@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Fatura AXD LOG</title>
+  <style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    box-sizing: border-box;
+  }
+  .fatura {
+    width: 794px;
+    max-width: 100%;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 16px;
+    box-sizing: border-box;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    page-break-inside: avoid;
+    margin: 0 auto;
+  }
+  .cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    border-bottom: 2px solid #ccc;
+    padding: 12px 20px;
+    border-radius: 4px 4px 0 0;
+    color: #333;
+    background-color: transparent;
+  }
+  .logo img {
+    height: 100px;
+    display: block;
+  }
+  .empresa-info {
+    text-align: right;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: #333;
+  }
+  .linha {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    font-size: 13px;
+  }
+  .coluna { width: 48%; }
+  .titulo-secao {
+    margin-top: 20px;
+    font-weight: bold;
+    text-decoration: underline;
+  }
+  input, textarea, select {
+    width: 100%;
+    border: 1px solid #ccc;
+    padding: 4px;
+    font-size: 14px;
+  }
+  textarea {
+    resize: vertical;
+    min-height: 60px;
+    border: 1px solid #000;
+    color: #000;
+    background-color: #fff;
+  }
+  .buttons-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  .print-button button, .clear-button button {
+    padding: 10px 20px;
+    font-size: 14px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .print-button button {
+    background-color: #007bff;
+  }
+  .print-button button:hover {
+    background-color: #0056b3;
+  }
+  .clear-button button {
+    background-color: #dc3545;
+  }
+  .clear-button button:hover {
+    background-color: #c82333;
+  }
+  @page {
+    size: A4;
+    margin: 20mm;
+  }
+  @media print {
+    .buttons-container { display: none; }
+    body {
+      background-color: white;
+      margin: 0;
+      padding: 0;
+      display: block;
+    }
+    .fatura {
+      border: none;
+      width: 100%;
+      max-width: 794px;
+      margin: 0 auto;
+      padding: 10mm;
+      box-sizing: border-box;
+      page-break-inside: avoid;
+    }
+    canvas#qrcode {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+  }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/imask/6.4.2/imask.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js"></script>
+  <script>
+    function atualizarVencimento() {
+      const dias = parseInt(document.getElementById('dias-vencimento').value) || 0;
+      const dataCarregamento = document.getElementById('data-carregamento').value;
+
+      if (!dataCarregamento) {
+        document.getElementById('data-vencimento').value = '';
+        return;
+      }
+
+      const partes = dataCarregamento.split('-');
+      const baseDate = new Date(partes[0], partes[1] - 1, partes[2]);
+      const dataVencimento = new Date(baseDate.getTime() + (dias * 24 * 60 * 60 * 1000));
+
+      const vencDia = String(dataVencimento.getDate()).padStart(2, '0');
+      const vencMes = String(dataVencimento.getMonth() + 1).padStart(2, '0');
+      const vencAno = dataVencimento.getFullYear();
+      const dataVencFormatada = `${vencDia}/${vencMes}/${vencAno}`;
+
+      document.getElementById('data-vencimento').value = dataVencFormatada;
+    }
+
+    function imprimirFatura() {
+      setTimeout(() => {
+        window.print();
+      }, 200);
+    }
+
+    function limparDados() {
+      // Limpa campos editáveis
+      document.getElementById('data-carregamento').value = '';
+      document.getElementById('numero-fatura').value = '';
+      document.getElementById('dias-vencimento').value = '12';
+      document.getElementById('valor').value = '';
+      document.getElementById('valor-extenso').value = '';
+      document.getElementById('data-vencimento').value = '';
+      document.querySelector('input[value="PAUMA ADMINISTRACAO E SERVIÇOS LTDA"]').value = '';
+      document.querySelector('input[placeholder="Digite o CNPJ ou CPF"]').value = '';
+      document.getElementById('cep').value = '';
+      document.getElementById('endereco').value = '';
+      document.querySelector('input[value="PIX ou BOLETO"]').value = 'PIX ou BOLETO';
+      document.querySelector('input[value="Origem: Salvador - BA destino obra rodoviária - Irecê-BA"]').value = 'Origem: Salvador - BA destino obra rodoviária - Irecê-BA';
+      document.querySelector('textarea[placeholder="Descreva aqui os serviços prestados..."]').value = '';
+      
+      // Atualiza a data de emissão para a data/hora atual
+      const dataAtual = new Date();
+      const dia = String(dataAtual.getDate()).padStart(2, '0');
+      const mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
+      const ano = dataAtual.getFullYear();
+      const hora = String(dataAtual.getHours()).padStart(2, '0');
+      const minuto = String(dataAtual.getMinutes()).padStart(2, '0');
+      document.getElementById('data-emissao').value = `${dia}/${mes}/${ano} ${hora}:${minuto}`;
+      
+      // Mantém os dados da empresa selecionada
+      mudarEmpresa();
+      
+      // Atualiza QR Code vazio
+      atualizarQRCode();
+    }
+
+    function buscarEndereco(cep) {
+      const cepFormatado = cep.replace(/[^\d]/g, '');
+      if (cepFormatado.length === 8) {
+        try {
+          axios.get(`https://viacep.com.br/ws/${cepFormatado}/json/`)
+            .then(response => {
+              if (response.data && !response.data.erro) {
+                document.getElementById('endereco').value = `${response.data.logradouro}, ${response.data.bairro} - ${response.data.localidade} - ${response.data.uf}`;
+              } else {
+                alert("CEP não encontrado.");
+              }
+            })
+            .catch(error => {
+              alert("Erro ao buscar o CEP.");
+            });
+        } catch (error) {
+          alert("Erro ao buscar o CEP.");
+        }
+      } else {
+        alert("CEP inválido.");
+      }
+    }
+
+    function mudarEmpresa() {
+      const empresaSelecionada = document.getElementById('selecionar-empresa').value;
+      
+      if (empresaSelecionada === 'axd') {
+        // Dados AXD LOG
+        document.getElementById('cnpj').innerText = 'CNPJ: 59.352.973/0001-32';
+        document.getElementById('endereco-empresa').innerHTML = 'RUA: Jubiabá, 292 - Bairro: Luis Eduardo Magalhães<br>Simões Filho - BA';
+        document.getElementById('banco').value = '0260';
+        document.getElementById('conta').value = 'AG:0001 CONTA: 129139513-3';
+        document.getElementById('pix').value = '59.352.973/0001-32';
+        document.querySelector('.logo img').src = 'logo_axdlog.png';
+        document.querySelector('.logo img').alt = 'AXD LOG';
+      } else if (empresaSelecionada === 'rodovar') {
+        // Dados RODOVAR
+        document.getElementById('cnpj').innerText = 'CNPJ: 49.908.710/0001-03';
+        document.getElementById('endereco-empresa').innerHTML = 'Travessa Acalanto, 84<br>Jardim das Margaridas, Salvador-BA';
+        document.getElementById('banco').value = '336';
+        document.getElementById('conta').value = 'AG:0001 CONTA: 25289183-0';
+        document.getElementById('pix').value = '49.908.710/0001-03';
+        document.querySelector('.logo img').src = 'logo_rodovar.png';
+        document.querySelector('.logo img').alt = 'RODOVAR';
+      }
+    }
+
+    window.onload = function () {
+      // Máscara de CEP
+      const campoCep = document.getElementById('cep');
+      IMask(campoCep, { mask: '00000-000' });
+
+      // Evento para buscar o endereço quando o CEP for alterado
+      campoCep.addEventListener('blur', function() {
+        buscarEndereco(campoCep.value);
+      });
+
+      // Atualiza a Data e Hora de Emissão automaticamente com a data e hora atuais
+      const dataEmissao = document.getElementById('data-emissao');
+      const dataAtual = new Date();
+      const dia = String(dataAtual.getDate()).padStart(2, '0');
+      const mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
+      const ano = dataAtual.getFullYear();
+      const hora = String(dataAtual.getHours()).padStart(2, '0');
+      const minuto = String(dataAtual.getMinutes()).padStart(2, '0');
+      dataEmissao.value = `${dia}/${mes}/${ano} ${hora}:${minuto}`;
+
+      // Chama a função para atualizar o vencimento, caso necessário
+      atualizarVencimento();
+
+      // Configura o evento para mudar os dados da empresa
+      document.getElementById('selecionar-empresa').addEventListener('change', mudarEmpresa);
+    }
+  </script>
+</head>
+
+<body>
+  <div class="fatura" style="page-break-inside: avoid;">
+    <div class="cabecalho">
+      <div class="logo">
+        <img src="logo_axdlog.png" alt="AXD LOG">
+      </div>
+      <div class="empresa-info">
+        <select id="selecionar-empresa" style="margin-bottom: 10px;">
+          <option value="axd">AXD LOG</option>
+          <option value="rodovar">RODOVAR</option>
+        </select>
+        <span id="cnpj">CNPJ: 59.352.973/0001-32</span><br>
+        Inscr. Estadual: 228.253.729 ME<br>
+        <span id="endereco-empresa">RUA: Jubiabá, 292 - Bairro: Luis Eduardo Magalhães<br>Simões Filho - BA</span><br>
+        Data Emissão: <input type="text" id="data-emissao" readonly>
+      </div>
+    </div>
+
+    <div class="titulo-secao">Dados da Fatura</div>
+    <div class="linha">
+      <div class="coluna">
+        Data do Carregamento:<br>
+        <input type="date" id="data-carregamento" onchange="atualizarVencimento()">
+      </div>
+      <div class="coluna">
+        Nº da Fatura:<br>
+        <input type="text" id="numero-fatura" value="038,1">
+      </div>
+    </div>
+    <div class="linha">
+      <div class="coluna">
+        Dias para vencimento:<br>
+        <input type="number" id="dias-vencimento" value="12" onchange="atualizarVencimento()">
+      </div>
+      <div class="coluna">
+        Valor:<br>
+        <input type="text" id="valor" value="R$ 6.650,00">
+      </div>
+    </div>
+    <div class="linha">
+      <div class="coluna">
+        Valor por extenso:<br>
+        <input type="text" id="valor-extenso" placeholder="Digite o valor por extenso...">
+      </div>
+      <div class="coluna">
+        Data de Vencimento:<br>
+        <input type="text" id="data-vencimento" readonly>
+      </div>
+    </div>
+    
+    <div class="linha">
+      <div class="coluna">
+        Nome do Sacado:<br>
+        <input type="text" value="PAUMA ADMINISTRACAO E SERVIÇOS LTDA">
+      </div>
+      <div class="coluna">
+        CNPJ / CPF do Cliente:<br>
+        <input type="text" placeholder="Digite o CNPJ ou CPF">
+      </div>
+    </div>
+
+    <div class="linha">
+      <div class="coluna">
+        CEP:<br>
+        <input type="text" id="cep" value="45601-002">
+      </div>
+      <div class="coluna">
+        Endereço:<br>
+        <input type="text" id="endereco" value="Avenida Antônio Carlos Magalhães, S/N">
+      </div>
+    </div>
+
+    <div class="titulo-secao">Forma de Pagamento e Referência</div>
+    <div class="linha">
+      <div class="coluna">
+        Forma de Pagamento:<br>
+        <input type="text" value="PIX ou BOLETO">
+      </div>
+      <div class="coluna">
+        Referente:<br>
+        <input type="text" value="Origem: Salvador - BA destino obra rodoviária - Irecê-BA">
+      </div>
+    </div>
+
+    <div class="titulo-secao">Descrição do Serviço</div>
+    <div class="linha">
+      <div class="coluna" style="width: 100%;">
+        <textarea placeholder="Descreva aqui os serviços prestados..."></textarea>
+      </div>
+    </div>
+
+    <div class="titulo-secao">Banco / PIX</div>
+    <div class="linha">
+      <div class="coluna">
+        Banco:<br>
+        <input type="text" id="banco" value="0260" placeholder="0260">
+      </div>
+      <div class="coluna">
+        Conta:<br>
+        <input type="text" id="conta" value="AG:0001 CONTA: 129139513-3" placeholder="AG:0001 CONTA: 129139513-3">
+      </div>
+    </div>
+    <div class="linha">
+      <div class="coluna">
+        PIX (CNPJ):<br>
+        <input type="text" id="pix" value="59.352.973/0001-32" placeholder="59.352.973/0001-32">
+      </div>
+    </div>
+
+    <div class="titulo-secao">Observações</div>
+    <div class="linha" style="page-break-inside: avoid;">
+      <div class="coluna" style="width: 100%;">
+        <textarea readonly>Não aceitamos depósito sem autorização prévia</textarea>
+      </div>
+    </div>
+
+    <div style="margin-top: 10px; text-align: center; page-break-inside: avoid;">
+      <canvas id="qrcode" style="display: block; margin: 0 auto; height: 40px;"></canvas>
+    </div>
+    <div class="buttons-container">
+      <div class="clear-button">
+        <button onclick="limparDados()">Limpar Dados</button>
+      </div>
+      <div class="print-button">
+        <button onclick="imprimirFatura()">Imprimir Fatura</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+<script>
+  function atualizarQRCode() {
+    const numero = document.getElementById('numero-fatura').value || '---';
+    const valor = document.getElementById('valor').value || '---';
+    const textoQRCode = `FATURA: ${numero}
+VALOR: ${valor}`;
+    const qr = new QRious({
+      element: document.getElementById('qrcode'),
+      value: textoQRCode,
+      size: 50
+    });
+  }
+
+  window.addEventListener('load', function () {
+    atualizarQRCode();
+    document.getElementById('numero-fatura').addEventListener('input', atualizarQRCode);
+    document.getElementById('valor').addEventListener('input', atualizarQRCode);
+  });
+</script>
+</html>
