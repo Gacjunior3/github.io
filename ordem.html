@@ -7,8 +7,12 @@
     body {
       font-family: Arial, sans-serif;
       font-size: 12px;
-      margin: 20px;
+      margin: 0;
+      padding: 20px;
       background-color: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .container {
@@ -17,6 +21,9 @@
       background: white;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
       position: relative;
+      width: 210mm;
+      min-height: 297mm;
+      box-sizing: border-box;
     }
 
     .header-qr-container {
@@ -153,17 +160,17 @@
       top: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0,0,0,0.9);
+      background-color: #000;
     }
 
     .modal-content {
-      margin: auto;
+      margin: 20px auto;
       display: block;
-      width: 80%;
+      width: 90%;
       max-width: 800px;
-      margin-top: 50px;
-      height: 80vh;
+      height: 85vh;
       border: none;
+      background: #000;
     }
 
     .close {
@@ -174,11 +181,14 @@
       font-size: 40px;
       font-weight: bold;
       cursor: pointer;
+      z-index: 1001;
     }
 
     .modal-buttons {
       text-align: center;
       margin: 20px 0;
+      position: relative;
+      z-index: 1001;
     }
 
     .modal-buttons button {
@@ -202,11 +212,26 @@
     }
 
     @media print {
-      .no-print, .action-buttons, .empresa-selector {
+      body, html {
+        width: 210mm;
+        height: 297mm;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white;
+      }
+      .no-print, .action-buttons, .empresa-selector, .btn-buscar {
         display: none !important;
       }
       .logo-container {
         border: none !important;
+      }
+      .container {
+        border: none;
+        box-shadow: none;
+        padding: 5mm;
+        margin: 0;
+        width: 100%;
+        min-height: 100%;
       }
     }
   </style>
@@ -479,25 +504,37 @@
 
     // Função para visualizar o PDF
     async function visualizarPDF() {
+      // Esconde todos os botões de buscar
+      document.querySelectorAll('.btn-buscar').forEach(btn => {
+        btn.style.visibility = 'hidden';
+      });
+      
       // Atualiza o QRCode antes de gerar o PDF
       gerarQRCode();
       
       try {
         const element = document.getElementById('containerPDF');
         const opt = {
-          margin: 10,
+          margin: [5, 5, 5, 5],
           filename: `OrdemColeta_${document.getElementById('inputNumero').value}.pdf`,
           image: { type: 'jpeg', quality: 1 },
           html2canvas: { 
-            scale: 2,
+            scale: 1.5,
             logging: true,
             useCORS: true,
-            allowTaint: true
+            allowTaint: true,
+            scrollX: 0,
+            scrollY: 0,
+            width: element.scrollWidth + 20,
+            height: element.scrollHeight + 20,
+            ignoreElements: (el) => el.classList.contains('btn-buscar')
           },
           jsPDF: { 
             unit: 'mm', 
             format: 'a4', 
-            orientation: 'portrait' 
+            orientation: 'portrait',
+            compress: true,
+            hotfixes: ['px_scaling']
           }
         };
 
@@ -515,6 +552,11 @@
       } catch (error) {
         console.error("Erro ao gerar PDF:", error);
         alert("Erro ao gerar PDF. Verifique o console para detalhes.");
+      } finally {
+        // Restaura a visibilidade dos botões
+        document.querySelectorAll('.btn-buscar').forEach(btn => {
+          btn.style.visibility = 'visible';
+        });
       }
     }
 
@@ -560,7 +602,7 @@
       }
     }
 
-    // Função para gerar dados do QRCode (simplificada)
+    // Função para gerar dados do QRCode
     function gerarDadosQRCode() {
       return {
         numeroOrdem: document.getElementById('inputNumero').value,
@@ -616,33 +658,41 @@
       gerarQRCode();
     }
 
-    // Função para limpar formulário
+    // Função para limpar formulário - VERSÃO COMPLETA
     function limparFormulario() {
-      if (confirm('Tem certeza que deseja limpar todos os dados?')) {
+      if (confirm('Tem certeza que deseja limpar TODOS os dados?')) {
+        // Incrementa e gera novo número de ordem
         numeroOrdem++;
         const novoNumero = gerarNumeroOrdem();
         document.getElementById('inputNumero').value = novoNumero;
         document.getElementById('numeroOrdem').textContent = novoNumero;
         
-        // Limpa campos editáveis
-        document.getElementById('destinatarioNome').value = '';
-        document.getElementById('destinatarioCNPJ').value = '';
-        document.getElementById('destinatarioCEP').value = '';
-        document.getElementById('destinatarioEndereco').innerText = '';
-        document.getElementById('destinatarioCidade').value = '';
-        document.getElementById('destino').value = '';
-        document.getElementById('destinoCEP').value = '';
-        document.getElementById('observacao').value = '';
+        // Lista COMPLETA de todos os campos editáveis
+        const camposParaLimpar = [
+          'remetenteNome', 'remetenteCNPJ', 'remetenteCEP', 'remetenteCidade',
+          'destinatarioNome', 'destinatarioCNPJ', 'destinatarioCEP', 'destinatarioCidade',
+          'produtoDescricao', 'pesoUnitario', 'pesoBruto', 
+          'destino', 'destinoCEP', 'quantidade', 'pedido', 'observacao',
+          'motoristaNome', 'motoristaCPF', 'motoristaRG', 'motoristaCNH',
+          'veiculoPlaca', 'veiculoCarreta', 'veiculo2Placa', 'veiculo2Carreta'
+        ];
         
-        // Reseta selects
+        // Limpa todos os campos
+        camposParaLimpar.forEach(id => {
+          const element = document.getElementById(id);
+          if (element) element.value = '';
+        });
+        
+        // Limpa endereços
+        document.getElementById('destinatarioEndereco').innerText = '';
+        document.getElementById('remetenteEndereco').innerText = '';
+        
+        // Reseta todos os selects
         document.getElementById('especie').selectedIndex = 0;
         document.getElementById('veiculo').selectedIndex = 0;
         document.getElementById('veiculo2').selectedIndex = 0;
-        
-        // Limpa campos de veículos
-        document.getElementById('veiculoCarreta').value = '';
-        document.getElementById('veiculo2Placa').value = '';
-        document.getElementById('veiculo2Carreta').value = '';
+        document.getElementById('remetenteUF').value = 'BA';
+        document.getElementById('destinatarioUF').value = 'BA';
         
         // Restaura data/hora
         document.getElementById('dataEmissao').value = getDateTimeNow();
