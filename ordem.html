@@ -499,7 +499,7 @@
       </tr>
     </table>
 
-    <div class="footer">
+    <div class="footer" id="footer-empresa">
       RODOVAR LTDA - CNPJ: 49.908.710/0001-03 - Insc. Estadual: 228.253.729 ME<br>
       Travessa Acalanto, 84 - Jardim das Margaridas - Salvador/BA<br>
       Documento gerado em: <span id="dataGeracao"></span>
@@ -550,7 +550,9 @@
         endereco: "RUA Jubiabá, 292 - Bairro: Luis Eduardo Magalhães",
         cidade: "Simões Filho",
         uf: "BA",
-        logo: "logo_axd.png"
+        logo: "logo_axd.png",
+        footer: "AXD - CNPJ: 59.352.973/0001-32 - Insc. Estadual: 228.253.729 ME<br>" +
+                "RUA Jubiabá, 292 - Bairro: Luis Eduardo Magalhães - Simões Filho/BA"
       },
       RODOVAR: {
         nome: "RODOVAR LTDA",
@@ -559,7 +561,9 @@
         endereco: "Travessa Acalanto, 84 - Jardim das Margaridas",
         cidade: "Salvador",
         uf: "BA",
-        logo: "logo_rodovar.png"
+        logo: "logo_rodovar.png",
+        footer: "RODOVAR LTDA - CNPJ: 49.908.710/0001-03 - Insc. Estadual: 228.253.729 ME<br>" +
+                "Travessa Acalanto, 84 - Jardim das Margaridas - Salvador/BA"
       }
     };
 
@@ -692,6 +696,7 @@
       const empresa = empresas[empresaSelecionada];
       const empresaInfo = document.getElementById('empresa-info');
       const logotipo = document.getElementById('logotipo');
+      const footerEmpresa = document.getElementById('footer-empresa');
 
       empresaInfo.innerHTML = `
         ${empresa.nome}<br>
@@ -703,6 +708,14 @@
       
       logotipo.src = empresa.logo;
       logotipo.alt = `Logotipo ${empresa.nome}`;
+      
+      footerEmpresa.innerHTML = `
+        ${empresa.footer}<br>
+        Documento gerado em: <span id="dataGeracao"></span>
+      `;
+      
+      // Atualiza a data de geração no footer
+      document.getElementById('dataGeracao').textContent = new Date().toLocaleString('pt-BR');
       
       gerarQRCode();
     }
