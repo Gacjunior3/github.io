@@ -9,10 +9,11 @@
       font-size: 12px;
       margin: 0;
       padding: 20px;
-      background-color: #f9f9f9;
+      background-color: #000;
       display: flex;
       flex-direction: column;
       align-items: center;
+      min-height: 100vh;
     }
 
     .container {
@@ -24,6 +25,7 @@
       width: 210mm;
       min-height: 297mm;
       box-sizing: border-box;
+      margin-top: 20px;
     }
 
     .header-qr-container {
@@ -66,18 +68,19 @@
     }
 
     .empresa-selector {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      z-index: 100;
+      position: relative;
+      margin-bottom: 15px;
+      width: 210mm;
+      text-align: right;
     }
     
     .empresa-select {
-      padding: 5px 8px;
+      padding: 8px 12px;
       border-radius: 4px;
       border: 1px solid #ccc;
       background: #f8f8f8;
-      font-size: 12px;
+      font-size: 14px;
+      font-weight: bold;
     }
 
     input, select, textarea {
@@ -85,6 +88,24 @@
       border: none;
       background: none;
       font-size: 12px;
+    }
+
+    /* Ajustes para data/hora */
+    #dataEmissao {
+      font-size: 14px;
+      padding: 5px;
+      width: 100%;
+    }
+
+    #dataAssinatura {
+      font-size: 14px;
+      padding: 5px;
+      width: 100%;
+    }
+
+    /* Espaçamento na linha da data */
+    table tr:nth-child(2) td {
+      padding-bottom: 15px;
     }
 
     table {
@@ -112,18 +133,19 @@
     }
 
     .action-buttons {
-      margin-top: 20px;
+      margin: 20px 0;
       text-align: center;
     }
     
     .action-buttons button {
-      padding: 10px 20px;
+      padding: 12px 25px;
       margin: 0 10px;
       cursor: pointer;
       border: none;
       border-radius: 4px;
       font-weight: bold;
       font-size: 14px;
+      transition: all 0.3s ease;
     }
     
     #btnImprimir {
@@ -131,13 +153,21 @@
       color: white;
     }
     
+    #btnImprimir:hover {
+      background: #0b7dda;
+    }
+    
     #btnLimpar {
       background: #f44336;
       color: white;
     }
 
+    #btnLimpar:hover {
+      background: #da190b;
+    }
+
     .btn-buscar {
-      padding: 2px 8px;
+      padding: 3px 10px;
       margin-left: 5px;
       font-size: 11px;
       background: #4CAF50;
@@ -145,6 +175,11 @@
       border: none;
       border-radius: 3px;
       cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-buscar:hover {
+      background: #3e8e41;
     }
 
     .no-print {
@@ -160,7 +195,7 @@
       top: 0;
       width: 100%;
       height: 100%;
-      background-color: #000;
+      background-color: rgba(0,0,0,0.9);
     }
 
     .modal-content {
@@ -192,13 +227,14 @@
     }
 
     .modal-buttons button {
-      padding: 10px 20px;
-      margin: 0 10px;
+      padding: 12px 25px;
+      margin: 0 15px;
       border: none;
       border-radius: 4px;
       font-weight: bold;
       cursor: pointer;
       font-size: 14px;
+      transition: all 0.3s ease;
     }
 
     #btnSalvarPDF {
@@ -206,9 +242,17 @@
       color: white;
     }
 
+    #btnSalvarPDF:hover {
+      background: #0b7dda;
+    }
+
     #btnImprimirPDF {
       background: #4CAF50;
       color: white;
+    }
+
+    #btnImprimirPDF:hover {
+      background: #3e8e41;
     }
 
     @media print {
@@ -264,7 +308,7 @@
             <div id="headerQrCode"></div>
             <div style="text-align: center;">
               <h2 style="margin: 0; font-size: 18px;">Ordem de Coleta</h2>
-              <div id="numeroOrdem" style="font-weight: bold;">OC231201-0524</div>
+              <div id="numeroOrdem" style="font-weight: bold;"></div>
             </div>
           </div>
         </td>
@@ -275,8 +319,8 @@
         <td></td>
       </tr>
       <tr>
-        <td>Operador:<br><input type="text" id="operador" value="MARIANE"></td>
-        <td>Número:<br><input type="text" id="inputNumero" value="OC231201-0524"></td>
+        <td>Operador:<br><input type="text" id="operador" placeholder="Nome do Operador"></td>
+        <td>Número:<br><input type="text" id="inputNumero" readonly></td>
         <td colspan="2"></td>
       </tr>
     </table>
@@ -284,22 +328,20 @@
     <div class="remetente-destinatario">
       <div class="bloco">
         <h3 style="margin: 0 0 10px 0; text-align: center;">Remetente</h3>
-        <input type="text" id="remetenteNome" value="SEQUIOA MADEIREIRA LTDA">
-        <input type="text" id="remetenteCNPJ" value="28.199.101/0001-52">
+        <input type="text" id="remetenteNome" placeholder="Nome do Remetente">
+        <input type="text" id="remetenteCNPJ" placeholder="CNPJ/CPF">
         
         <div style="margin-top: 10px;">
-          <input type="text" id="remetenteCEP" placeholder="CEP" value="41500-300" 
+          <input type="text" id="remetenteCEP" placeholder="CEP" 
                  style="width: 100px; display: inline-block;">
           <button class="btn-buscar no-print" onclick="buscarCEP('remetente')">Buscar</button>
         </div>
         
-        <div id="remetenteEndereco" style="margin-top: 5px;">
-          Rua das Flores, 123 - Centro
-        </div>
+        <div id="remetenteEndereco" style="margin-top: 5px;"></div>
         <div style="margin-top: 5px;">
-          <input type="text" id="remetenteCidade" value="Salvador" style="width: 70%; display: inline-block;">
+          <input type="text" id="remetenteCidade" placeholder="Cidade" style="width: 70%; display: inline-block;">
           <select id="remetenteUF" style="width: 25%;">
-            <option value="BA" selected>BA</option>
+            <option value="BA">BA</option>
           </select>
         </div>
       </div>
@@ -333,7 +375,7 @@
         <th>Peso Bruto</th>
       </tr>
       <tr>
-        <td colspan="5"><input type="text" id="produtoDescricao" value="CHAPAS DE MADEIRA"></td>
+        <td colspan="5"><input type="text" id="produtoDescricao" placeholder="Descrição do Produto"></td>
         <td>
           <select id="especie">
             <option value="">Selecione</option>
@@ -363,14 +405,14 @@
       </tr>
       <tr>
         <td>
-          <input type="text" id="destino" value="PORTO DE SAUIPE, MATA DE SAO JOAO-BA">
+          <input type="text" id="destino" placeholder="Local de Destino">
           <div style="margin-top: 5px;">
             <input type="text" id="destinoCEP" placeholder="CEP do Destino" style="width: 100px;">
             <button class="btn-buscar no-print" onclick="buscarCEP('destino')">Buscar CEP</button>
           </div>
         </td>
         <td><input type="text" id="quantidade" value="0,00"></td>
-        <td><input type="text" id="pedido"></td>
+        <td><input type="text" id="pedido" placeholder="Número do Pedido"></td>
       </tr>
     </table>
 
@@ -379,16 +421,16 @@
         <th>Observação</th>
       </tr>
       <tr>
-        <td><textarea id="observacao" rows="3" style="resize: none;"></textarea></td>
+        <td><textarea id="observacao" rows="3" style="resize: none;" placeholder="Observações adicionais"></textarea></td>
       </tr>
     </table>
 
     <table>
       <tr>
-        <td colspan="3">Motorista: <input type="text" id="motoristaNome" value="GENIVAL FUIZA DOS SANTOS"></td>
-        <td>CPF: <input type="text" id="motoristaCPF" value="007.461.998-56"></td>
-        <td>RG: <input type="text" id="motoristaRG" value="1300242795"></td>
-        <td>CNH: <input type="text" id="motoristaCNH" value="88683744664"></td>
+        <td colspan="3">Motorista: <input type="text" id="motoristaNome" placeholder="Nome do Motorista"></td>
+        <td>CPF: <input type="text" id="motoristaCPF" placeholder="000.000.000-00"></td>
+        <td>RG: <input type="text" id="motoristaRG" placeholder="Número do RG"></td>
+        <td>CNH: <input type="text" id="motoristaCNH" placeholder="Número da CNH"></td>
       </tr>
       <tr>
         <td>Veículo: 
@@ -410,8 +452,8 @@
             <option value="Outros">Outros</option>
           </select>
         </td>
-        <td>Placa: <input type="text" id="veiculoPlaca" value="AAA0A00"></td>
-        <td>Carreta: <input type="text" id="veiculoCarreta"></td>
+        <td>Placa: <input type="text" id="veiculoPlaca" placeholder="AAA0A00"></td>
+        <td>Carreta: <input type="text" id="veiculoCarreta" placeholder="Placa da Carreta"></td>
         <td>Veículo 2: 
           <select id="veiculo2">
             <option value="">Nenhum</option>
@@ -431,8 +473,8 @@
             <option value="Outros">Outros</option>
           </select>
         </td>
-        <td>Placa 2: <input type="text" id="veiculo2Placa"></td>
-        <td>Carreta 2: <input type="text" id="veiculo2Carreta"></td>
+        <td>Placa 2: <input type="text" id="veiculo2Placa" placeholder="Placa do Veículo 2"></td>
+        <td>Carreta 2: <input type="text" id="veiculo2Carreta" placeholder="Placa da Carreta 2"></td>
       </tr>
     </table>
 
@@ -475,7 +517,7 @@
 
   <script>
     // Variáveis globais
-    let numeroOrdem = 524;
+    let numeroOrdem = Math.floor(Math.random() * 9000) + 1000; // Número aleatório entre 1000 e 9999
     let qrCodeInstance = null;
     let pdfBlob = null;
     let debounceTimer = null;
@@ -669,7 +711,7 @@
         
         // Lista COMPLETA de todos os campos editáveis
         const camposParaLimpar = [
-          'remetenteNome', 'remetenteCNPJ', 'remetenteCEP', 'remetenteCidade',
+          'operador', 'remetenteNome', 'remetenteCNPJ', 'remetenteCEP', 'remetenteCidade',
           'destinatarioNome', 'destinatarioCNPJ', 'destinatarioCEP', 'destinatarioCidade',
           'produtoDescricao', 'pesoUnitario', 'pesoBruto', 
           'destino', 'destinoCEP', 'quantidade', 'pedido', 'observacao',
@@ -790,6 +832,11 @@
 
     // Inicialização
     window.onload = function() {
+      // Configura número da ordem automaticamente
+      const novoNumero = gerarNumeroOrdem();
+      document.getElementById('inputNumero').value = novoNumero;
+      document.getElementById('numeroOrdem').textContent = novoNumero;
+      
       // Configura data/hora
       document.getElementById('dataEmissao').value = getDateTimeNow();
       document.getElementById('dataAssinatura').value = getDateNow();
