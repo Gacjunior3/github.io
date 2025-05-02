@@ -8,8 +8,8 @@
   body {
     font-family: Arial, sans-serif;
     margin: 0;
-    padding: 0;
-    background-color: #f9f9f9;
+    padding: 20px;
+    background-color: #000;
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -26,6 +26,7 @@
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
     page-break-inside: avoid;
     margin: 0 auto;
+    border-radius: 5px;
   }
   .cabecalho {
     display: flex;
@@ -55,6 +56,8 @@
     font-size: 13px;
   }
   .coluna { width: 48%; }
+  .coluna-pequena { width: 30%; }
+  .coluna-grande { width: 68%; }
   .titulo-secao {
     margin-top: 20px;
     font-weight: bold;
@@ -77,6 +80,7 @@
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
+    gap: 10px;
   }
   .print-button button, .clear-button button {
     padding: 10px 20px;
@@ -85,39 +89,40 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    width: 100%;
+    transition: all 0.3s ease;
   }
   .print-button button {
     background-color: #007bff;
   }
   .print-button button:hover {
     background-color: #0056b3;
+    transform: translateY(-2px);
   }
   .clear-button button {
     background-color: #dc3545;
   }
   .clear-button button:hover {
     background-color: #c82333;
+    transform: translateY(-2px);
   }
   @page {
     size: A4;
     margin: 20mm;
   }
   @media print {
-    .buttons-container { display: none; }
     body {
       background-color: white;
-      margin: 0;
       padding: 0;
-      display: block;
     }
+    .buttons-container { display: none; }
     .fatura {
       border: none;
       width: 100%;
       max-width: 794px;
       margin: 0 auto;
       padding: 10mm;
-      box-sizing: border-box;
-      page-break-inside: avoid;
+      box-shadow: none;
     }
     canvas#qrcode {
       break-inside: avoid;
@@ -163,13 +168,13 @@
       document.getElementById('valor').value = '';
       document.getElementById('valor-extenso').value = '';
       document.getElementById('data-vencimento').value = '';
-      document.querySelector('input[value="PAUMA ADMINISTRACAO E SERVIÇOS LTDA"]').value = '';
-      document.querySelector('input[placeholder="Digite o CNPJ ou CPF"]').value = '';
+      document.getElementById('nome-sacado').value = '';
+      document.getElementById('cnpj-cpf').value = '';
       document.getElementById('cep').value = '';
       document.getElementById('endereco').value = '';
-      document.querySelector('input[value="PIX ou BOLETO"]').value = 'PIX ou BOLETO';
-      document.querySelector('input[value="Origem: Salvador - BA destino obra rodoviária - Irecê-BA"]').value = 'Origem: Salvador - BA destino obra rodoviária - Irecê-BA';
-      document.querySelector('textarea[placeholder="Descreva aqui os serviços prestados..."]').value = '';
+      document.getElementById('forma-pagamento').value = 'PIX ou BOLETO';
+      document.getElementById('referente').value = 'Origem:  - Destino: ';
+      document.getElementById('descricao-servico').value = '';
       
       // Atualiza a data de emissão para a data/hora atual
       const dataAtual = new Date();
@@ -316,11 +321,11 @@
     <div class="linha">
       <div class="coluna">
         Nome do Sacado:<br>
-        <input type="text" value="PAUMA ADMINISTRACAO E SERVIÇOS LTDA">
+        <input type="text" id="nome-sacado" value="PAUMA ADMINISTRACAO E SERVIÇOS LTDA">
       </div>
       <div class="coluna">
         CNPJ / CPF do Cliente:<br>
-        <input type="text" placeholder="Digite o CNPJ ou CPF">
+        <input type="text" id="cnpj-cpf" placeholder="Digite o CNPJ ou CPF">
       </div>
     </div>
 
@@ -337,20 +342,20 @@
 
     <div class="titulo-secao">Forma de Pagamento e Referência</div>
     <div class="linha">
-      <div class="coluna">
+      <div class="coluna-pequena">
         Forma de Pagamento:<br>
-        <input type="text" value="PIX ou BOLETO">
+        <input type="text" id="forma-pagamento" value="PIX ou BOLETO">
       </div>
-      <div class="coluna">
+      <div class="coluna-grande">
         Referente:<br>
-        <input type="text" value="Origem: Salvador - BA destino obra rodoviária - Irecê-BA">
+        <input type="text" id="referente" value="Origem: Salvador - BA - Destino: Irecê-BA">
       </div>
     </div>
 
     <div class="titulo-secao">Descrição do Serviço</div>
     <div class="linha">
       <div class="coluna" style="width: 100%;">
-        <textarea placeholder="Descreva aqui os serviços prestados..."></textarea>
+        <textarea id="descricao-servico" placeholder="Descreva aqui os serviços prestados..."></textarea>
       </div>
     </div>
 
@@ -384,10 +389,10 @@
     </div>
     <div class="buttons-container">
       <div class="clear-button">
-        <button onclick="limparDados()">Limpar Dados</button>
+        <button onclick="limparDados()">Limpar Formulário</button>
       </div>
       <div class="print-button">
-        <button onclick="imprimirFatura()">Imprimir Fatura</button>
+        <button onclick="imprimirFatura()">Imprimir/Salvar PDF</button>
       </div>
     </div>
   </div>
