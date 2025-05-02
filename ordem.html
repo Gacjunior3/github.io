@@ -17,7 +17,7 @@
     }
 
     .container {
-      border: 1px solid #000;
+      border: 2px solid #000;
       padding: 15px;
       background: white;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
@@ -39,7 +39,7 @@
       height: 70px;
       background: white;
       padding: 5px;
-      border: 1px solid #ddd;
+      border: 2px solid #000;
     }
 
     .logo-cell {
@@ -56,7 +56,7 @@
       align-items: center;
       justify-content: center;
       background: white;
-      border: 1px solid #eee;
+      border: 2px solid #000;
     }
     
     .logo {
@@ -77,7 +77,7 @@
     .empresa-select {
       padding: 8px 12px;
       border-radius: 4px;
-      border: 1px solid #ccc;
+      border: 2px solid #000;
       background: #f8f8f8;
       font-size: 14px;
       font-weight: bold;
@@ -90,7 +90,6 @@
       font-size: 12px;
     }
 
-    /* Ajustes para data/hora */
     #dataEmissao {
       font-size: 14px;
       padding: 5px;
@@ -103,7 +102,6 @@
       width: 100%;
     }
 
-    /* Espaçamento na linha da data */
     table tr:nth-child(2) td {
       padding-bottom: 15px;
     }
@@ -115,7 +113,7 @@
     }
 
     td, th {
-      border: 1px solid #000;
+      border: 2px solid #000;
       padding: 6px;
       vertical-align: top;
     }
@@ -128,7 +126,7 @@
 
     .bloco {
       flex: 1;
-      border: 1px solid #000;
+      border: 2px solid #000;
       padding: 10px;
     }
 
@@ -186,7 +184,6 @@
       display: inline-block;
     }
 
-    /* Modal de visualização do PDF */
     .modal-pdf {
       display: none;
       position: fixed;
@@ -255,6 +252,17 @@
       background: #3e8e41;
     }
 
+    .footer {
+      margin-top: 30px;
+      text-align: center;
+      font-size: 10px;
+      color: #666;
+      border-top: 2px solid #000;
+      padding-top: 10px;
+      width: 100%;
+      page-break-inside: avoid;
+    }
+
     @media print {
       body, html {
         width: 210mm;
@@ -276,6 +284,10 @@
         margin: 0;
         width: 100%;
         min-height: 100%;
+      }
+      .footer {
+        position: static;
+        width: 100%;
       }
     }
   </style>
@@ -321,7 +333,8 @@
       <tr>
         <td>Operador:<br><input type="text" id="operador" placeholder="Nome do Operador"></td>
         <td>Número:<br><input type="text" id="inputNumero" readonly></td>
-        <td colspan="2"></td>
+        <td>Valor de NF:<br><input type="text" id="valorNF" placeholder="R$ 0,00"></td>
+        <td></td>
       </tr>
     </table>
 
@@ -485,6 +498,12 @@
         <td>Responsável pela Operação</td>
       </tr>
     </table>
+
+    <div class="footer">
+      RODOVAR LTDA - CNPJ: 49.908.710/0001-03 - Insc. Estadual: 228.253.729 ME<br>
+      Travessa Acalanto, 84 - Jardim das Margaridas - Salvador/BA<br>
+      Documento gerado em: <span id="dataGeracao"></span>
+    </div>
   </div>
 
   <div class="action-buttons no-print">
@@ -517,7 +536,7 @@
 
   <script>
     // Variáveis globais
-    let numeroOrdem = Math.floor(Math.random() * 9000) + 1000; // Número aleatório entre 1000 e 9999
+    let numeroOrdem = Math.floor(Math.random() * 9000) + 1000;
     let qrCodeInstance = null;
     let pdfBlob = null;
     let debounceTimer = null;
@@ -546,12 +565,10 @@
 
     // Função para visualizar o PDF
     async function visualizarPDF() {
-      // Esconde todos os botões de buscar
       document.querySelectorAll('.btn-buscar').forEach(btn => {
         btn.style.visibility = 'hidden';
       });
       
-      // Atualiza o QRCode antes de gerar o PDF
       gerarQRCode();
       
       try {
@@ -580,14 +597,11 @@
           }
         };
 
-        // Gerar o PDF e obter como blob
         const result = await html2pdf().set(opt).from(element).outputPdf('blob');
         pdfBlob = result;
         
-        // Criar URL para o blob
         const url = URL.createObjectURL(result);
         
-        // Mostrar no modal
         document.getElementById('pdfViewer').src = url;
         document.getElementById('pdfModal').style.display = 'block';
         
@@ -595,14 +609,12 @@
         console.error("Erro ao gerar PDF:", error);
         alert("Erro ao gerar PDF. Verifique o console para detalhes.");
       } finally {
-        // Restaura a visibilidade dos botões
         document.querySelectorAll('.btn-buscar').forEach(btn => {
           btn.style.visibility = 'visible';
         });
       }
     }
 
-    // Função para fechar o modal
     function fecharModal() {
       document.getElementById('pdfModal').style.display = 'none';
       if (pdfBlob) {
@@ -611,7 +623,6 @@
       }
     }
 
-    // Função para salvar o PDF
     function salvarPDF() {
       if (pdfBlob) {
         const link = document.createElement('a');
@@ -624,7 +635,6 @@
       }
     }
 
-    // Função para imprimir o PDF
     function imprimirPDF() {
       if (pdfBlob) {
         const url = URL.createObjectURL(pdfBlob);
@@ -644,16 +654,15 @@
       }
     }
 
-    // Função para gerar dados do QRCode
     function gerarDadosQRCode() {
       return {
         numeroOrdem: document.getElementById('inputNumero').value,
         dataHora: document.getElementById('dataEmissao').value,
-        operador: document.getElementById('operador').value
+        operador: document.getElementById('operador').value,
+        valorNF: document.getElementById('valorNF').value
       };
     }
 
-    // Função para gerar/atualizar o QRCode
     function gerarQRCode() {
       const dados = gerarDadosQRCode();
       const dadosString = JSON.stringify(dados);
@@ -679,7 +688,6 @@
       }
     }
 
-    // Função para trocar empresa
     function trocarEmpresa() {
       const empresaSelecionada = document.getElementById('empresa-select').value;
       const empresa = empresas[empresaSelecionada];
@@ -700,18 +708,15 @@
       gerarQRCode();
     }
 
-    // Função para limpar formulário - VERSÃO COMPLETA
     function limparFormulario() {
       if (confirm('Tem certeza que deseja limpar TODOS os dados?')) {
-        // Incrementa e gera novo número de ordem
         numeroOrdem++;
         const novoNumero = gerarNumeroOrdem();
         document.getElementById('inputNumero').value = novoNumero;
         document.getElementById('numeroOrdem').textContent = novoNumero;
         
-        // Lista COMPLETA de todos os campos editáveis
         const camposParaLimpar = [
-          'operador', 'remetenteNome', 'remetenteCNPJ', 'remetenteCEP', 'remetenteCidade',
+          'operador', 'valorNF', 'remetenteNome', 'remetenteCNPJ', 'remetenteCEP', 'remetenteCidade',
           'destinatarioNome', 'destinatarioCNPJ', 'destinatarioCEP', 'destinatarioCidade',
           'produtoDescricao', 'pesoUnitario', 'pesoBruto', 
           'destino', 'destinoCEP', 'quantidade', 'pedido', 'observacao',
@@ -719,33 +724,27 @@
           'veiculoPlaca', 'veiculoCarreta', 'veiculo2Placa', 'veiculo2Carreta'
         ];
         
-        // Limpa todos os campos
         camposParaLimpar.forEach(id => {
           const element = document.getElementById(id);
           if (element) element.value = '';
         });
         
-        // Limpa endereços
         document.getElementById('destinatarioEndereco').innerText = '';
         document.getElementById('remetenteEndereco').innerText = '';
         
-        // Reseta todos os selects
         document.getElementById('especie').selectedIndex = 0;
         document.getElementById('veiculo').selectedIndex = 0;
         document.getElementById('veiculo2').selectedIndex = 0;
         document.getElementById('remetenteUF').value = 'BA';
         document.getElementById('destinatarioUF').value = 'BA';
         
-        // Restaura data/hora
         document.getElementById('dataEmissao').value = getDateTimeNow();
         document.getElementById('dataAssinatura').value = getDateNow();
         
-        // Atualiza QRCode
         gerarQRCode();
       }
     }
 
-    // Função para buscar CEP
     async function buscarCEP(tipo) {
       const cepInput = document.getElementById(tipo + 'CEP');
       let cep = cepInput.value.replace(/\D/g, '');
@@ -779,7 +778,6 @@
       }
     }
 
-    // Função para carregar estados
     async function carregarEstados() {
       try {
         const response = await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados');
@@ -803,7 +801,6 @@
       }
     }
 
-    // Funções auxiliares
     function getDateTimeNow() {
       const now = new Date();
       now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -830,34 +827,41 @@
       e.target.value = value;
     }
 
-    // Inicialização
+    function formatarValorMonetario(elemento) {
+      let valor = elemento.value.replace(/\D/g, '');
+      valor = (valor/100).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      });
+      elemento.value = valor;
+    }
+
     window.onload = function() {
-      // Configura número da ordem automaticamente
       const novoNumero = gerarNumeroOrdem();
       document.getElementById('inputNumero').value = novoNumero;
       document.getElementById('numeroOrdem').textContent = novoNumero;
       
-      // Configura data/hora
       document.getElementById('dataEmissao').value = getDateTimeNow();
       document.getElementById('dataAssinatura').value = getDateNow();
+      document.getElementById('dataGeracao').textContent = new Date().toLocaleString('pt-BR');
       
-      // Carrega estados
       carregarEstados();
       
-      // Configura eventos para atualizar QRCode
       document.getElementById('inputNumero').addEventListener('change', gerarQRCode);
       document.getElementById('dataEmissao').addEventListener('change', gerarQRCode);
       document.getElementById('operador').addEventListener('input', function() {
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(gerarQRCode, 500);
       });
+      document.getElementById('valorNF').addEventListener('blur', function() {
+        formatarValorMonetario(this);
+        gerarQRCode();
+      });
       
-      // Configura eventos de CEP
       document.querySelectorAll('input[id$="CEP"]').forEach(input => {
         input.addEventListener('input', formatarCEP);
       });
 
-      // Gera QRCode inicial
       gerarQRCode();
     };
   </script>
