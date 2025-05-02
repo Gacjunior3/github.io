@@ -6,7 +6,7 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #fffbdc;
+      background-color: #000; /* Fundo preto */
       margin: 0;
       padding: 20px;
       font-size: 12px;
@@ -116,12 +116,8 @@
       align-items: center;
       gap: 5px;
     }
-    .btn-imprimir {
+    .btn-imprimir-pdf {
       background-color: #4CAF50;
-      color: white;
-    }
-    .btn-pdf {
-      background-color: #f44336;
       color: white;
     }
     .btn-limpar {
@@ -153,6 +149,15 @@
       .container {
         box-shadow: none;
       }
+      textarea {
+        border: none;
+        resize: none;
+        overflow: visible;
+        white-space: pre-wrap;
+      }
+      .observacoes textarea {
+        height: auto !important;
+      }
     }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/imask/6.4.2/imask.min.js"></script>
@@ -168,13 +173,13 @@
         logo.src = 'img/logo_rodovar.png';
         dadosEmpresa.innerHTML = `CNPJ: 49.908.710/0001-03<br>Endereço: Travessa Acalanto, 84<br>Jardim das Margaridas, Salvador-BA`;
         rodape.innerHTML = `CNPJ: 49.908.710/0001-03 | RODOVAR TRANSPORTES LTDA - Travessa Acalanto, 84 - Salvador - BA`;
-        document.body.style.backgroundColor = '#fdfcdc';
+        document.body.style.backgroundColor = '#000';
         container.style.borderColor = '#000';
       } else {
         logo.src = 'img/logo_axdlog.png';
         dadosEmpresa.innerHTML = `CNPJ: 59.352.973/0001-32<br>Rua Jubiabá, 292<br>Luis Eduardo Magalhães, Simões Filho - BA`;
         rodape.innerHTML = `CNPJ: 59.352.973/0001-32 | AXD LOG TRANSPORTES LTDA - Rua Jubiabá, 292 - Simões Filho - BA`;
-        document.body.style.backgroundColor = '#fffbdc';
+        document.body.style.backgroundColor = '#000';
         container.style.borderColor = '#000';
       }
     }
@@ -262,6 +267,14 @@
       };
 
       html2pdf().set(opt).from(element).save();
+    }
+
+    function imprimirOuPDF() {
+      if (confirm('Deseja imprimir ou salvar como PDF?')) {
+        window.print();
+      } else {
+        gerarPDF();
+      }
     }
 
     window.onload = function () {
@@ -377,20 +390,20 @@
       <div class="coluna">
         Veículo:<br>
        <select>
-  <option value="">Selecione</option>
-  <option>Toco</option>
-  <option>Carreta</option>
-  <option>Carreta LS</option>
-  <option>Caminhonete</option>
-  <option>Caminhão Baú</option>
-  <option>Carreta Baú</option>
-  <option>Caminhão Munck</option>
-  <option>Bitrem</option>
-  <option>Rodotrem</option>
-  <option>Van</option>
-  <option>Truck</option>
-  <option>Bitruck</option>
-</select>
+          <option value="">Selecione</option>
+          <option>Toco</option>
+          <option>Carreta</option>
+          <option>Carreta LS</option>
+          <option>Caminhonete</option>
+          <option>Caminhão Baú</option>
+          <option>Carreta Baú</option>
+          <option>Caminhão Munck</option>
+          <option>Bitrem</option>
+          <option>Rodotrem</option>
+          <option>Van</option>
+          <option>Truck</option>
+          <option>Bitruck</option>
+        </select>
       </div>
     </div>
 
@@ -400,9 +413,9 @@
     </div>
 
     <div class="linha">
-      <div class="coluna">
+      <div class="coluna observacoes">
         Observações:<br>
-        <textarea class="descricao-longa" placeholder="Observações..." rows="6">
+        <textarea class="descricao-longa" placeholder="Observações..." rows="6" style="min-height: 150px;">
 Carga 100% assegurada – averbação conforme valor de nota fiscal; - KORV
 ● Prazo para entrega: 03 dias após carregamento;
 ● Forma de pagamento: Boleto Bancário (Não aceitamos depósito sem autorização prévia);
@@ -433,8 +446,7 @@ Carga 100% assegurada – averbação conforme valor de nota fiscal; - KORV
   </div>
 
   <div class="botoes">
-    <button class="btn-imprimir" onclick="window.print()"><span>🖨️</span> Imprimir</button>
-    <button class="btn-pdf" onclick="gerarPDF()"><span>📄</span> Gerar PDF</button>
+    <button class="btn-imprimir-pdf" onclick="imprimirOuPDF()"><span>🖨️📄</span> Imprimir/Salvar PDF</button>
     <button class="btn-limpar" onclick="limparDados()"><span>🧹</span> Limpar Dados</button>
   </div>
 </body>
