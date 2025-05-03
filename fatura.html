@@ -132,7 +132,219 @@
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/imask/6.4.2/imask.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+</head>
+
+<body>
+  <div class="fatura" style="page-break-inside: avoid;">
+    <div class="cabecalho">
+      <div class="logo">
+        <img src="logo_axdlog.png" alt="AXD LOG">
+      </div>
+      <div class="empresa-info">
+        <select id="selecionar-empresa" style="margin-bottom: 10px;">
+          <option value="axd">AXD LOG</option>
+          <option value="rodovar">RODOVAR</option>
+        </select>
+        <span id="cnpj">CNPJ: 59.352.973/0001-32</span><br>
+        Inscr. Estadual: 228.253.729 ME<br>
+        <span id="endereco-empresa">RUA: Jubiabá, 292 - Bairro: Luis Eduardo Magalhães<br>Simões Filho - BA</span><br>
+        Data Emissão: <input type="text" id="data-emissao" readonly>
+      </div>
+    </div>
+
+    <div class="titulo-secao">Dados da Fatura</div>
+    <div class="linha">
+      <div class="coluna">
+        Data do Carregamento:<br>
+        <input type="date" id="data-carregamento" onchange="atualizarVencimento()">
+      </div>
+      <div class="coluna">
+        Nº da Fatura:<br>
+        <input type="text" id="numero-fatura">
+      </div>
+    </div>
+    <div class="linha">
+      <div class="coluna">
+        Dias para vencimento:<br>
+        <input type="number" id="dias-vencimento" value="12" onchange="atualizarVencimento()">
+      </div>
+      <div class="coluna">
+        Valor:<br>
+        <input type="text" id="valor">
+      </div>
+    </div>
+    <div class="linha">
+      <div class="coluna">
+        Valor por extenso:<br>
+        <input type="text" id="valor-extenso" readonly>
+      </div>
+      <div class="coluna">
+        Data de Vencimento:<br>
+        <input type="text" id="data-vencimento" readonly>
+      </div>
+    </div>
+    
+    <div class="linha">
+      <div class="coluna">
+        Nome do Sacado:<br>
+        <input type="text" id="nome-sacado">
+      </div>
+      <div class="coluna">
+        CNPJ / CPF do Cliente:<br>
+        <input type="text" id="cnpj-cpf" placeholder="Digite o CNPJ ou CPF">
+      </div>
+    </div>
+
+    <div class="linha">
+      <div class="coluna">
+        CEP:<br>
+        <input type="text" id="cep">
+      </div>
+      <div class="coluna">
+        Endereço:<br>
+        <input type="text" id="endereco">
+      </div>
+    </div>
+
+    <div class="titulo-secao">Forma de Pagamento e Referência</div>
+    <div class="linha">
+      <div class="coluna-pequena">
+        Forma de Pagamento:<br>
+        <input type="text" id="forma-pagamento" value="PIX ou BOLETO">
+      </div>
+      <div class="coluna-grande">
+        Referente:<br>
+        <input type="text" id="referente" value="Origem:  - Destino: ">
+      </div>
+    </div>
+
+    <div class="titulo-secao">Descrição do Serviço</div>
+    <div class="linha">
+      <div class="coluna" style="width: 100%;">
+        <textarea id="descricao-servico" placeholder="Descreva aqui os serviços prestados..."></textarea>
+      </div>
+    </div>
+
+    <div class="titulo-secao">Banco / PIX</div>
+    <div class="linha">
+      <div class="coluna">
+        Banco:<br>
+        <input type="text" id="banco" placeholder="0260">
+      </div>
+      <div class="coluna">
+        Conta:<br>
+        <input type="text" id="conta" placeholder="AG:0001 CONTA: 129139513-3">
+      </div>
+    </div>
+    <div class="linha">
+      <div class="coluna">
+        PIX (CNPJ):<br>
+        <input type="text" id="pix" placeholder="59.352.973/0001-32">
+      </div>
+    </div>
+
+    <div class="titulo-secao">Observações</div>
+    <div class="linha" style="page-break-inside: avoid;">
+      <div class="coluna" style="width: 100%;">
+        <textarea readonly>Não aceitamos depósito sem autorização prévia</textarea>
+      </div>
+    </div>
+
+    <div style="margin-top: 10px; text-align: center; page-break-inside: avoid;">
+      <canvas id="qrcode" style="display: block; margin: 0 auto; height: 40px;"></canvas>
+    </div>
+    <div class="buttons-container">
+      <div class="clear-button">
+        <button onclick="limparDados()">Limpar Formulário</button>
+      </div>
+      <div class="print-button">
+        <button onclick="imprimirFatura()">Imprimir/Salvar PDF</button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    function numeroParaExtenso(valor) {
+        // Remove caracteres não numéricos e converte para número
+        const num = parseFloat(valor.replace(/[^\d,]/g, '').replace(',', '.'));
+        
+        if (isNaN(num)) return '';
+        
+        const inteiro = Math.floor(num);
+        const decimal = Math.round((num - inteiro) * 100);
+        
+        function converterNumero(num) {
+            const unidades = ['', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove'];
+            const dez_a_dezenove = ['dez', 'onze', 'doze', 'treze', 'quatorze', 'quinze', 'dezesseis', 'dezessete', 'dezoito', 'dezenove'];
+            const dezenas = ['', 'dez', 'vinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa'];
+            const centenas = ['', 'cento', 'duzentos', 'trezentos', 'quatrocentos', 'quinhentos', 'seiscentos', 'setecentos', 'oitocentos', 'novecentos'];
+            
+            if (num === 0) return 'zero';
+            if (num > 999999999) return 'Número muito grande';
+            
+            let extenso = '';
+            const milhao = Math.floor(num / 1000000);
+            num %= 1000000;
+            const milhar = Math.floor(num / 1000);
+            num %= 1000;
+            const centena = Math.floor(num / 100);
+            num %= 100;
+            const dezena = Math.floor(num / 10);
+            const unidade = num % 10;
+            
+            if (milhao > 0) {
+                extenso += converterNumero(milhao) + (milhao === 1 ? ' milhão' : ' milhões');
+                if (milhar > 0 || centena > 0 || dezena > 0 || unidade > 0) extenso += ' ';
+            }
+            
+            if (milhar > 0) {
+                if (milhar === 1) {
+                    extenso += 'mil';
+                } else {
+                    extenso += converterNumero(milhar) + ' mil';
+                }
+                if (centena > 0 || dezena > 0 || unidade > 0) extenso += ' ';
+            }
+            
+            if (centena > 0) {
+                if (centena === 1 && dezena === 0 && unidade === 0) {
+                    extenso += 'cem';
+                } else {
+                    extenso += centenas[centena];
+                }
+                if (dezena > 0 || unidade > 0) extenso += ' e ';
+            }
+            
+            if (dezena > 0) {
+                if (dezena === 1) {
+                    extenso += dez_a_dezenove[unidade];
+                    return extenso;
+                } else {
+                    extenso += dezenas[dezena];
+                }
+                if (unidade > 0) extenso += ' e ';
+            }
+            
+            if (unidade > 0) {
+                extenso += unidades[unidade];
+            }
+            
+            return extenso;
+        }
+        
+        let extenso = converterNumero(inteiro) + ' reais';
+        
+        if (decimal > 0) {
+            extenso += ' e ' + converterNumero(decimal) + ' centavos';
+        }
+        
+        // Capitaliza a primeira letra
+        extenso = extenso.charAt(0).toUpperCase() + extenso.slice(1);
+        
+        return extenso;
+    }
+
     function atualizarVencimento() {
       const dias = parseInt(document.getElementById('dias-vencimento').value) || 0;
       const dataCarregamento = document.getElementById('data-carregamento').value;
@@ -243,173 +455,56 @@
       }
     }
 
+    function atualizarQRCode() {
+      const numero = document.getElementById('numero-fatura').value || '---';
+      const valor = document.getElementById('valor').value || '---';
+      const textoQRCode = `FATURA: ${numero}
+VALOR: ${valor}`;
+      const qr = new QRious({
+        element: document.getElementById('qrcode'),
+        value: textoQRCode,
+        size: 50
+      });
+    }
+
     window.onload = function () {
       // Máscara de CEP
       const campoCep = document.getElementById('cep');
       IMask(campoCep, { mask: '00000-000' });
+
+      // Máscara para valor (moeda)
+      const valorMask = IMask(document.getElementById('valor'), {
+        mask: Number,
+        scale: 2,
+        thousandsSeparator: '.',
+        padFractionalZeros: true,
+        normalizeZeros: true,
+        radix: ',',
+        mapToRadix: ['.']
+      });
 
       // Evento para buscar o endereço quando o CEP for alterado
       campoCep.addEventListener('blur', function() {
         buscarEndereco(campoCep.value);
       });
 
+      // Evento para converter valor para extenso
+      document.getElementById('valor').addEventListener('input', function() {
+        const valor = this.value;
+        const valorExtenso = numeroParaExtenso(valor);
+        document.getElementById('valor-extenso').value = valorExtenso;
+      });
+
       // Configura o evento para mudar os dados da empresa
       document.getElementById('selecionar-empresa').addEventListener('change', mudarEmpresa);
+
+      // Eventos para atualizar QR Code
+      document.getElementById('numero-fatura').addEventListener('input', atualizarQRCode);
+      document.getElementById('valor').addEventListener('input', atualizarQRCode);
 
       // Inicializa o formulário limpo
       limparDados();
     }
   </script>
-</head>
-
-<body>
-  <div class="fatura" style="page-break-inside: avoid;">
-    <div class="cabecalho">
-      <div class="logo">
-        <img src="logo_axdlog.png" alt="AXD LOG">
-      </div>
-      <div class="empresa-info">
-        <select id="selecionar-empresa" style="margin-bottom: 10px;">
-          <option value="axd">AXD LOG</option>
-          <option value="rodovar">RODOVAR</option>
-        </select>
-        <span id="cnpj">CNPJ: 59.352.973/0001-32</span><br>
-        Inscr. Estadual: 228.253.729 ME<br>
-        <span id="endereco-empresa">RUA: Jubiabá, 292 - Bairro: Luis Eduardo Magalhães<br>Simões Filho - BA</span><br>
-        Data Emissão: <input type="text" id="data-emissao" readonly>
-      </div>
-    </div>
-
-    <div class="titulo-secao">Dados da Fatura</div>
-    <div class="linha">
-      <div class="coluna">
-        Data do Carregamento:<br>
-        <input type="date" id="data-carregamento" onchange="atualizarVencimento()">
-      </div>
-      <div class="coluna">
-        Nº da Fatura:<br>
-        <input type="text" id="numero-fatura">
-      </div>
-    </div>
-    <div class="linha">
-      <div class="coluna">
-        Dias para vencimento:<br>
-        <input type="number" id="dias-vencimento" value="12" onchange="atualizarVencimento()">
-      </div>
-      <div class="coluna">
-        Valor:<br>
-        <input type="text" id="valor">
-      </div>
-    </div>
-    <div class="linha">
-      <div class="coluna">
-        Valor por extenso:<br>
-        <input type="text" id="valor-extenso" placeholder="Digite o valor por extenso...">
-      </div>
-      <div class="coluna">
-        Data de Vencimento:<br>
-        <input type="text" id="data-vencimento" readonly>
-      </div>
-    </div>
-    
-    <div class="linha">
-      <div class="coluna">
-        Nome do Sacado:<br>
-        <input type="text" id="nome-sacado">
-      </div>
-      <div class="coluna">
-        CNPJ / CPF do Cliente:<br>
-        <input type="text" id="cnpj-cpf" placeholder="Digite o CNPJ ou CPF">
-      </div>
-    </div>
-
-    <div class="linha">
-      <div class="coluna">
-        CEP:<br>
-        <input type="text" id="cep">
-      </div>
-      <div class="coluna">
-        Endereço:<br>
-        <input type="text" id="endereco">
-      </div>
-    </div>
-
-    <div class="titulo-secao">Forma de Pagamento e Referência</div>
-    <div class="linha">
-      <div class="coluna-pequena">
-        Forma de Pagamento:<br>
-        <input type="text" id="forma-pagamento" value="PIX ou BOLETO">
-      </div>
-      <div class="coluna-grande">
-        Referente:<br>
-        <input type="text" id="referente" value="Origem:  - Destino: ">
-      </div>
-    </div>
-
-    <div class="titulo-secao">Descrição do Serviço</div>
-    <div class="linha">
-      <div class="coluna" style="width: 100%;">
-        <textarea id="descricao-servico" placeholder="Descreva aqui os serviços prestados..."></textarea>
-      </div>
-    </div>
-
-    <div class="titulo-secao">Banco / PIX</div>
-    <div class="linha">
-      <div class="coluna">
-        Banco:<br>
-        <input type="text" id="banco" placeholder="0260">
-      </div>
-      <div class="coluna">
-        Conta:<br>
-        <input type="text" id="conta" placeholder="AG:0001 CONTA: 129139513-3">
-      </div>
-    </div>
-    <div class="linha">
-      <div class="coluna">
-        PIX (CNPJ):<br>
-        <input type="text" id="pix" placeholder="59.352.973/0001-32">
-      </div>
-    </div>
-
-    <div class="titulo-secao">Observações</div>
-    <div class="linha" style="page-break-inside: avoid;">
-      <div class="coluna" style="width: 100%;">
-        <textarea readonly>Não aceitamos depósito sem autorização prévia</textarea>
-      </div>
-    </div>
-
-    <div style="margin-top: 10px; text-align: center; page-break-inside: avoid;">
-      <canvas id="qrcode" style="display: block; margin: 0 auto; height: 40px;"></canvas>
-    </div>
-    <div class="buttons-container">
-      <div class="clear-button">
-        <button onclick="limparDados()">Limpar Formulário</button>
-      </div>
-      <div class="print-button">
-        <button onclick="imprimirFatura()">Imprimir/Salvar PDF</button>
-      </div>
-    </div>
-  </div>
-
 </body>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
-<script>
-  function atualizarQRCode() {
-    const numero = document.getElementById('numero-fatura').value || '---';
-    const valor = document.getElementById('valor').value || '---';
-    const textoQRCode = `FATURA: ${numero}
-VALOR: ${valor}`;
-    const qr = new QRious({
-      element: document.getElementById('qrcode'),
-      value: textoQRCode,
-      size: 50
-    });
-  }
-
-  window.addEventListener('load', function () {
-    atualizarQRCode();
-    document.getElementById('numero-fatura').addEventListener('input', atualizarQRCode);
-    document.getElementById('valor').addEventListener('input', atualizarQRCode);
-  });
-</script>
 </html>
