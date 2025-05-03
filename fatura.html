@@ -164,7 +164,7 @@
       // Limpa campos editáveis
       document.getElementById('data-carregamento').value = '';
       document.getElementById('numero-fatura').value = '';
-      document.getElementById('dias-vencimento').value = '12';
+      document.getElementById('dias-vencimento').value = '21';
       document.getElementById('valor').value = '';
       document.getElementById('valor-extenso').value = '';
       document.getElementById('data-vencimento').value = '';
@@ -177,6 +177,16 @@
       document.getElementById('descricao-servico').value = '';
       
       // Atualiza a data de emissão para a data/hora atual
+      atualizarDataEmissao();
+      
+      // Mantém os dados da empresa selecionada
+      mudarEmpresa();
+      
+      // Atualiza QR Code vazio
+      atualizarQRCode();
+    }
+
+    function atualizarDataEmissao() {
       const dataAtual = new Date();
       const dia = String(dataAtual.getDate()).padStart(2, '0');
       const mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
@@ -184,12 +194,6 @@
       const hora = String(dataAtual.getHours()).padStart(2, '0');
       const minuto = String(dataAtual.getMinutes()).padStart(2, '0');
       document.getElementById('data-emissao').value = `${dia}/${mes}/${ano} ${hora}:${minuto}`;
-      
-      // Mantém os dados da empresa selecionada
-      mudarEmpresa();
-      
-      // Atualiza QR Code vazio
-      atualizarQRCode();
     }
 
     function buscarEndereco(cep) {
@@ -249,21 +253,11 @@
         buscarEndereco(campoCep.value);
       });
 
-      // Atualiza a Data e Hora de Emissão automaticamente com a data e hora atuais
-      const dataEmissao = document.getElementById('data-emissao');
-      const dataAtual = new Date();
-      const dia = String(dataAtual.getDate()).padStart(2, '0');
-      const mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
-      const ano = dataAtual.getFullYear();
-      const hora = String(dataAtual.getHours()).padStart(2, '0');
-      const minuto = String(dataAtual.getMinutes()).padStart(2, '0');
-      dataEmissao.value = `${dia}/${mes}/${ano} ${hora}:${minuto}`;
-
-      // Chama a função para atualizar o vencimento, caso necessário
-      atualizarVencimento();
-
       // Configura o evento para mudar os dados da empresa
       document.getElementById('selecionar-empresa').addEventListener('change', mudarEmpresa);
+
+      // Inicializa o formulário limpo
+      limparDados();
     }
   </script>
 </head>
@@ -294,7 +288,7 @@
       </div>
       <div class="coluna">
         Nº da Fatura:<br>
-        <input type="text" id="numero-fatura" value="038,1">
+        <input type="text" id="numero-fatura">
       </div>
     </div>
     <div class="linha">
@@ -304,7 +298,7 @@
       </div>
       <div class="coluna">
         Valor:<br>
-        <input type="text" id="valor" value="R$ 6.650,00">
+        <input type="text" id="valor">
       </div>
     </div>
     <div class="linha">
@@ -321,7 +315,7 @@
     <div class="linha">
       <div class="coluna">
         Nome do Sacado:<br>
-        <input type="text" id="nome-sacado" value="PAUMA ADMINISTRACAO E SERVIÇOS LTDA">
+        <input type="text" id="nome-sacado">
       </div>
       <div class="coluna">
         CNPJ / CPF do Cliente:<br>
@@ -332,11 +326,11 @@
     <div class="linha">
       <div class="coluna">
         CEP:<br>
-        <input type="text" id="cep" value="45601-002">
+        <input type="text" id="cep">
       </div>
       <div class="coluna">
         Endereço:<br>
-        <input type="text" id="endereco" value="Avenida Antônio Carlos Magalhães, S/N">
+        <input type="text" id="endereco">
       </div>
     </div>
 
@@ -348,7 +342,7 @@
       </div>
       <div class="coluna-grande">
         Referente:<br>
-        <input type="text" id="referente" value="Origem: Salvador - BA - Destino: Irecê-BA">
+        <input type="text" id="referente" value="Origem:  - Destino: ">
       </div>
     </div>
 
@@ -363,17 +357,17 @@
     <div class="linha">
       <div class="coluna">
         Banco:<br>
-        <input type="text" id="banco" value="0260" placeholder="0260">
+        <input type="text" id="banco" placeholder="0260">
       </div>
       <div class="coluna">
         Conta:<br>
-        <input type="text" id="conta" value="AG:0001 CONTA: 129139513-3" placeholder="AG:0001 CONTA: 129139513-3">
+        <input type="text" id="conta" placeholder="AG:0001 CONTA: 129139513-3">
       </div>
     </div>
     <div class="linha">
       <div class="coluna">
         PIX (CNPJ):<br>
-        <input type="text" id="pix" value="59.352.973/0001-32" placeholder="59.352.973/0001-32">
+        <input type="text" id="pix" placeholder="59.352.973/0001-32">
       </div>
     </div>
 
