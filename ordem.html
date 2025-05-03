@@ -507,26 +507,12 @@
   </div>
 
   <div class="action-buttons no-print">
-    <button id="btnImprimir" onclick="visualizarPDF()">
-      <i class="fas fa-print"></i> Imprimir/Salvar PDF
+    <button id="btnImprimir" onclick="window.print()">
+      <i class="fas fa-print"></i> Imprimir
     </button>
     <button id="btnLimpar" onclick="limparFormulario()">
       <i class="fas fa-trash-alt"></i> Limpar Formulário
     </button>
-  </div>
-
-  <!-- Modal para visualização do PDF -->
-  <div id="pdfModal" class="modal-pdf">
-    <span class="close" onclick="fecharModal()">&times;</span>
-    <div class="modal-buttons">
-      <button id="btnSalvarPDF" onclick="salvarPDF()">
-        <i class="fas fa-save"></i> Salvar PDF
-      </button>
-      <button id="btnImprimirPDF" onclick="imprimirPDF()">
-        <i class="fas fa-print"></i> Imprimir
-      </button>
-    </div>
-    <iframe id="pdfViewer" class="modal-content"></iframe>
   </div>
 
   <!-- Bibliotecas necessárias -->
@@ -640,22 +626,7 @@
     }
 
     function imprimirPDF() {
-      if (pdfBlob) {
-        const url = URL.createObjectURL(pdfBlob);
-        const iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        iframe.src = url;
-        document.body.appendChild(iframe);
-        
-        iframe.onload = function() {
-          setTimeout(function() {
-            iframe.contentWindow.print();
-            URL.revokeObjectURL(url);
-            document.body.removeChild(iframe);
-            fecharModal();
-          }, 500);
-        };
-      }
+      window.print();
     }
 
     function gerarDadosQRCode() {
