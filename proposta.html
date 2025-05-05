@@ -6,7 +6,7 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #000; /* Fundo preto */
+      background-color: #000;
       margin: 0;
       padding: 20px;
       font-size: 12px;
@@ -163,6 +163,33 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/imask/6.4.2/imask.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script>
+    // Sistema de geração de números aleatórios únicos
+    const NUMERO_INICIAL = 160;
+    const NUMERO_FINAL = 9999;
+    let numerosUsados = JSON.parse(localStorage.getItem('numerosPropostasUsados')) || [];
+
+    function gerarNumeroPropostaUnico() {
+      // Se já usou todos os números possíveis, limpa o registro
+      if (numerosUsados.length >= (NUMERO_FINAL - NUMERO_INICIAL + 1)) {
+        localStorage.removeItem('numerosPropostasUsados');
+        numerosUsados = [];
+        alert('Todos os números de proposta foram utilizados. O sistema reiniciou a contagem.');
+      }
+
+      let numero;
+      do {
+        // Gera número aleatório entre NUMERO_INICIAL e NUMERO_FINAL
+        numero = Math.floor(Math.random() * (NUMERO_FINAL - NUMERO_INICIAL + 1)) + NUMERO_INICIAL;
+      } while (numerosUsados.includes(numero));
+
+      // Armazena o número usado
+      numerosUsados.push(numero);
+      localStorage.setItem('numerosPropostasUsados', JSON.stringify(numerosUsados));
+
+      // Formata com 4 dígitos
+      return numero.toString().padStart(4, '0');
+    }
+
     function trocarLogoEmpresa(empresa) {
       const logo = document.getElementById('logo');
       const dadosEmpresa = document.getElementById('dados-empresa');
@@ -248,7 +275,6 @@
         document.querySelectorAll('select').forEach(element => {
           element.selectedIndex = 0;
         });
-        // Restaurar valores padrão
         document.querySelector('textarea.descricao-longa').value = 'LIVRE DE CARGA E DESCARGA';
         document.getElementById('empresa').selectedIndex = 0;
         trocarLogoEmpresa('AXD');
@@ -260,12 +286,11 @@
       const element = document.querySelector('.container');
       const opt = {
         margin: 10,
-        filename: 'proposta_frete.pdf',
+        filename: 'proposta_frete_' + document.getElementById('numero-proposta').value + '.pdf',
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2 },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
       };
-
       html2pdf().set(opt).from(element).save();
     }
 
@@ -278,6 +303,9 @@
     }
 
     window.onload = function () {
+      // Gera o número da proposta automaticamente
+      document.getElementById('numero-proposta').value = gerarNumeroPropostaUnico();
+      
       preencherDataHora();
       carregarEstados();
       document.getElementById('uf-origem').addEventListener('change', (e) => carregarCidades(e.target.value, 'cidade-origem'));
@@ -302,7 +330,7 @@
           <option value="AXD">AXD Log</option>
           <option value="Rodovar">Rodovar</option>
         </select><br>
-        Nº da Proposta: <input type="text" style="width: 120px;"><br>
+        Nº da Proposta: <input type="text" id="numero-proposta" style="width: 120px;" readonly><br>
         Data e Hora: <span id="datahora"></span><br>
         Validade: <span id="validade"></span>
       </div>
