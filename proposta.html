@@ -76,7 +76,7 @@
       background-color: #f9f9f9;
       color: #333;
     }
-    #erro-cep {
+    #erro-cep, #erro-cnpj {
       color: red;
       display: none;
       font-size: 10px;
@@ -139,7 +139,7 @@
       text-align: center;
       background-color: #fff;
     }
-    .btn-gerar-numero {
+    .btn-gerar-numero, .btn-consultar-cnpj {
       background-color: #ff9800;
       color: white;
       padding: 4px 8px;
@@ -147,6 +147,13 @@
       margin-left: 5px;
       border-radius: 3px;
       cursor: pointer;
+      border: none;
+    }
+    .loading {
+      display: none;
+      font-size: 10px;
+      color: #555;
+      margin-left: 5px;
     }
     @media print {
       .botoes {
@@ -178,7 +185,6 @@
     let numerosUsados = JSON.parse(localStorage.getItem('numerosPropostasUsados')) || [];
 
     function gerarNumeroPropostaUnico() {
-      // Se já usou todos os números possíveis, limpa o registro
       if (numerosUsados.length >= (NUMERO_FINAL - NUMERO_INICIAL + 1)) {
         localStorage.removeItem('numerosPropostasUsados');
         numerosUsados = [];
@@ -187,15 +193,12 @@
 
       let numero;
       do {
-        // Gera número aleatório entre NUMERO_INICIAL e NUMERO_FINAL
         numero = Math.floor(Math.random() * (NUMERO_FINAL - NUMERO_INICIAL + 1)) + NUMERO_INICIAL;
       } while (numerosUsados.includes(numero));
 
-      // Armazena o número usado
       numerosUsados.push(numero);
       localStorage.setItem('numerosPropostasUsados', JSON.stringify(numerosUsados));
 
-      // Formata com 4 dígitos
       return numero.toString().padStart(4, '0');
     }
 
@@ -276,6 +279,42 @@
       }
     }
 
+    // FUNÇÃO PARA CONSULTAR CNPJ
+    function consultarCNPJ(manual = false) {
+      const cnpjInput = document.getElementById('cnpj');
+      const cnpj = cnpjInput.value.replace(/\D/g, '');
+      
+      if (cnpj.length !== 14) {
+        document.getElementById('erro-cnpj').style.display = 'inline';
+        document.getElementById('erro-cnpj').textContent = 'CNPJ inválido (deve ter 14 dígitos)';
+        return;
+      }
+
+      document.getElementById('loading-cnpj').style.display = 'inline';
+      if (manual) cnpjInput.disabled = true;
+
+      // Usando a API BrasilAPI (mais estável que ReceitaWS)
+      fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`)
+        .then(response => {
+          if (!response.ok) throw new Error('CNPJ não encontrado');
+          return response.json();
+        })
+        .then(data => {
+          document.getElementById('cliente').value = data.razao_social || '';
+          document.getElementById('endereco').value = 
+            `${data.logradouro || ''}, ${data.numero || ''} - ${data.bairro || ''}, ${data.municipio || ''} - ${data.uf || ''}`;
+          document.getElementById('erro-cnpj').style.display = 'none';
+        })
+        .catch(error => {
+          document.getElementById('erro-cnpj').style.display = 'inline';
+          document.getElementById('erro-cnpj').textContent = error.message || 'Erro na consulta. Preencha manualmente.';
+        })
+        .finally(() => {
+          document.getElementById('loading-cnpj').style.display = 'none';
+          cnpjInput.disabled = false;
+        });
+    }
+
     function limparDados() {
       if (confirm('Tem certeza que deseja limpar todos os dados do formulário?')) {
         document.querySelectorAll('input[type="text"], textarea').forEach(element => {
@@ -288,8 +327,8 @@
         document.getElementById('empresa').selectedIndex = 0;
         trocarLogoEmpresa('AXD');
         preencherDataHora();
-        // Gera novo número ao limpar
         document.getElementById('numero-proposta').value = gerarNumeroPropostaUnico();
+        document.getElementById('erro-cnpj').style.display = 'none';
       }
     }
 
@@ -318,17 +357,23 @@
     }
 
     window.onload = function () {
-      // Gera o número da proposta automaticamente
       document.getElementById('numero-proposta').value = gerarNumeroPropostaUnico();
-      
       preencherDataHora();
       carregarEstados();
       document.getElementById('uf-origem').addEventListener('change', (e) => carregarCidades(e.target.value, 'cidade-origem'));
       document.getElementById('uf-destino').addEventListener('change', (e) => carregarCidades(e.target.value, 'cidade-destino'));
       trocarLogoEmpresa('AXD');
       
-      // Remove o atributo readonly para permitir edição
+      // Permite edição do número da proposta
       document.getElementById('numero-proposta').removeAttribute('readonly');
+
+      // Configura máscara e eventos do CNPJ
+      const cnpjMask = IMask(document.getElementById('cnpj'), { 
+        mask: '00.000.000/0000-00',
+        onComplete: function() {
+          setTimeout(() => consultarCNPJ(), 500); // Busca automática com delay
+        }
+      });
     }
   </script>
 </head>
@@ -376,7 +421,12 @@
       </div>
       <div class="coluna">
         CNPJ:<br>
-        <input type="text" id="cnpj" placeholder="CNPJ">
+        <div style="display: flex; align-items: center;">
+          <input type="text" id="cnpj" placeholder="00.000.000/0000-00">
+          <button class="btn-consultar-cnpj" onclick="consultarCNPJ(true)" title="Consultar CNPJ">🔍</button>
+          <span id="loading-cnpj" class="loading">Consultando...</span>
+        </div>
+        <small id="erro-cnpj">CNPJ não encontrado</small>
       </div>
     </div>
 
