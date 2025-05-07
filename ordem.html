@@ -180,6 +180,36 @@
       background: #3e8e41;
     }
 
+    .btn-consultar-cnpj {
+      background: #FF9800;
+      color: white;
+      padding: 3px 10px;
+      margin-left: 5px;
+      font-size: 11px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-consultar-cnpj:hover {
+      background: #e68a00;
+    }
+
+    .loading-cnpj {
+      display: inline-block;
+      font-size: 10px;
+      color: #555;
+      margin-left: 5px;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
     .no-print {
       display: inline-block;
     }
@@ -271,7 +301,7 @@
         padding: 0 !important;
         background: white;
       }
-      .no-print, .action-buttons, .empresa-selector, .btn-buscar {
+      .no-print, .action-buttons, .empresa-selector, .btn-buscar, .btn-consultar-cnpj {
         display: none !important;
       }
       .logo-container {
@@ -342,7 +372,10 @@
       <div class="bloco">
         <h3 style="margin: 0 0 10px 0; text-align: center;">Remetente</h3>
         <input type="text" id="remetenteNome" placeholder="Nome do Remetente">
-        <input type="text" id="remetenteCNPJ" placeholder="CNPJ/CPF">
+        <div style="display: flex; align-items: center;">
+          <input type="text" id="remetenteCNPJ" placeholder="CNPJ/CPF" style="flex: 1;">
+          <button class="btn-consultar-cnpj no-print" onclick="consultarCNPJ('remetenteCNPJ', 'remetente')">🔍</button>
+        </div>
         
         <div style="margin-top: 10px;">
           <input type="text" id="remetenteCEP" placeholder="CEP" 
@@ -362,7 +395,10 @@
       <div class="bloco">
         <h3 style="margin: 0 0 10px 0; text-align: center;">Destinatário</h3>
         <input type="text" id="destinatarioNome" placeholder="Nome do Destinatário">
-        <input type="text" id="destinatarioCNPJ" placeholder="CNPJ/CPF">
+        <div style="display: flex; align-items: center;">
+          <input type="text" id="destinatarioCNPJ" placeholder="CNPJ/CPF" style="flex: 1;">
+          <button class="btn-consultar-cnpj no-print" onclick="consultarCNPJ('destinatarioCNPJ', 'destinatario')">🔍</button>
+        </div>
         
         <div style="margin-top: 10px;">
           <input type="text" id="destinatarioCEP" placeholder="CEP" 
@@ -515,9 +551,24 @@
     </button>
   </div>
 
+  <!-- Modal para visualização do PDF -->
+  <div id="pdfModal" class="modal-pdf">
+    <span class="close" onclick="fecharModal()">&times;</span>
+    <iframe id="pdfViewer" class="modal-content"></iframe>
+    <div class="modal-buttons">
+      <button id="btnSalvarPDF" onclick="salvarPDF()">
+        <i class="fas fa-download"></i> Salvar PDF
+      </button>
+      <button id="btnImprimirPDF" onclick="imprimirPDF()">
+        <i class="fas fa-print"></i> Imprimir
+      </button>
+    </div>
+  </div>
+
   <!-- Bibliotecas necessárias -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/imask/6.4.2/imask.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
   <script>
@@ -553,9 +604,80 @@
       }
     };
 
+    // Função para consultar CNPJ
+    async function consultarCNPJ(cnpjInputId, tipo) {
+      const cnpjInput = document.getElementById(cnpjInputId);
+      const cnpj = cnpjInput.value.replace(/\D/g, '');
+      
+      if (cnpj.length !== 14) {
+        alert('CNPJ inválido! Deve conter 14 dígitos.');
+        return;
+      }
+
+      // Mostra loading
+      const loadingSpan = document.createElement('span');
+      loadingSpan.className = 'loading-cnpj';
+      loadingSpan.textContent = 'Consultando...';
+      cnpjInput.parentNode.appendChild(loadingSpan);
+      cnpjInput.disabled = true;
+
+      try {
+        // Tenta a API BrasilAPI (mais estável)
+        const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`);
+        
+        if (!response.ok) {
+          throw new Error('CNPJ não encontrado');
+        }
+
+        const data = await response.json();
+
+        // Preenche os campos conforme o tipo
+        if (tipo === 'remetente') {
+          document.getElementById('remetenteNome').value = data.razao_social || '';
+          document.getElementById('remetenteEndereco').textContent = 
+            `${data.logradouro || ''} ${data.numero ? ', ' + data.numero : ''} - ${data.bairro || ''}`;
+          document.getElementById('remetenteCidade').value = data.municipio || '';
+          document.getElementById('remetenteUF').value = data.uf || '';
+        } else {
+          document.getElementById('destinatarioNome').value = data.razao_social || '';
+          document.getElementById('destinatarioEndereco').textContent = 
+            `${data.logradouro || ''} ${data.numero ? ', ' + data.numero : ''} - ${data.bairro || ''}`;
+          document.getElementById('destinatarioCidade').value = data.municipio || '';
+          document.getElementById('destinatarioUF').value = data.uf || '';
+        }
+
+      } catch (error) {
+        alert('Erro ao consultar CNPJ: ' + error.message);
+      } finally {
+        // Remove loading e habilita campo
+        const loading = cnpjInput.parentNode.querySelector('.loading-cnpj');
+        if (loading) loading.remove();
+        cnpjInput.disabled = false;
+      }
+    }
+
+    // Configura máscaras para CNPJ
+    function configurarMascarasCNPJ() {
+      // Máscara para CNPJ do remetente
+      IMask(document.getElementById('remetenteCNPJ'), {
+        mask: '00.000.000/0000-00',
+        onComplete: function() {
+          setTimeout(() => consultarCNPJ('remetenteCNPJ', 'remetente'), 500);
+        }
+      });
+
+      // Máscara para CNPJ do destinatário
+      IMask(document.getElementById('destinatarioCNPJ'), {
+        mask: '00.000.000/0000-00',
+        onComplete: function() {
+          setTimeout(() => consultarCNPJ('destinatarioCNPJ', 'destinatario'), 500);
+        }
+      });
+    }
+
     // Função para visualizar o PDF
     async function visualizarPDF() {
-      document.querySelectorAll('.btn-buscar').forEach(btn => {
+      document.querySelectorAll('.btn-buscar, .btn-consultar-cnpj').forEach(btn => {
         btn.style.visibility = 'hidden';
       });
       
@@ -576,7 +698,7 @@
             scrollY: 0,
             width: element.scrollWidth + 20,
             height: element.scrollHeight + 20,
-            ignoreElements: (el) => el.classList.contains('btn-buscar')
+            ignoreElements: (el) => el.classList.contains('btn-buscar') || el.classList.contains('btn-consultar-cnpj')
           },
           jsPDF: { 
             unit: 'mm', 
@@ -599,7 +721,7 @@
         console.error("Erro ao gerar PDF:", error);
         alert("Erro ao gerar PDF. Verifique o console para detalhes.");
       } finally {
-        document.querySelectorAll('.btn-buscar').forEach(btn => {
+        document.querySelectorAll('.btn-buscar, .btn-consultar-cnpj').forEach(btn => {
           btn.style.visibility = 'visible';
         });
       }
@@ -829,6 +951,7 @@
       document.getElementById('dataGeracao').textContent = new Date().toLocaleString('pt-BR');
       
       carregarEstados();
+      configurarMascarasCNPJ();
       
       document.getElementById('inputNumero').addEventListener('change', gerarQRCode);
       document.getElementById('dataEmissao').addEventListener('change', gerarQRCode);
