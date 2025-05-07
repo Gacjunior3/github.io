@@ -139,6 +139,15 @@
       text-align: center;
       background-color: #fff;
     }
+    .btn-gerar-numero {
+      background-color: #ff9800;
+      color: white;
+      padding: 4px 8px;
+      font-size: 10px;
+      margin-left: 5px;
+      border-radius: 3px;
+      cursor: pointer;
+    }
     @media print {
       .botoes {
         display: none;
@@ -279,6 +288,8 @@
         document.getElementById('empresa').selectedIndex = 0;
         trocarLogoEmpresa('AXD');
         preencherDataHora();
+        // Gera novo número ao limpar
+        document.getElementById('numero-proposta').value = gerarNumeroPropostaUnico();
       }
     }
 
@@ -302,6 +313,10 @@
       }
     }
 
+    function gerarNovoNumero() {
+      document.getElementById('numero-proposta').value = gerarNumeroPropostaUnico();
+    }
+
     window.onload = function () {
       // Gera o número da proposta automaticamente
       document.getElementById('numero-proposta').value = gerarNumeroPropostaUnico();
@@ -311,6 +326,9 @@
       document.getElementById('uf-origem').addEventListener('change', (e) => carregarCidades(e.target.value, 'cidade-origem'));
       document.getElementById('uf-destino').addEventListener('change', (e) => carregarCidades(e.target.value, 'cidade-destino'));
       trocarLogoEmpresa('AXD');
+      
+      // Remove o atributo readonly para permitir edição
+      document.getElementById('numero-proposta').removeAttribute('readonly');
     }
   </script>
 </head>
@@ -330,7 +348,11 @@
           <option value="AXD">AXD Log</option>
           <option value="Rodovar">Rodovar</option>
         </select><br>
-        Nº da Proposta: <input type="text" id="numero-proposta" style="width: 120px;" readonly><br>
+        Nº da Proposta: 
+        <div style="display: flex; align-items: center;">
+          <input type="text" id="numero-proposta" style="width: 120px;">
+          <button class="btn-gerar-numero" onclick="gerarNovoNumero()" title="Gerar novo número">🔢</button>
+        </div>
         Data e Hora: <span id="datahora"></span><br>
         Validade: <span id="validade"></span>
       </div>
