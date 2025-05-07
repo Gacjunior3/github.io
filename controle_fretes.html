@@ -13,7 +13,7 @@
             color: #333;
         }
         .container {
-            max-width: 1400px;
+            max-width: 1800px;
             margin: 0 auto;
             background-color: white;
             padding: 25px;
@@ -50,9 +50,10 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
         }
         th, td {
-            padding: 12px 15px;
+            padding: 15px 20px;
             text-align: left;
             border-bottom: 1px solid #e0e0e0;
+            vertical-align: top;
         }
         th {
             background-color: #3498db;
@@ -60,6 +61,7 @@
             font-weight: 600;
             position: sticky;
             top: 0;
+            white-space: nowrap;
         }
         tr:nth-child(even) {
             background-color: #f8f9fa;
@@ -69,12 +71,13 @@
         }
         input, select {
             width: 100%;
-            padding: 8px 12px;
+            padding: 10px 15px;
             border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 14px;
             box-sizing: border-box;
             transition: border 0.3s;
+            min-height: 40px;
         }
         input:focus, select:focus {
             border-color: #3498db;
@@ -82,7 +85,7 @@
             box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
         }
         button {
-            padding: 10px 18px;
+            padding: 12px 20px;
             background-color: #3498db;
             color: white;
             border: none;
@@ -91,6 +94,7 @@
             font-size: 14px;
             font-weight: 500;
             transition: background-color 0.3s;
+            margin: 5px 0;
         }
         button:hover {
             background-color: #2980b9;
@@ -118,16 +122,16 @@
             display: block;
         }
         .fixed-column {
-            width: 120px;
-            min-width: 120px;
+            min-width: 150px;
+            width: auto;
         }
         .small-column {
-            width: 80px;
-            min-width: 80px;
+            min-width: 100px;
+            width: auto;
         }
         .city-state-column {
-            min-width: 180px;
-            width: 200px;
+            min-width: 220px;
+            width: auto;
         }
         .search-container {
             position: relative;
@@ -135,10 +139,11 @@
         }
         .search-input {
             width: 100%;
-            padding: 6px 8px;
+            padding: 10px 15px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 14px;
+            min-height: 40px;
         }
         .search-results {
             position: absolute;
@@ -151,10 +156,10 @@
             z-index: 1000;
             display: none;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            font-size: 12px;
+            font-size: 14px;
         }
         .search-item {
-            padding: 8px 12px;
+            padding: 10px 15px;
             cursor: pointer;
             border-bottom: 1px solid #f0f0f0;
         }
@@ -163,10 +168,10 @@
         }
         .state-badge {
             display: inline-block;
-            padding: 2px 6px;
+            padding: 3px 8px;
             background-color: #e0f2fe;
             border-radius: 12px;
-            font-size: 11px;
+            font-size: 12px;
             color: #0369a1;
             margin-left: 8px;
         }
@@ -184,8 +189,8 @@
         }
         .login-box {
             background: white;
-            width: 300px;
-            padding: 20px;
+            width: 350px;
+            padding: 25px;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0,0,0,0.2);
         }
@@ -194,17 +199,74 @@
             color: #2c3e50;
         }
         .login-box input {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            padding: 12px;
+            font-size: 16px;
         }
         #loginError {
             color: #e74c3c;
-            font-size: 12px;
-            margin-top: 5px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        .obs-input {
+            min-height: 60px;
+        }
+        .modal-confirm {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .confirm-box {
+            background: white;
+            width: 350px;
+            padding: 25px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        .confirm-box h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .confirm-box input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .confirm-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        .save-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #27ae60;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+            animation: fadeIn 0.3s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         @media (max-width: 1200px) {
             .city-state-column {
-                min-width: 150px;
-                width: 160px;
+                min-width: 180px;
             }
         }
         @media (max-width: 992px) {
@@ -219,8 +281,7 @@
                 overflow-x: auto;
             }
             .city-state-column {
-                min-width: 130px;
-                width: 140px;
+                min-width: 160px;
             }
         }
     </style>
@@ -235,6 +296,25 @@
             <button onclick="login()" style="width:100%;">Entrar</button>
             <p id="loginError"></p>
         </div>
+    </div>
+
+    <!-- Modal de Confirmação para Apagar Linha -->
+    <div id="confirmModal" class="modal-confirm">
+        <div class="confirm-box">
+            <h3>Confirmar Exclusão</h3>
+            <p>Digite a senha para confirmar a exclusão desta linha:</p>
+            <input type="password" id="deletePassword" placeholder="Senha">
+            <div class="confirm-buttons">
+                <button onclick="cancelDelete()">Cancelar</button>
+                <button onclick="confirmDelete()" class="delete-btn">Confirmar</button>
+            </div>
+            <p id="deleteError" style="color: #e74c3c; margin-top: 10px;"></p>
+        </div>
+    </div>
+
+    <!-- Notificação de Salvamento -->
+    <div id="saveNotification" class="save-notification">
+        Dados salvos com sucesso!
     </div>
 
     <div class="container">
@@ -283,7 +363,7 @@
                         <th class="fixed-column">Funcionário</th>
                         <th class="fixed-column">Data Emissão</th>
                         <th class="fixed-column">CTE/Fatura</th>
-                        <th>Contratante</th>
+                        <th class="fixed-column">Contratante</th>
                         <th class="small-column">Frete Empresa</th>
                         <th class="small-column">Frete Motorista</th>
                         <th class="fixed-column">Vencimento</th>
@@ -292,7 +372,7 @@
                         <th class="fixed-column">Veículo</th>
                         <th class="small-column">Exclusivo</th>
                         <th class="small-column">Tipo</th>
-                        <th>Observações</th>
+                        <th class="fixed-column">Observações</th>
                         <th class="small-column">Ações</th>
                     </tr>
                 </thead>
@@ -340,6 +420,8 @@
         // Variáveis globais
         let estados = [];
         let cidadesCache = {};
+        let currentRowToDelete = null;
+        const DELETE_PASSWORD = "admin123"; // Defina sua senha para exclusão aqui
         
         // Inicialização quando o DOM estiver pronto
         document.addEventListener('DOMContentLoaded', async function() {
@@ -614,7 +696,7 @@
                             <option value="RODOVAR">RODOVAR</option>
                         </select>
                     </td>
-                    <td><input type="text" class="obs" placeholder="Anotações"></td>
+                    <td><input type="text" class="obs obs-input" placeholder="Anotações"></td>
                     <td><button onclick="deleteRow(this)" class="delete-btn" title="Remover linha">❌</button></td>
                 `;
                 
@@ -632,17 +714,39 @@
             }
         }
         
-        // Remove uma linha da tabela
+        // Remove uma linha da tabela (com confirmação)
         function deleteRow(button) {
             try {
-                const row = button.closest('tr');
-                if (row) {
-                    row.remove();
+                currentRowToDelete = button.closest('tr');
+                document.getElementById('deletePassword').value = '';
+                document.getElementById('deleteError').textContent = '';
+                document.getElementById('confirmModal').style.display = 'flex';
+            } catch (error) {
+                console.error("Erro ao preparar exclusão:", error);
+                showMessage("Erro ao preparar exclusão", "error");
+            }
+        }
+
+        // Cancela a exclusão
+        function cancelDelete() {
+            document.getElementById('confirmModal').style.display = 'none';
+            currentRowToDelete = null;
+        }
+
+        // Confirma a exclusão após verificar senha
+        function confirmDelete() {
+            const password = document.getElementById('deletePassword').value;
+            const errorElement = document.getElementById('deleteError');
+            
+            if (password === DELETE_PASSWORD) {
+                if (currentRowToDelete) {
+                    currentRowToDelete.remove();
                     showMessage('Linha removida com sucesso!', 'success');
                 }
-            } catch (error) {
-                console.error("Erro ao remover linha:", error);
-                showMessage("Erro ao remover linha", "error");
+                document.getElementById('confirmModal').style.display = 'none';
+                currentRowToDelete = null;
+            } else {
+                errorElement.textContent = "Senha incorreta!";
             }
         }
         
@@ -685,6 +789,13 @@
                 // Salva no Firebase Realtime Database
                 const dbRef = ref(database, `fretes/${period}`);
                 await set(dbRef, data);
+                
+                // Mostra notificação de salvamento
+                const notification = document.getElementById('saveNotification');
+                notification.style.display = 'block';
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 3000);
                 
                 showMessage(`Dados salvos com sucesso no Firebase para ${month}/${year}!`, 'success');
             } catch (error) {
@@ -751,44 +862,48 @@
             }
         }
         
-        // Exporta para Excel (formato CSV)
+        // Exporta para Excel (formato CSV melhorado)
         function exportToExcel() {
             try {
                 const month = document.getElementById('month').value;
                 const year = document.getElementById('year').value;
                 const period = `${month}_${year}`;
                 
-                // Cabeçalhos com formatação melhor
-                let csv = '"Controle de Fretes - Transporte"\n';
-                csv += `"Período: ${month}/${year}"\n\n`;
-                csv += '"Funcionário","Data Emissão","CTE/FATURA","Contratante","Frete Empresa","Frete Motorista","Vencimento","Origem","Destino","Veículo","Exclusivo","Tipo","Observações"\n';
+                // Cabeçalho completo com formatação profissional
+                let csv = [
+                    ['Controle de Fretes - Transporte', '', '', '', '', '', '', '', '', '', '', '', ''],
+                    [`Período: ${month}/${year}`, '', '', '', '', '', '', '', '', '', '', '', ''],
+                    ['', '', '', '', '', '', '', '', '', '', '', '', ''],
+                    ['Funcionário', 'Data Emissão', 'CTE/FATURA', 'Contratante', 'Frete Empresa (R$)', 'Frete Motorista (R$)', 
+                     'Vencimento', 'Origem', 'Destino', 'Veículo', 'Exclusivo', 'Tipo', 'Observações']
+                ];
                 
+                // Adiciona os dados das linhas
                 const rows = document.querySelectorAll('#dataTable tbody tr');
-                rows.forEach((row, index) => {
-                    const cells = [
-                        row.querySelector('.employee').value,
+                rows.forEach(row => {
+                    csv.push([
+                        row.querySelector('.employee').value || '',
                         formatExcelDate(row.querySelector('.emission-date').value),
-                        row.querySelector('.cte-fatura').value,
-                        row.querySelector('.contractor').value,
+                        row.querySelector('.cte-fatura').value || '',
+                        row.querySelector('.contractor').value || '',
                         parseFloat(row.querySelector('.company-freight').value || 0).toFixed(2).replace('.', ','),
                         parseFloat(row.querySelector('.driver-freight').value || 0).toFixed(2).replace('.', ','),
                         formatExcelDate(row.querySelector('.due-date').value),
-                        row.querySelector('.origin-input').value,
-                        row.querySelector('.destination-input').value,
-                        row.querySelector('.vehicle').value,
-                        row.querySelector('.exclusivity').value,
-                        row.querySelector('.axd-rodovar').value,
-                        row.querySelector('.obs').value
-                    ];
-                    
-                    csv += cells.map(cell => `"${cell}"`).join(';') + '\n';
+                        row.querySelector('.origin-input').value || '',
+                        row.querySelector('.destination-input').value || '',
+                        row.querySelector('.vehicle').value || '',
+                        row.querySelector('.exclusivity').value || 'Não',
+                        row.querySelector('.axd-rodovar').value || 'AXD',
+                        row.querySelector('.obs').value || ''
+                    ]);
                 });
                 
-                // Adiciona totais
-                const totals = calculateTotals();
-                csv += `\n"TOTAIS","","","","${totals.company.toFixed(2).replace('.', ',')}","${totals.driver.toFixed(2).replace('.', ',')}","","","","","","",""`;
+                // Converte para CSV com formatação UTF-8 com BOM
+                const csvContent = csv.map(row => 
+                    row.map(cell => `"${cell}"`).join(';')
+                ).join('\n');
                 
-                const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+                const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
                 const link = document.createElement('a');
                 const url = URL.createObjectURL(blob);
                 
@@ -807,30 +922,11 @@
             }
         }
 
-        // Função auxiliar para formatar datas no Excel
+        // Função auxiliar para formatar datas no Excel (padrão brasileiro)
         function formatExcelDate(dateString) {
             if (!dateString) return '';
             const [year, month, day] = dateString.split('-');
             return `${day}/${month}/${year}`;
-        }
-
-        // Função para calcular totais
-        function calculateTotals() {
-            let companyTotal = 0;
-            let driverTotal = 0;
-            
-            document.querySelectorAll('#dataTable tbody tr').forEach(row => {
-                const companyValue = parseFloat(row.querySelector('.company-freight').value) || 0;
-                const driverValue = parseFloat(row.querySelector('.driver-freight').value) || 0;
-                
-                companyTotal += companyValue;
-                driverTotal += driverValue;
-            });
-            
-            return {
-                company: companyTotal,
-                driver: driverTotal
-            };
         }
         
         // Mostra mensagens para o usuário
@@ -851,6 +947,8 @@
         window.searchCities = searchCities;
         window.deleteRow = deleteRow;
         window.login = login;
+        window.cancelDelete = cancelDelete;
+        window.confirmDelete = confirmDelete;
     </script>
 </body>
 </html>
