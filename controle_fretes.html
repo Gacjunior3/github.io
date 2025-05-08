@@ -260,6 +260,29 @@
             z-index: 1000;
             animation: fadeIn 0.3s;
         }
+        .filter-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .filter-item {
+            flex: 1;
+            min-width: 200px;
+        }
+        .filter-btn {
+            background-color: #2ecc71;
+        }
+        .filter-btn:hover {
+            background-color: #27ae60;
+        }
+        .reset-filter-btn {
+            background-color: #f39c12;
+        }
+        .reset-filter-btn:hover {
+            background-color: #d35400;
+        }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -356,6 +379,28 @@
             </div>
         </div>
         
+        <!-- Filtros -->
+        <div class="filter-container">
+            <div class="filter-item">
+                <input type="text" id="filterEmployee" placeholder="Filtrar por Funcionário" class="search-input">
+            </div>
+            <div class="filter-item">
+                <input type="text" id="filterContractor" placeholder="Filtrar por Contratante" class="search-input">
+            </div>
+            <div class="filter-item">
+                <input type="text" id="filterVehicle" placeholder="Filtrar por Veículo" class="search-input">
+            </div>
+            <div class="filter-item">
+                <select id="filterType" class="search-input">
+                    <option value="">Todos os Tipos</option>
+                    <option value="AXD">AXD</option>
+                    <option value="RODOVAR">RODOVAR</option>
+                </select>
+            </div>
+            <button id="filterBtn" class="filter-btn">🔍 Filtrar</button>
+            <button id="resetFilterBtn" class="reset-filter-btn">🔄 Limpar Filtros</button>
+        </div>
+        
         <div style="overflow-x: auto;">
             <table id="dataTable">
                 <thead>
@@ -436,6 +481,19 @@
             document.getElementById('loadBtn').addEventListener('click', loadData);
             document.getElementById('exportBtn').addEventListener('click', exportToExcel);
             document.getElementById('logoutBtn').addEventListener('click', logout);
+            document.getElementById('filterBtn').addEventListener('click', applyFilters);
+            document.getElementById('resetFilterBtn').addEventListener('click', resetFilters);
+            
+            // Permite filtrar ao pressionar Enter nos campos de filtro
+            document.getElementById('filterEmployee').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') applyFilters();
+            });
+            document.getElementById('filterContractor').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') applyFilters();
+            });
+            document.getElementById('filterVehicle').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') applyFilters();
+            });
             
             // Verifica autenticação
             onAuthStateChanged(auth, (user) => {
@@ -635,8 +693,8 @@
                     <td><input type="date" class="emission-date"></td>
                     <td><input type="text" class="cte-fatura" placeholder="Número"></td>
                     <td><input type="text" class="contractor" placeholder="Cliente"></td>
-                    <td><input type="number" step="0.01" class="company-freight" placeholder="R$"></td>
-                    <td><input type="number" step="0.01" class="driver-freight" placeholder="R$"></td>
+                    <td><input type="text" class="company-freight" placeholder="R$" onblur="formatCurrency(this)"></td>
+                    <td><input type="text" class="driver-freight" placeholder="R$" onblur="formatCurrency(this)"></td>
                     <td><input type="date" class="due-date"></td>
                 `;
                 
@@ -769,13 +827,23 @@
                 const data = [];
                 
                 rows.forEach(row => {
+                    // Converte os valores formatados para números antes de salvar
+                    const companyFreightValue = row.querySelector('.company-freight').value;
+                    const driverFreightValue = row.querySelector('.driver-freight').value;
+                    
+                    const companyFreight = companyFreightValue ? 
+                        parseFloat(companyFreightValue.replace(/\./g, '').replace(',', '.')) : 0;
+                    
+                    const driverFreight = driverFreightValue ? 
+                        parseFloat(driverFreightValue.replace(/\./g, '').replace(',', '.')) : 0;
+                    
                     data.push({
                         employee: row.querySelector('.employee').value || '',
                         emissionDate: row.querySelector('.emission-date').value || '',
                         cteFatura: row.querySelector('.cte-fatura').value || '',
                         contractor: row.querySelector('.contractor').value || '',
-                        companyFreight: row.querySelector('.company-freight').value || '',
-                        driverFreight: row.querySelector('.driver-freight').value || '',
+                        companyFreight: companyFreight,
+                        driverFreight: driverFreight,
                         dueDate: row.querySelector('.due-date').value || '',
                         origin: row.querySelector('.origin-input').value || '',
                         destination: row.querySelector('.destination-input').value || '',
@@ -837,8 +905,11 @@
                             newRow.querySelector('.emission-date').value = item.emissionDate || '';
                             newRow.querySelector('.cte-fatura').value = item.cteFatura || '';
                             newRow.querySelector('.contractor').value = item.contractor || '';
-                            newRow.querySelector('.company-freight').value = item.companyFreight || '';
-                            newRow.querySelector('.driver-freight').value = item.driverFreight || '';
+                            
+                            // Formata os valores monetários para exibição
+                            newRow.querySelector('.company-freight').value = formatCurrencyForDisplay(item.companyFreight || 0);
+                            newRow.querySelector('.driver-freight').value = formatCurrencyForDisplay(item.driverFreight || 0);
+                            
                             newRow.querySelector('.due-date').value = item.dueDate || '';
                             newRow.querySelector('.origin-input').value = item.origin || '';
                             newRow.querySelector('.destination-input').value = item.destination || '';
@@ -886,8 +957,8 @@
                         formatExcelDate(row.querySelector('.emission-date').value),
                         row.querySelector('.cte-fatura').value || '',
                         row.querySelector('.contractor').value || '',
-                        parseFloat(row.querySelector('.company-freight').value || 0).toFixed(2).replace('.', ','),
-                        parseFloat(row.querySelector('.driver-freight').value || 0).toFixed(2).replace('.', ','),
+                        row.querySelector('.company-freight').value || '0,00',
+                        row.querySelector('.driver-freight').value || '0,00',
                         formatExcelDate(row.querySelector('.due-date').value),
                         row.querySelector('.origin-input').value || '',
                         row.querySelector('.destination-input').value || '',
@@ -943,12 +1014,131 @@
             }
         }
 
+        // Formata valor monetário para exibição (5.500,00)
+        function formatCurrency(input) {
+            try {
+                // Remove tudo que não é dígito
+                let value = input.value.replace(/\D/g, '');
+                
+                // Se estiver vazio, define como 0,00
+                if (value === '') {
+                    input.value = '0,00';
+                    return;
+                }
+                
+                // Adiciona zeros à esquerda para garantir 2 casas decimais
+                value = value.padStart(3, '0');
+                
+                // Separa centavos
+                const cents = value.slice(-2);
+                const reais = value.slice(0, -2);
+                
+                // Formata os reais com pontos como separadores de milhar
+                let formattedReais = '';
+                for (let i = reais.length - 1, j = 0; i >= 0; i--, j++) {
+                    if (j > 0 && j % 3 === 0) {
+                        formattedReais = '.' + formattedReais;
+                    }
+                    formattedReais = reais[i] + formattedReais;
+                }
+                
+                // Atualiza o valor do campo
+                input.value = formattedReais + ',' + cents;
+            } catch (error) {
+                console.error("Erro ao formatar moeda:", error);
+                input.value = '0,00';
+            }
+        }
+        
+        // Formata um valor numérico para exibição monetária (5.500,00)
+        function formatCurrencyForDisplay(value) {
+            try {
+                if (typeof value === 'string') {
+                    value = parseFloat(value.replace(',', '.'));
+                }
+                
+                // Arredonda para 2 casas decimais
+                value = Math.round(value * 100) / 100;
+                
+                // Converte para string e separa parte inteira e decimal
+                const parts = value.toFixed(2).split('.');
+                let reais = parts[0];
+                const cents = parts[1] || '00';
+                
+                // Adiciona separadores de milhar
+                reais = reais.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                
+                return reais + ',' + cents;
+            } catch (error) {
+                console.error("Erro ao formatar moeda para exibição:", error);
+                return '0,00';
+            }
+        }
+        
+        // Aplica os filtros na tabela
+        function applyFilters() {
+            try {
+                const employeeFilter = document.getElementById('filterEmployee').value.toLowerCase();
+                const contractorFilter = document.getElementById('filterContractor').value.toLowerCase();
+                const vehicleFilter = document.getElementById('filterVehicle').value.toLowerCase();
+                const typeFilter = document.getElementById('filterType').value;
+                
+                const rows = document.querySelectorAll('#dataTable tbody tr');
+                
+                rows.forEach(row => {
+                    const employee = row.querySelector('.employee').value.toLowerCase();
+                    const contractor = row.querySelector('.contractor').value.toLowerCase();
+                    const vehicle = row.querySelector('.vehicle').value.toLowerCase();
+                    const type = row.querySelector('.axd-rodovar').value;
+                    
+                    const employeeMatch = employee.includes(employeeFilter);
+                    const contractorMatch = contractor.includes(contractorFilter);
+                    const vehicleMatch = vehicle.includes(vehicleFilter);
+                    const typeMatch = typeFilter === '' || type === typeFilter;
+                    
+                    if (employeeMatch && contractorMatch && vehicleMatch && typeMatch) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                
+                showMessage('Filtros aplicados com sucesso!', 'success');
+            } catch (error) {
+                console.error("Erro ao aplicar filtros:", error);
+                showMessage("Erro ao aplicar filtros", "error");
+            }
+        }
+        
+        // Limpa todos os filtros
+        function resetFilters() {
+            try {
+                document.getElementById('filterEmployee').value = '';
+                document.getElementById('filterContractor').value = '';
+                document.getElementById('filterVehicle').value = '';
+                document.getElementById('filterType').value = '';
+                
+                const rows = document.querySelectorAll('#dataTable tbody tr');
+                rows.forEach(row => {
+                    row.style.display = '';
+                });
+                
+                showMessage('Filtros removidos!', 'success');
+            } catch (error) {
+                console.error("Erro ao resetar filtros:", error);
+                showMessage("Erro ao remover filtros", "error");
+            }
+        }
+
         // Torna as funções globais para serem acessíveis no HTML
         window.searchCities = searchCities;
         window.deleteRow = deleteRow;
         window.login = login;
         window.cancelDelete = cancelDelete;
         window.confirmDelete = confirmDelete;
+        window.formatCurrency = formatCurrency;
+        window.applyFilters = applyFilters;
+        window.resetFilters = resetFilters;
     </script>
 </body>
 </html>
