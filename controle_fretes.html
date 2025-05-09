@@ -508,14 +508,14 @@
             });
         });
 
-        // Função para inicializar o aplicativo após login - VERSÃO CORRIGIDA
+        // Função para inicializar o aplicativo após login - VERSÃO FINAL
         async function initApp() {
             try {
                 // Carrega estados do IBGE
                 await loadStates();
                 
-                // Tabela começa vazia agora
-                showMessage('Sistema pronto para uso! Adicione linhas conforme necessário.', 'success');
+                // Tabela começa vazia (sem linhas automáticas)
+                showMessage('Sistema pronto! Clique em "Adicionar Linha" para começar.', 'success');
             } catch (error) {
                 console.error("Erro na inicialização:", error);
                 showMessage("Erro ao carregar dados iniciais", "error");
@@ -936,8 +936,7 @@
                     showMessage(`Dados de ${month}/${year} carregados do Firebase!`, 'success');
                 } else {
                     showMessage(`Nenhum dado encontrado no Firebase para ${month}/${year}.`, 'error');
-                    // Adiciona linhas vazias se não houver dados
-                    addRow();
+                    // Não adiciona linha automática quando não há dados
                 }
             } catch (error) {
                 console.error("Erro ao carregar dados do Firebase:", error);
