@@ -808,7 +808,7 @@
             }
         }
         
-        // Salva os dados no Firebase
+        // Salva os dados no Firebase (VERSÃO CORRIGIDA)
         async function saveData() {
             try {
                 // Verifica se o usuário está autenticado
@@ -823,8 +823,17 @@
                 const year = document.getElementById('year').value;
                 const period = `${month}_${year}`;
                 
+                // Primeiro carrega os dados existentes
+                const dbRef = ref(database, `fretes/${period}`);
+                const snapshot = await get(dbRef);
+                let existingData = snapshot.exists() ? snapshot.val() : [];
+                
+                // Cria um mapa dos CTEs/Faturas existentes para evitar duplicatas
+                const existingCtes = new Set(existingData.map(item => item.cteFatura));
+                
+                // Coleta os dados das linhas atuais
                 const rows = document.querySelectorAll('#dataTable tbody tr');
-                const data = [];
+                const newData = [];
                 
                 rows.forEach(row => {
                     // Converte os valores formatados para números antes de salvar
@@ -837,26 +846,33 @@
                     const driverFreight = driverFreightValue ? 
                         parseFloat(driverFreightValue.replace(/\./g, '').replace(',', '.')) : 0;
                     
-                    data.push({
-                        employee: row.querySelector('.employee').value || '',
-                        emissionDate: row.querySelector('.emission-date').value || '',
-                        cteFatura: row.querySelector('.cte-fatura').value || '',
-                        contractor: row.querySelector('.contractor').value || '',
-                        companyFreight: companyFreight,
-                        driverFreight: driverFreight,
-                        dueDate: row.querySelector('.due-date').value || '',
-                        origin: row.querySelector('.origin-input').value || '',
-                        destination: row.querySelector('.destination-input').value || '',
-                        vehicle: row.querySelector('.vehicle').value || '',
-                        exclusivity: row.querySelector('.exclusivity').value || 'Não',
-                        axdRodovar: row.querySelector('.axd-rodovar').value || 'AXD',
-                        obs: row.querySelector('.obs').value || ''
-                    });
+                    const cteFatura = row.querySelector('.cte-fatura').value || '';
+                    
+                    // Verifica se é uma linha existente (já tem CTE/Fatura) ou nova
+                    if (!cteFatura || !existingCtes.has(cteFatura)) {
+                        newData.push({
+                            employee: row.querySelector('.employee').value || '',
+                            emissionDate: row.querySelector('.emission-date').value || '',
+                            cteFatura: cteFatura,
+                            contractor: row.querySelector('.contractor').value || '',
+                            companyFreight: companyFreight,
+                            driverFreight: driverFreight,
+                            dueDate: row.querySelector('.due-date').value || '',
+                            origin: row.querySelector('.origin-input').value || '',
+                            destination: row.querySelector('.destination-input').value || '',
+                            vehicle: row.querySelector('.vehicle').value || '',
+                            exclusivity: row.querySelector('.exclusivity').value || 'Não',
+                            axdRodovar: row.querySelector('.axd-rodovar').value || 'AXD',
+                            obs: row.querySelector('.obs').value || ''
+                        });
+                    }
                 });
 
+                // Combina os dados existentes com os novos
+                const combinedData = [...existingData, ...newData];
+                
                 // Salva no Firebase Realtime Database
-                const dbRef = ref(database, `fretes/${period}`);
-                await set(dbRef, data);
+                await set(dbRef, combinedData);
                 
                 // Mostra notificação de salvamento
                 const notification = document.getElementById('saveNotification');
