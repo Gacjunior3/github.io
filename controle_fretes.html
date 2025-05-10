@@ -443,7 +443,8 @@
             getDatabase,
             ref,
             set,
-            get
+            get,
+            remove
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         // Configuração do Firebase
@@ -508,7 +509,7 @@
             });
         });
 
-        // Função para inicializar o aplicativo após login - VERSÃO FINAL
+        // Função para inicializar o aplicativo após login
         async function initApp() {
             try {
                 // Carrega estados do IBGE
@@ -788,15 +789,49 @@
             currentRowToDelete = null;
         }
 
-        // Confirma a exclusão após verificar senha
-        function confirmDelete() {
+        // Confirma a exclusão após verificar senha - VERSÃO FINAL
+        async function confirmDelete() {
             const password = document.getElementById('deletePassword').value;
             const errorElement = document.getElementById('deleteError');
             
             if (password === DELETE_PASSWORD) {
                 if (currentRowToDelete) {
-                    currentRowToDelete.remove();
-                    showMessage('Linha removida com sucesso!', 'success');
+                    try {
+                        // Obtém o CTE/Fatura da linha a ser excluída
+                        const cteFatura = currentRowToDelete.querySelector('.cte-fatura').value;
+                        
+                        if (cteFatura) {
+                            // Obtém mês e ano atuais
+                            const month = document.getElementById('month').value;
+                            const year = document.getElementById('year').value;
+                            const period = `${month}_${year}`;
+                            
+                            // Carrega os dados atuais do Firebase
+                            const dbRef = ref(database, `fretes/${period}`);
+                            const snapshot = await get(dbRef);
+                            
+                            if (snapshot.exists()) {
+                                let data = snapshot.val();
+                                
+                                // Filtra para remover o item com o CTE/Fatura correspondente
+                                data = data.filter(item => item.cteFatura !== cteFatura);
+                                
+                                // Atualiza o Firebase com os dados filtrados
+                                await set(dbRef, data);
+                                
+                                // Remove a linha localmente
+                                currentRowToDelete.remove();
+                                showMessage('Linha removida com sucesso!', 'success');
+                            }
+                        } else {
+                            // Se não tem CTE/Fatura, apenas remove localmente
+                            currentRowToDelete.remove();
+                            showMessage('Linha removida localmente!', 'success');
+                        }
+                    } catch (error) {
+                        console.error("Erro ao excluir do Firebase:", error);
+                        showMessage("Erro ao excluir linha: " + error.message, "error");
+                    }
                 }
                 document.getElementById('confirmModal').style.display = 'none';
                 currentRowToDelete = null;
@@ -805,7 +840,7 @@
             }
         }
         
-        // Salva os dados no Firebase (VERSÃO CORRIGIDA)
+        // Salva os dados no Firebase
         async function saveData() {
             try {
                 // Verifica se o usuário está autenticado
@@ -900,7 +935,7 @@
                 const year = document.getElementById('year').value;
                 const period = `${month}_${year}`;
                 
-                // Limpa a tabela
+                // Limpa a tabela completamente
                 document.querySelector('#dataTable tbody').innerHTML = '';
                 
                 // Carrega do Firebase
@@ -910,6 +945,7 @@
                 if (snapshot.exists()) {
                     const data = snapshot.val();
                     
+                    // Adiciona apenas as linhas com dados existentes
                     data.forEach(item => {
                         const newRow = addRow();
                         
