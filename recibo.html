@@ -357,6 +357,39 @@
         white-space: pre-wrap;
       }
     }
+    
+    /* Controle de recibo avulso */
+    .tipo-recibo-container {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 10px;
+    }
+    
+    .tipo-recibo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 9pt;
+    }
+    
+    .tipo-recibo label {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+    
+    .tipo-recibo input[type="radio"] {
+      margin: 0;
+    }
+    
+    .transporte-section {
+      display: block;
+    }
+    
+    .transporte-section.hidden {
+      display: none;
+    }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -399,14 +432,24 @@
     }
     
     function atualizarDescricao() {
-      const veiculo = document.getElementById('veiculo').value;
-      const motorista = document.getElementById('motorista').value;
-      const telefone = document.getElementById('telefone-motorista').value;
-      let dataCarregamento = document.getElementById('data-carregamento').value;
+      const isAvulso = document.getElementById('tipo-recibo-avulso').checked;
+      let descricao = '';
       
-      if(dataCarregamento) {
-        const [ano, mes, dia] = dataCarregamento.split('-');
-        dataCarregamento = `${dia}/${mes}/${ano}`;
+      if (!isAvulso) {
+        const veiculo = document.getElementById('veiculo').value;
+        const motorista = document.getElementById('motorista').value;
+        const telefone = document.getElementById('telefone-motorista').value;
+        let dataCarregamento = document.getElementById('data-carregamento').value;
+        
+        if(dataCarregamento) {
+          const [ano, mes, dia] = dataCarregamento.split('-');
+          dataCarregamento = `${dia}/${mes}/${ano}`;
+        }
+
+        descricao = `VEÍCULO: ${veiculo || 'Não informado'}\n` +
+                   `MOTORISTA: ${motorista || 'Não informado'}\n` +
+                   `TELEFONE: ${telefone || 'Não informado'}\n` +
+                   `DATA CARREGAMENTO: ${dataCarregamento || 'Não informada'}\n\n`;
       }
 
       const valor = document.getElementById('adiantamento-valor').value;
@@ -423,12 +466,7 @@
         infoPagamento += `\nCONTA: ${document.getElementById('conta').value}`;
       }
 
-      const descricao = `VEÍCULO: ${veiculo || 'Não informado'}\n` +
-                       `MOTORISTA: ${motorista || 'Não informado'}\n` +
-                       `TELEFONE: ${telefone || 'Não informado'}\n` +
-                       `DATA CARREGAMENTO: ${dataCarregamento || 'Não informada'}\n\n` +
-                       infoPagamento;
-
+      descricao += infoPagamento;
       document.getElementById('descricao-servico').value = descricao;
       salvarDados();
     }
@@ -525,6 +563,7 @@
         localStorage.setItem(`recibo_${input.id}`, input.value);
       });
       localStorage.setItem('recibo_empresa', document.getElementById('empresa').value);
+      localStorage.setItem('recibo_tipo', document.querySelector('input[name="tipo-recibo"]:checked').value);
     }
     
     function carregarDados() {
@@ -537,6 +576,12 @@
       if(empresaSalva) {
         document.getElementById('empresa').value = empresaSalva;
         trocarEmpresa();
+      }
+      
+      const tipoSalvo = localStorage.getItem('recibo_tipo');
+      if(tipoSalvo) {
+        document.getElementById(`tipo-recibo-${tipoSalvo}`).checked = true;
+        toggleTipoRecibo();
       }
     }
     
@@ -555,6 +600,8 @@
         document.getElementById('valor-bruto').value = 'R$ 0,00';
         document.getElementById('adiantamento').value = '70';
         document.getElementById('numero-recibo').value = '';
+        document.getElementById('tipo-recibo-normal').checked = true;
+        toggleTipoRecibo();
         atualizarValores();
       }
     }
@@ -589,6 +636,22 @@
       }
     }
     
+    function toggleTipoRecibo() {
+      const isAvulso = document.getElementById('tipo-recibo-avulso').checked;
+      const transporteSection = document.querySelector('.transporte-section');
+      
+      if (isAvulso) {
+        transporteSection.classList.add('hidden');
+        document.querySelector('.titulo-documento').textContent = 'RECIBO AVULSO';
+      } else {
+        transporteSection.classList.remove('hidden');
+        document.querySelector('.titulo-documento').textContent = 'RECIBO DE PAGAMENTO';
+      }
+      
+      atualizarDescricao();
+      salvarDados();
+    }
+    
     window.onload = function() {
       formatarDataHora();
       aplicarMascaraValor();
@@ -609,6 +672,10 @@
       
       document.getElementById('numero-recibo').addEventListener('input', salvarDados);
       
+      document.querySelectorAll('input[name="tipo-recibo"]').forEach(radio => {
+        radio.addEventListener('change', toggleTipoRecibo);
+      });
+      
       mostrarCamposPagamento();
       atualizarValores();
     }
@@ -628,6 +695,19 @@
           </select><br>
           <span id="cnpj-empresa">CNPJ: 59.352.973/0001-32</span><br>
           <span id="endereco-empresa">RUA: Jubiabá, 292 - Bairro: Luis Eduardo Magalhães, Simões Filho - BA</span>
+        </div>
+      </div>
+      
+      <div class="tipo-recibo-container">
+        <div class="tipo-recibo">
+          <label>
+            <input type="radio" name="tipo-recibo" id="tipo-recibo-normal" value="normal" checked onchange="toggleTipoRecibo()">
+            Recibo Normal
+          </label>
+          <label>
+            <input type="radio" name="tipo-recibo" id="tipo-recibo-avulso" value="avulso" onchange="toggleTipoRecibo()">
+            Recibo Avulso
+          </label>
         </div>
       </div>
       
@@ -664,34 +744,36 @@
         </div>
       </div>
       
-      <div class="titulo-transporte">Informações do Transporte</div>
-      
-      <div class="linha">
-        <div class="coluna">
-          <div class="campo">
-            <label for="veiculo">Veículo:</label>
-            <input type="text" id="veiculo" placeholder="Placa do veículo">
+      <div class="transporte-section">
+        <div class="titulo-transporte">Informações do Transporte</div>
+        
+        <div class="linha">
+          <div class="coluna">
+            <div class="campo">
+              <label for="veiculo">Veículo:</label>
+              <input type="text" id="veiculo" placeholder="Placa do veículo">
+            </div>
+          </div>
+          <div class="coluna">
+            <div class="campo">
+              <label for="motorista">Motorista:</label>
+              <input type="text" id="motorista" placeholder="Nome do motorista">
+            </div>
           </div>
         </div>
-        <div class="coluna">
-          <div class="campo">
-            <label for="motorista">Motorista:</label>
-            <input type="text" id="motorista" placeholder="Nome do motorista">
+        
+        <div class="linha">
+          <div class="coluna">
+            <div class="campo">
+              <label for="telefone-motorista">Telefone:</label>
+              <input type="text" id="telefone-motorista" placeholder="(00) 00000-0000">
+            </div>
           </div>
-        </div>
-      </div>
-      
-      <div class="linha">
-        <div class="coluna">
-          <div class="campo">
-            <label for="telefone-motorista">Telefone:</label>
-            <input type="text" id="telefone-motorista" placeholder="(00) 00000-0000">
-          </div>
-        </div>
-        <div class="coluna">
-          <div class="campo">
-            <label for="data-carregamento">Data Carregamento:</label>
-            <input type="date" id="data-carregamento">
+          <div class="coluna">
+            <div class="campo">
+              <label for="data-carregamento">Data Carregamento:</label>
+              <input type="date" id="data-carregamento">
+            </div>
           </div>
         </div>
       </div>
