@@ -144,6 +144,10 @@
       background-color: #FF9800;
       color: white;
     }
+    .btn-importar {
+      background-color: #4CAF50;
+      color: white;
+    }
     .btn-limpar-antigas {
       background-color: #F44336;
       color: white;
@@ -402,6 +406,8 @@ Carga 100% assegurada – averbação conforme valor de nota fiscal; - KORV
     <div class="info-armazenamento" id="info-armazenamento"></div>
     <div class="botoes">
       <button class="btn-exportar" onclick="exportarPropostas()">📤 Exportar Todas como JSON</button>
+      <button class="btn-importar" onclick="document.getElementById('importar-input').click()">📥 Importar Propostas (JSON)</button>
+      <input type="file" id="importar-input" accept=".json" style="display: none;" onchange="importarPropostas(this)">
       <button class="btn-limpar-antigas" onclick="limparPropostasAntigas()">🗑️ Limpar Propostas Antigas</button>
       <button class="btn-limpar" onclick="limparTodasPropostas()">⚠️ Limpar TODAS as Propostas</button>
       <button class="btn-limpar" onclick="fecharPainelGerenciamento()">❌ Fechar</button>
@@ -714,6 +720,65 @@ Carga 100% assegurada – averbação conforme valor de nota fiscal; - KORV
       });
     }
 
+    // Função para importar propostas
+    function importarPropostas(input) {
+      const file = input.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const propostasImportadas = JSON.parse(e.target.result);
+          
+          if (!Array.isArray(propostasImportadas)) {
+            throw new Error('Formato inválido - deve ser um array de propostas');
+          }
+
+          // Validação básica da estrutura
+          if (propostasImportadas.length > 0 && !propostasImportadas[0].numero) {
+            throw new Error('Formato inválido - cada proposta deve ter um número');
+          }
+
+          const propostasAtuais = JSON.parse(localStorage.getItem(PROPOSTAS_KEY)) || [];
+          const numerosAtuais = propostasAtuais.map(p => p.numero);
+          
+          // Filtra propostas que já existem (mesmo número)
+          const novasPropostas = propostasImportadas.filter(
+            p => !numerosAtuais.includes(p.numero)
+          );
+
+          if (novasPropostas.length === 0) {
+            alert('Nenhuma nova proposta para importar (todas já existem).');
+            return;
+          }
+
+          if (confirm(`Deseja importar ${novasPropostas.length} proposta(s)?`)) {
+            const todasPropostas = [...novasPropostas, ...propostasAtuais]
+              .sort((a, b) => b.timestamp - a.timestamp)
+              .slice(0, LIMITE_MAXIMO); // Mantém dentro do limite
+
+            localStorage.setItem(PROPOSTAS_KEY, JSON.stringify(todasPropostas));
+            atualizarSeletorPropostas();
+            atualizarInfoArmazenamento();
+            alert(`${novasPropostas.length} proposta(s) importada(s) com sucesso!`);
+          }
+        } catch (error) {
+          alert(`Erro ao importar propostas: ${error.message}`);
+          console.error(error);
+        }
+        
+        // Limpa o input para permitir nova seleção do mesmo arquivo
+        input.value = '';
+      };
+      
+      reader.onerror = function() {
+        alert('Erro ao ler o arquivo');
+        input.value = '';
+      };
+      
+      reader.readAsText(file);
+    }
+
     // Funções de gerenciamento
     function mostrarPainelGerenciamento() {
       document.getElementById('painel-gerenciamento').style.display = 'block';
@@ -732,7 +797,8 @@ Carga 100% assegurada – averbação conforme valor de nota fiscal; - KORV
       const info = `
         <strong>Propostas armazenadas:</strong> ${propostas.length}/${LIMITE_MAXIMO}<br>
         <strong>Espaço utilizado:</strong> ${tamanhoKB} KB (${porcentagem}% do limite)<br>
-        <strong>Mais antiga:</strong> ${propostas.length > 0 ? new Date(propostas[propostas.length-1].timestamp).toLocaleDateString() : 'Nenhuma'}
+        <strong>Mais recente:</strong> ${propostas.length > 0 ? new Date(propostas[0].timestamp).toLocaleString() : 'Nenhuma'}<br>
+        <strong>Mais antiga:</strong> ${propostas.length > 0 ? new Date(propostas[propostas.length-1].timestamp).toLocaleString() : 'Nenhuma'}
       `;
       
       document.getElementById('info-armazenamento').innerHTML = info;
