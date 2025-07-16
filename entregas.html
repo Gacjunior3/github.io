@@ -273,6 +273,13 @@
             margin-top: 20px;
             gap: 10px;
         }
+        
+        .empty-message {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -357,6 +364,7 @@
             </div>
             
             <button class="load-btn" onclick="carregarMes()">Carregar Mês</button>
+            <button class="load-btn" onclick="mostrarTodasEntregas()">Mostrar Todas</button>
         </div>
         
         <button class="add-btn" onclick="adicionarNovaLinha()">Adicionar Entrega</button>
@@ -757,53 +765,105 @@
                 const tabela = document.getElementById('corpoTabela');
                 tabela.innerHTML = '';
                 
+                if (Object.keys(entregas).length === 0) {
+                    tabela.innerHTML = '<tr><td colspan="14" class="empty-message">Nenhuma entrega cadastrada</td></tr>';
+                    return;
+                }
+                
                 Object.keys(entregas).forEach(id => {
                     const entrega = entregas[id];
-                    
-                    // Formata a data diretamente do valor salvo (formato YYYY-MM-DD)
-                    const [ano, mes, dia] = entrega.data.split('-');
-                    const dataFormatada = `${dia}/${mes}/${ano}`;
-                    
-                    let prazoFormatado = '-';
-                    if (entrega.prazo) {
-                        const [anoP, mesP, diaP] = entrega.prazo.split('-');
-                        prazoFormatado = `${diaP}/${mesP}/${anoP}`;
-                    }
-                    
-                    const row = document.createElement('tr');
-                    row.dataset.id = id;
-                    row.innerHTML = `
-                        <td>${dataFormatada}</td>
-                        <td>${entrega.vendedor}</td>
-                        <td>${entrega.cliente}</td>
-                        <td><a href="#" class="whatsapp-link" onclick="copiarNumero('${entrega.telefoneCliente}')">${formatarTelefoneDisplay(entrega.telefoneCliente)}</a></td>
-                        <td>${entrega.motorista}</td>
-                        <td><a href="#" class="whatsapp-link" onclick="copiarNumero('${entrega.telefoneMotorista}')">${formatarTelefoneDisplay(entrega.telefoneMotorista)}</a></td>
-                        <td>${entrega.origem}</td>
-                        <td>${entrega.destino}</td>
-                        <td>${entrega.freteEmpresa ? 'R$ ' + entrega.freteEmpresa.toFixed(2).replace('.', ',') : '-'}</td>
-                        <td>${entrega.freteMotorista ? 'R$ ' + entrega.freteMotorista.toFixed(2).replace('.', ',') : '-'}</td>
-                        <td class="status-${entrega.status}">
-                            <select class="status-select" onchange="atualizarStatus(this, '${id}')">
-                                <option value="coletando" ${entrega.status === 'coletando' ? 'selected' : ''}>Coletando</option>
-                                <option value="transito" ${entrega.status === 'transito' ? 'selected' : ''}>Em trânsito</option>
-                                <option value="parado" ${entrega.status === 'parado' ? 'selected' : ''}>Parado</option>
-                                <option value="entregue" ${entrega.status === 'entregue' ? 'selected' : ''}>Entregue</option>
-                            </select>
-                        </td>
-                        <td>${prazoFormatado}</td>
-                        <td>${entrega.observacao || '-'}</td>
-                        <td class="action-buttons">
-                            <button class="edit-btn" onclick="editarLinha(this)">Editar</button>
-                            <button class="delete-btn" onclick="excluirLinha(this)">Excluir</button>
-                        </td>
-                    `;
-                    
-                    tabela.appendChild(row);
+                    adicionarLinhaTabela(tabela, id, entrega);
                 });
                 
                 proximoId = Object.keys(entregas).length + 1;
             });
+        }
+        
+        // Função auxiliar para adicionar uma linha na tabela
+        function adicionarLinhaTabela(tabela, id, entrega) {
+            // Formata a data diretamente do valor salvo (formato YYYY-MM-DD)
+            const [ano, mes, dia] = entrega.data.split('-');
+            const dataFormatada = `${dia}/${mes}/${ano}`;
+            
+            let prazoFormatado = '-';
+            if (entrega.prazo) {
+                const [anoP, mesP, diaP] = entrega.prazo.split('-');
+                prazoFormatado = `${diaP}/${mesP}/${anoP}`;
+            }
+            
+            const row = document.createElement('tr');
+            row.dataset.id = id;
+            row.innerHTML = `
+                <td>${dataFormatada}</td>
+                <td>${entrega.vendedor}</td>
+                <td>${entrega.cliente}</td>
+                <td><a href="#" class="whatsapp-link" onclick="copiarNumero('${entrega.telefoneCliente}')">${formatarTelefoneDisplay(entrega.telefoneCliente)}</a></td>
+                <td>${entrega.motorista}</td>
+                <td><a href="#" class="whatsapp-link" onclick="copiarNumero('${entrega.telefoneMotorista}')">${formatarTelefoneDisplay(entrega.telefoneMotorista)}</a></td>
+                <td>${entrega.origem}</td>
+                <td>${entrega.destino}</td>
+                <td>${entrega.freteEmpresa ? 'R$ ' + entrega.freteEmpresa.toFixed(2).replace('.', ',') : '-'}</td>
+                <td>${entrega.freteMotorista ? 'R$ ' + entrega.freteMotorista.toFixed(2).replace('.', ',') : '-'}</td>
+                <td class="status-${entrega.status}">
+                    <select class="status-select" onchange="atualizarStatus(this, '${id}')">
+                        <option value="coletando" ${entrega.status === 'coletando' ? 'selected' : ''}>Coletando</option>
+                        <option value="transito" ${entrega.status === 'transito' ? 'selected' : ''}>Em trânsito</option>
+                        <option value="parado" ${entrega.status === 'parado' ? 'selected' : ''}>Parado</option>
+                        <option value="entregue" ${entrega.status === 'entregue' ? 'selected' : ''}>Entregue</option>
+                    </select>
+                </td>
+                <td>${prazoFormatado}</td>
+                <td>${entrega.observacao || '-'}</td>
+                <td class="action-buttons">
+                    <button class="edit-btn" onclick="editarLinha(this)">Editar</button>
+                    <button class="delete-btn" onclick="excluirLinha(this)">Excluir</button>
+                </td>
+            `;
+            
+            tabela.appendChild(row);
+        }
+        
+        // Função para carregar dados do mês selecionado
+        function carregarMes() {
+            const mes = document.getElementById('mesFilter').value;
+            const ano = document.getElementById('anoFilter').value;
+            
+            // Limpar filtros ativos
+            document.getElementById('vendedorFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            
+            // Carrega todos os dados e filtra localmente
+            entregasRef.once('value', (snapshot) => {
+                const entregas = snapshot.val() || {};
+                const tabela = document.getElementById('corpoTabela');
+                tabela.innerHTML = '';
+                
+                let encontrouDados = false;
+                
+                Object.keys(entregas).forEach(id => {
+                    const entrega = entregas[id];
+                    const dataEntrega = entrega.data; // Formato esperado: YYYY-MM-DD
+                    
+                    // Verifica se a entrega é do mês/ano selecionado
+                    if (dataEntrega) {
+                        const [anoEntrega, mesEntrega] = dataEntrega.split('-');
+                        
+                        if (mesEntrega === mes && anoEntrega === ano) {
+                            encontrouDados = true;
+                            adicionarLinhaTabela(tabela, id, entrega);
+                        }
+                    }
+                });
+                
+                if (!encontrouDados) {
+                    tabela.innerHTML = '<tr><td colspan="14" class="empty-message">Nenhuma entrega encontrada para este mês</td></tr>';
+                }
+            });
+        }
+        
+        // Função para mostrar todas as entregas
+        function mostrarTodasEntregas() {
+            carregarDados();
         }
         
         // Função para filtrar a tabela
@@ -823,15 +883,6 @@
                 
                 linha.style.display = mostraLinha ? '' : 'none';
             });
-        }
-        
-        // Função para carregar dados do mês selecionado
-        function carregarMes() {
-            const mes = document.getElementById('mesFilter').value;
-            const ano = document.getElementById('anoFilter').value;
-            
-            // Aqui você implementaria a filtragem por mês/ano
-            alert(`Filtrando por ${mes}/${ano}...`);
         }
         
         // Função para exportar para Excel
