@@ -86,6 +86,7 @@
             to { transform: translateX(0); opacity: 1; }
         }
         
+        /* Tabs */
         .tabs {
             display: flex;
             margin-bottom: 20px;
@@ -126,6 +127,7 @@
             font-size: 16px;
         }
         
+        /* Filtros */
         .filters-container {
             background-color: var(--white);
             padding: 20px;
@@ -180,6 +182,7 @@
             border-top: 1px solid #f0f0f0;
         }
         
+        /* Botões */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -255,6 +258,7 @@
             background-color: #f8f9fa;
         }
         
+        /* Tabela */
         .table-container {
             background-color: var(--white);
             border-radius: var(--border-radius);
@@ -372,6 +376,7 @@
             color: var(--danger-color);
         }
         
+        /* Linha em edição */
         .edit-row {
             background-color: #fffaf0 !important;
         }
@@ -396,6 +401,7 @@
             border-color: var(--primary-color);
         }
         
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -443,6 +449,7 @@
             gap: 12px;
         }
         
+        /* Mensagem vazia */
         .empty-message {
             text-align: center;
             padding: 40px 20px;
@@ -457,6 +464,7 @@
             display: block;
         }
         
+        /* Responsividade */
         @media (max-width: 1200px) {
             table {
                 display: block;
@@ -498,6 +506,7 @@
             <i class="fas fa-check-circle"></i> Número copiado para a área de transferência!
         </div>
         
+        <!-- Modal para senha -->
         <div id="passwordModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
@@ -517,6 +526,7 @@
             </div>
         </div>
         
+        <!-- Abas para filtros rápidos -->
         <div class="tabs">
             <div class="tab active" onclick="filtrarPorAba('todos')">
                 <i class="fas fa-list"></i> Todos
@@ -535,6 +545,7 @@
             </div>
         </div>
         
+        <!-- Filtros -->
         <div class="filters-container">
             <div class="filters-row">
                 <div class="filter-group">
@@ -606,6 +617,7 @@
             </div>
         </div>
         
+        <!-- Tabela -->
         <div class="table-container">
             <table id="tabelaEntregas">
                 <thead>
@@ -634,7 +646,7 @@
     </div>
 
     <script>
-        // Configuração do Firebase
+        // Configuração do Firebase (substitua com suas credenciais)
         const firebaseConfig = {
             apiKey: "AIzaSyAG60_tih4qVGIlT1bs_kt-_E_77xw-XX8",
             authDomain: "acompanhamento-transportes.firebaseapp.com",
@@ -650,10 +662,14 @@
         const database = firebase.database();
         const entregasRef = database.ref('entregas');
         
-        // Variáveis para controle
+        // Variáveis para controle de exclusão
         let currentDeleteId = null;
-        const SENHA_EXCLUSAO = "axd236";
+        const SENHA_EXCLUSAO = "axd236"; // Defina sua senha aqui
+        
+        // Variável para controle do listener do Firebase
         let firebaseListener = null;
+        
+        // Variável para armazenar o estado atual dos filtros
         let currentFilters = {
             vendedor: '',
             status: '',
@@ -662,7 +678,7 @@
             abaAtiva: 'todos'
         };
 
-        // Funções básicas
+        // Função para mostrar o modal de senha
         function showPasswordModal(id) {
             currentDeleteId = id;
             document.getElementById('passwordModal').style.display = 'flex';
@@ -671,11 +687,13 @@
             document.getElementById('passwordInput').focus();
         }
         
+        // Função para cancelar a exclusão
         function cancelDelete() {
             document.getElementById('passwordModal').style.display = 'none';
             currentDeleteId = null;
         }
         
+        // Função para confirmar a exclusão após verificar a senha
         function confirmDelete() {
             const senha = document.getElementById('passwordInput').value;
             if (senha === SENHA_EXCLUSAO) {
@@ -687,36 +705,380 @@
             }
         }
         
+        // Função para excluir a linha após confirmação da senha
         function excluirLinhaConfirmada(id) {
             entregasRef.child(id).remove()
-                .then(() => aplicarFiltrosAtuais())
+                .then(() => {
+                    // Mantém os filtros atuais após exclusão
+                    aplicarFiltrosAtuais();
+                })
                 .catch(error => {
                     console.error("Erro ao excluir:", error);
                     alert("Erro ao excluir a entrega. Por favor, tente novamente.");
                 });
         }
         
+        // Função para filtrar por aba - CORREÇÃO PRINCIPAL
+        function filtrarPorAba(aba) {
+            // Atualiza a aba ativa
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.textContent.toLowerCase().includes(aba) || 
+                    (aba === 'todos' && tab.textContent.includes('Todos'))) {
+                    tab.classList.add('active');
+                }
+            });
+
+            // Atualiza o estado dos filtros
+            currentFilters.abaAtiva = aba;
+            
+            // Atualiza o filtro de status
+            const statusFilter = document.getElementById('statusFilter');
+            if (aba === 'todos') {
+                statusFilter.value = '';
+                currentFilters.status = '';
+            } else {
+                statusFilter.value = aba;
+                currentFilters.status = aba;
+            }
+
+            // Aplica o filtro
+            filtrarTabela();
+        }
+        
+        // Função para copiar número para área de transferência
+        function copiarNumero(numero) {
+            navigator.clipboard.writeText(numero).then(() => {
+                const notification = document.getElementById('copyNotification');
+                notification.style.display = 'block';
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 3000);
+            }).catch(err => {
+                console.error('Erro ao copiar número: ', err);
+                alert('Não foi possível copiar o número. Por favor, copie manualmente.');
+            });
+            return false; // Evita que o link siga o href
+        }
+        
+        // Função para adicionar nova linha editável
+        function adicionarNovaLinha() {
+            const tabela = document.getElementById('corpoTabela');
+            
+            // Verifica se já existe uma linha em edição
+            const existingEditRow = tabela.querySelector('.edit-row');
+            if (existingEditRow) {
+                alert('Conclua a edição atual antes de adicionar uma nova entrega.');
+                return;
+            }
+            
+            // Cria uma nova linha com campos editáveis
+            const newRow = document.createElement('tr');
+            newRow.className = 'edit-row';
+            newRow.dataset.id = 'new-' + Date.now();
+            
+            // Obtém a data atual no formato YYYY-MM-DD
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const formattedDate = `${year}-${month}-${day}`;
+            
+            newRow.innerHTML = `
+                <td><input type="date" value="${formattedDate}"></td>
+                <td>
+                    <select>
+                        <option value="MARCIA">MARCIA</option>
+                        <option value="MARIANE">MARIANE</option>
+                        <option value="JEISE">JEISE</option>
+                        <option value="MONICA">MONICA</option>
+                        <option value="ANA">ANA</option>
+                        <option value="MARIVAL">MARIVAL</option>
+                        <option value="GENIVALDO">GENIVALDO</option>
+                    </select>
+                </td>
+                <td><input type="text" placeholder="Nome do cliente"></td>
+                <td><input type="text" placeholder="(XX) XXXXX-XXXX"></td>
+                <td><input type="text" placeholder="Nome do motorista"></td>
+                <td><input type="text" placeholder="(XX) XXXXX-XXXX"></td>
+                <td><input type="text" placeholder="Cidade/UF"></td>
+                <td><input type="text" placeholder="Cidade/UF"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td>
+                    <select>
+                        <option value="coletando">Coletando</option>
+                        <option value="transito">Em trânsito</option>
+                        <option value="parado">Parado</option>
+                        <option value="entregue">Entregue</option>
+                    </select>
+                </td>
+                <td><input type="date"></td>
+                <td><input type="text" placeholder="Observações"></td>
+                <td class="action-buttons">
+                    <button class="btn btn-success" onclick="salvarLinha(this)">
+                        <i class="fas fa-save"></i> Salvar
+                    </button>
+                    <button class="btn btn-outline" onclick="cancelarEdicao(this)">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </td>
+            `;
+            
+            // Adiciona máscara aos campos de telefone
+            newRow.querySelectorAll('input[type="text"]').forEach(input => {
+                if (input.placeholder.includes('(XX)')) {
+                    input.addEventListener('input', formatarTelefoneInput);
+                } else if (input.placeholder.startsWith('R$')) {
+                    input.addEventListener('input', formatarMoedaInput);
+                }
+            });
+            
+            // Adiciona a nova linha no início da tabela
+            tabela.insertBefore(newRow, tabela.firstChild);
+            
+            // Foca no primeiro campo
+            newRow.querySelector('input').focus();
+        }
+        
+        // Função para salvar uma linha nova ou editada - CORREÇÃO PRINCIPAL
+        function salvarLinha(botao) {
+            const linha = botao.closest('tr');
+            const inputs = linha.querySelectorAll('input, select');
+            const id = linha.dataset.id;
+            
+            // Validação básica
+            if (!inputs[0].value || !inputs[2].value || !inputs[3].value || !inputs[4].value || !inputs[5].value) {
+                alert('Por favor, preencha os campos obrigatórios: Data, Cliente, Telefone Cliente, Motorista e Telefone Motorista');
+                return;
+            }
+            
+            // Cria objeto com os dados da entrega
+            const entrega = {
+                data: inputs[0].value,
+                vendedor: inputs[1].value,
+                cliente: inputs[2].value,
+                telefoneCliente: inputs[3].value.replace(/\D/g, ''),
+                motorista: inputs[4].value,
+                telefoneMotorista: inputs[5].value.replace(/\D/g, ''),
+                origem: inputs[6].value,
+                destino: inputs[7].value,
+                freteEmpresa: inputs[8].value ? parseFloat(inputs[8].value.replace(/[^\d,]/g, '').replace(',', '.')) : 0,
+                freteMotorista: inputs[9].value ? parseFloat(inputs[9].value.replace(/[^\d,]/g, '').replace(',', '.')) : 0,
+                status: inputs[10].value,
+                prazo: inputs[11].value || '',
+                observacao: inputs[12].value || '',
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            };
+            
+            // Desativa o botão para evitar múltiplos cliques
+            botao.disabled = true;
+            
+            if (id.startsWith('new-')) {
+                // Nova entrega - adiciona ao Firebase
+                const newRef = entregasRef.push();
+                newRef.set(entrega)
+                    .then(() => {
+                        // Remove a linha de edição
+                        linha.remove();
+                        // Mantém os filtros atuais
+                        aplicarFiltrosAtuais();
+                    })
+                    .catch(error => {
+                        console.error("Erro ao salvar:", error);
+                        alert("Erro ao salvar os dados. Por favor, tente novamente.");
+                        botao.disabled = false;
+                    });
+            } else {
+                // Edição de entrega existente
+                entregasRef.child(id).update(entrega)
+                    .then(() => {
+                        // Não remove a linha, apenas atualiza os dados
+                        // A linha será atualizada automaticamente pelo listener do Firebase
+                        botao.disabled = false;
+                    })
+                    .catch(error => {
+                        console.error("Erro ao atualizar:", error);
+                        alert("Erro ao atualizar os dados. Por favor, tente novamente.");
+                        botao.disabled = false;
+                    });
+            }
+        }
+        
+        // Função para aplicar os filtros atuais
+        function aplicarFiltrosAtuais() {
+            // Verifica se estamos em uma visualização específica (mês/ano ou filtros)
+            if (currentFilters.mes && currentFilters.ano) {
+                carregarMes(currentFilters.mes, currentFilters.ano);
+            } else if (currentFilters.vendedor || currentFilters.status || currentFilters.abaAtiva !== 'todos') {
+                filtrarTabela();
+            } else {
+                // Se não houver filtros específicos, mostra todas as entregas
+                mostrarTodasEntregas();
+            }
+        }
+        
+        // Função para editar uma linha existente
+        function editarLinha(botao) {
+            const linha = botao.closest('tr');
+            const id = linha.dataset.id;
+            const celulas = linha.cells;
+            
+            // Verifica se já existe uma linha em edição
+            const existingEditRow = document.querySelector('.edit-row');
+            if (existingEditRow && existingEditRow !== linha) {
+                alert('Conclua a edição atual antes de editar outra entrega.');
+                return;
+            }
+            
+            // Salva o conteúdo original para possível cancelamento
+            linha.dataset.originalContent = linha.innerHTML;
+            
+            // Pega a data no formato DD/MM/YYYY e converte para YYYY-MM-DD
+            const dataDisplay = celulas[0].textContent;
+            const [dia, mes, ano] = dataDisplay.split('/');
+            const dataFormatada = `${ano}-${mes}-${dia}`;
+            
+            // Converte o prazo para o formato do input (se existir)
+            const prazoInput = celulas[11].textContent;
+            let prazoFormatado = '';
+            if (prazoInput !== '-') {
+                const [diaP, mesP, anoP] = prazoInput.split('/');
+                prazoFormatado = `${anoP}-${mesP}-${diaP}`;
+            }
+            
+            // Obtém o status atual
+            const statusBadge = celulas[10].querySelector('.status-badge');
+            const statusAtual = statusBadge ? statusBadge.className.replace('status-badge status-', '') : '';
+            
+            // Cria os campos editáveis
+            linha.className = 'edit-row';
+            linha.innerHTML = `
+                <td><input type="date" value="${dataFormatada}"></td>
+                <td>
+                    <select>
+                        <option value="MARCIA" ${celulas[1].textContent === 'MARCIA' ? 'selected' : ''}>MARCIA</option>
+                        <option value="MARIANE" ${celulas[1].textContent === 'MARIANE' ? 'selected' : ''}>MARIANE</option>
+                        <option value="JEISE" ${celulas[1].textContent === 'JEISE' ? 'selected' : ''}>JEISE</option>
+                        <option value="MONICA" ${celulas[1].textContent === 'MONICA' ? 'selected' : ''}>MONICA</option>
+                        <option value="ANA" ${celulas[1].textContent === 'ANA' ? 'selected' : ''}>ANA</option>
+                        <option value="MARIVAL" ${celulas[1].textContent === 'MARIVAL' ? 'selected' : ''}>MARIVAL</option>
+                        <option value="GENIVALDO" ${celulas[1].textContent === 'GENIVALDO' ? 'selected' : ''}>GENIVALDO</option>
+                    </select>
+                </td>
+                <td><input type="text" value="${celulas[2].textContent}"></td>
+                <td><input type="text" value="${formatarTelefoneDisplay(celulas[3].querySelector('a').textContent)}"></td>
+                <td><input type="text" value="${celulas[4].textContent}"></td>
+                <td><input type="text" value="${formatarTelefoneDisplay(celulas[5].querySelector('a').textContent)}"></td>
+                <td><input type="text" value="${celulas[6].textContent}"></td>
+                <td><input type="text" value="${celulas[7].textContent}"></td>
+                <td><input type="text" value="${celulas[8].textContent === '-' ? '' : celulas[8].textContent}"></td>
+                <td><input type="text" value="${celulas[9].textContent === '-' ? '' : celulas[9].textContent}"></td>
+                <td>
+                    <select>
+                        <option value="coletando" ${statusAtual === 'coletando' ? 'selected' : ''}>Coletando</option>
+                        <option value="transito" ${statusAtual === 'transito' ? 'selected' : ''}>Em trânsito</option>
+                        <option value="parado" ${statusAtual === 'parado' ? 'selected' : ''}>Parado</option>
+                        <option value="entregue" ${statusAtual === 'entregue' ? 'selected' : ''}>Entregue</option>
+                    </select>
+                </td>
+                <td><input type="date" value="${prazoFormatado}"></td>
+                <td><input type="text" value="${celulas[12].textContent === '-' ? '' : celulas[12].textContent}"></td>
+                <td class="action-buttons">
+                    <button class="btn btn-success" onclick="salvarLinha(this)">
+                        <i class="fas fa-save"></i> Salvar
+                    </button>
+                    <button class="btn btn-outline" onclick="cancelarEdicao(this)">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </td>
+            `;
+            
+            // Adiciona máscara aos campos de telefone
+            linha.querySelectorAll('input[type="text"]').forEach(input => {
+                if (input.value.includes('(')) {
+                    input.addEventListener('input', formatarTelefoneInput);
+                } else if (input.value.startsWith('R$')) {
+                    input.addEventListener('input', formatarMoedaInput);
+                }
+            });
+            
+            // Foca no primeiro campo
+            linha.querySelector('input').focus();
+        }
+        
+        // Função para cancelar edição
+        function cancelarEdicao(botao) {
+            const linha = botao.closest('tr');
+            
+            if (linha.dataset.originalContent) {
+                // Restaura o conteúdo original (edição)
+                linha.innerHTML = linha.dataset.originalContent;
+                linha.className = '';
+            } else {
+                // Remove a linha (adição nova)
+                linha.remove();
+            }
+        }
+        
+        // Função para excluir uma linha (agora com verificação de senha)
+        function excluirLinha(botao) {
+            const id = botao.closest('tr').dataset.id;
+            showPasswordModal(id);
+        }
+        
+        // Função para atualizar o status diretamente
+        function atualizarStatus(select, id) {
+            const novoStatus = select.value;
+            entregasRef.child(id).update({
+                status: novoStatus,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            })
+            .catch(error => {
+                console.error("Erro ao atualizar status:", error);
+                alert("Erro ao atualizar o status. Por favor, tente novamente.");
+            });
+        }
+        
+        // Função para formatar telefone durante a digitação
+        function formatarTelefoneInput(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 0) {
+                value = '(' + value;
+            }
+            if (value.length > 3) {
+                value = value.substring(0, 3) + ') ' + value.substring(3);
+            }
+            if (value.length > 10) {
+                value = value.substring(0, 10) + '-' + value.substring(10, 15);
+            }
+            e.target.value = value;
+        }
+        
+        // Função para formatar telefone para exibição
         function formatarTelefoneDisplay(numero) {
             const nums = numero.replace(/\D/g, '');
             return `(${nums.substring(0,2)}) ${nums.substring(2,7)}-${nums.substring(7,11)}`;
         }
         
-        function getStatusText(status) {
-            const statusTexts = {
-                'coletando': 'Coletando',
-                'transito': 'Em Trânsito',
-                'parado': 'Parado',
-                'entregue': 'Entregue'
-            };
-            return statusTexts[status] || status;
+        // Função para formatar moeda durante a digitação
+        function formatarMoedaInput(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = (value / 100).toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            e.target.value = 'R$ ' + value;
         }
-
-        // Funções principais corrigidas
+        
+        // Função para carregar dados do Firebase
         function carregarDados() {
+            // Remove listener anterior se existir
             if (firebaseListener) {
                 entregasRef.off('value', firebaseListener);
             }
             
+            // Adiciona novo listener
             firebaseListener = entregasRef.orderByChild('timestamp').on('value', (snapshot) => {
                 const entregas = snapshot.val() || {};
                 const tabela = document.getElementById('corpoTabela');
@@ -734,101 +1096,25 @@
                     return;
                 }
                 
+                // Converter para array e ordenar por timestamp (mais recente primeiro)
                 const entregasArray = Object.entries(entregas).map(([id, entrega]) => ({ id, ...entrega }));
                 entregasArray.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                 
+                // Adicionar linhas na ordem inversa (mais recente primeiro)
                 entregasArray.forEach(({ id, ...entrega }) => {
                     adicionarLinhaTabela(tabela, id, entrega);
                 });
                 
-                aplicarFiltrosAtuais();
-            });
-        }
-
-        function filtrarTabela() {
-            const vendedor = document.getElementById('vendedorFilter').value.toLowerCase();
-            const status = document.getElementById('statusFilter').value;
-            
-            currentFilters.vendedor = vendedor;
-            currentFilters.status = status;
-            currentFilters.mes = '';
-            currentFilters.ano = '';
-            
-            const tabela = document.getElementById('corpoTabela');
-            const linhas = tabela.querySelectorAll('tr');
-            let encontrouDados = false;
-            
-            const emptyRow = tabela.querySelector('.empty-message');
-            if (emptyRow) emptyRow.remove();
-            
-            linhas.forEach(linha => {
-                if (linha.classList.contains('empty-message') || linha.classList.contains('edit-row')) return;
-                
-                const colVendedor = linha.cells[1]?.textContent.toLowerCase() || '';
-                const colStatusBadge = linha.querySelector('.status-badge');
-                const colStatus = colStatusBadge ? colStatusBadge.className.replace('status-badge status-', '') : '';
-                
-                const mostraLinha = 
-                    (vendedor === '' || colVendedor.includes(vendedor)) &&
-                    (status === '' || colStatus === status);
-                
-                linha.style.display = mostraLinha ? '' : 'none';
-                if (mostraLinha) encontrouDados = true;
-            });
-            
-            if (!encontrouDados) {
-                tabela.innerHTML = `
-                    <tr>
-                        <td colspan="14" class="empty-message">
-                            <i class="fas fa-search"></i>
-                            <p>Nenhuma entrega encontrada com os filtros aplicados</p>
-                        </td>
-                    </tr>
-                `;
-            }
-        }
-
-        function aplicarFiltrosAtuais() {
-            if (currentFilters.mes && currentFilters.ano) {
-                carregarMes(currentFilters.mes, currentFilters.ano);
-            } else {
-                if (currentFilters.vendedor || currentFilters.status) {
+                // Aplica os filtros atuais após carregar os dados
+                if (currentFilters.vendedor || currentFilters.status || currentFilters.abaAtiva !== 'todos') {
                     filtrarTabela();
-                } else {
-                    mostrarTodasEntregas();
-                }
-            }
-        }
-
-        function filtrarPorAba(aba) {
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-                if (tab.textContent.toLowerCase().includes(aba) || 
-                    (aba === 'todos' && tab.textContent.includes('Todos'))) {
-                    tab.classList.add('active');
                 }
             });
-
-            currentFilters.abaAtiva = aba;
-            currentFilters.vendedor = '';
-            currentFilters.mes = '';
-            currentFilters.ano = '';
-            
-            const statusFilter = document.getElementById('statusFilter');
-            if (aba === 'todos') {
-                statusFilter.value = '';
-                currentFilters.status = '';
-            } else {
-                statusFilter.value = aba;
-                currentFilters.status = aba;
-            }
-
-            document.getElementById('vendedorFilter').value = '';
-            aplicarFiltrosAtuais();
         }
-
-        // Funções restantes
+        
+        // Função auxiliar para adicionar uma linha na tabela
         function adicionarLinhaTabela(tabela, id, entrega) {
+            // Formata a data diretamente do valor salvo (formato YYYY-MM-DD)
             const [ano, mes, dia] = entrega.data.split('-');
             const dataFormatada = `${dia}/${mes}/${ano}`;
             
@@ -863,6 +1149,12 @@
                     <span class="status-badge status-${entrega.status}">
                         ${getStatusText(entrega.status)}
                     </span>
+                    <select class="status-select" onchange="atualizarStatus(this, '${id}')" style="display: none;">
+                        <option value="coletando" ${entrega.status === 'coletando' ? 'selected' : ''}>Coletando</option>
+                        <option value="transito" ${entrega.status === 'transito' ? 'selected' : ''}>Em trânsito</option>
+                        <option value="parado" ${entrega.status === 'parado' ? 'selected' : ''}>Parado</option>
+                        <option value="entregue" ${entrega.status === 'entregue' ? 'selected' : ''}>Entregue</option>
+                    </select>
                 </td>
                 <td>${prazoFormatado}</td>
                 <td>${entrega.observacao || '-'}</td>
@@ -878,8 +1170,209 @@
             
             tabela.appendChild(row);
         }
-
-        // Event listeners
+        
+        // Função para obter texto do status
+        function getStatusText(status) {
+            const statusTexts = {
+                'coletando': 'Coletando',
+                'transito': 'Em Trânsito',
+                'parado': 'Parado',
+                'entregue': 'Entregue'
+            };
+            return statusTexts[status] || status;
+        }
+        
+        // Função para carregar dados do mês selecionado
+        function carregarMes(mes = null, ano = null) {
+            const mesSelecionado = mes || document.getElementById('mesFilter').value;
+            const anoSelecionado = ano || document.getElementById('anoFilter').value;
+            
+            // Atualiza os filtros atuais
+            currentFilters.mes = mesSelecionado;
+            currentFilters.ano = anoSelecionado;
+            currentFilters.vendedor = '';
+            currentFilters.status = '';
+            
+            // Atualiza os controles da interface
+            document.getElementById('mesFilter').value = mesSelecionado;
+            document.getElementById('anoFilter').value = anoSelecionado;
+            document.getElementById('vendedorFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            
+            // Remove listener anterior se existir
+            if (firebaseListener) {
+                entregasRef.off('value', firebaseListener);
+            }
+            
+            // Carrega todos os dados e filtra localmente
+            firebaseListener = entregasRef.orderByChild('timestamp').once('value', (snapshot) => {
+                const entregas = snapshot.val() || {};
+                const tabela = document.getElementById('corpoTabela');
+                tabela.innerHTML = '';
+                
+                let encontrouDados = false;
+                
+                // Converter para array e ordenar por timestamp (mais recente primeiro)
+                const entregasArray = Object.entries(entregas).map(([id, entrega]) => ({ id, ...entrega }));
+                entregasArray.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                
+                // Adicionar linhas na ordem inversa (mais recente primeiro)
+                entregasArray.forEach(({ id, ...entrega }) => {
+                    const dataEntrega = entrega.data; // Formato esperado: YYYY-MM-DD
+                    
+                    // Verifica se a entrega é do mês/ano selecionado
+                    if (dataEntrega) {
+                        const [anoEntrega, mesEntrega] = dataEntrega.split('-');
+                        
+                        if (mesEntrega === mesSelecionado && anoEntrega === anoSelecionado) {
+                            encontrouDados = true;
+                            adicionarLinhaTabela(tabela, id, entrega);
+                        }
+                    }
+                });
+                
+                if (!encontrouDados) {
+                    tabela.innerHTML = `
+                        <tr>
+                            <td colspan="14" class="empty-message">
+                                <i class="fas fa-calendar-times"></i>
+                                <p>Nenhuma entrega encontrada para este mês</p>
+                            </td>
+                        </tr>
+                    `;
+                }
+                
+                // Restaura o listener para atualizações em tempo real
+                carregarDados();
+            });
+        }
+        
+        // Função para mostrar todas as entregas
+        function mostrarTodasEntregas() {
+            // Limpa os filtros de mês/ano
+            currentFilters.mes = '';
+            currentFilters.ano = '';
+            currentFilters.vendedor = '';
+            currentFilters.status = '';
+            currentFilters.abaAtiva = 'todos';
+            
+            // Atualiza a aba ativa
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.textContent.includes('Todos')) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // Limpa os controles de mês/ano
+            const dataAtual = new Date();
+            document.getElementById('mesFilter').value = (dataAtual.getMonth() + 1).toString().padStart(2, '0');
+            document.getElementById('anoFilter').value = dataAtual.getFullYear().toString();
+            document.getElementById('vendedorFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            
+            // Carrega todos os dados
+            carregarDados();
+        }
+        
+        // Função para filtrar a tabela
+        function filtrarTabela() {
+            const vendedor = document.getElementById('vendedorFilter').value.toLowerCase();
+            const status = document.getElementById('statusFilter').value;
+            
+            // Atualiza os filtros atuais
+            currentFilters.vendedor = vendedor;
+            currentFilters.status = status;
+            currentFilters.mes = '';
+            currentFilters.ano = '';
+            
+            const linhas = document.querySelectorAll('#corpoTabela tr:not(.edit-row)');
+            let encontrouDados = false;
+            
+            linhas.forEach(linha => {
+                const colVendedor = linha.cells[1].textContent.toLowerCase();
+                const colStatus = linha.querySelector('.status-badge')?.className.includes(status) || false;
+                
+                const mostraLinha = 
+                    (vendedor === '' || colVendedor === vendedor) &&
+                    (status === '' || colStatus);
+                
+                linha.style.display = mostraLinha ? '' : 'none';
+                
+                if (mostraLinha) {
+                    encontrouDados = true;
+                }
+            });
+            
+            // Mostra mensagem se nenhum resultado for encontrado
+            const emptyRow = document.querySelector('#corpoTabela .empty-message');
+            if (!encontrouDados && linhas.length > 0 && !emptyRow) {
+                document.getElementById('corpoTabela').innerHTML = `
+                    <tr>
+                        <td colspan="14" class="empty-message">
+                            <i class="fas fa-search"></i>
+                            <p>Nenhuma entrega encontrada com os filtros aplicados</p>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+        
+        // Função para exportar para Excel
+        function exportarExcel() {
+            const tabela = document.getElementById('tabelaEntregas');
+            const linhasVisiveis = Array.from(tabela.querySelectorAll('tbody tr:not(.edit-row)'))
+                .filter(linha => linha.style.display !== 'none');
+            
+            if (linhasVisiveis.length === 0) {
+                alert('Nenhum dado para exportar!');
+                return;
+            }
+            
+            // Criar uma nova planilha
+            const wb = XLSX.utils.book_new();
+            
+            // Converter a tabela para uma matriz de dados
+            const dados = [];
+            
+            // Adicionar cabeçalhos
+            const cabecalhos = Array.from(tabela.querySelectorAll('thead th'))
+                .map(th => th.textContent);
+            // Remove a coluna de ações
+            cabecalhos.pop();
+            dados.push(cabecalhos);
+            
+            // Adicionar linhas de dados (apenas as visíveis)
+            linhasVisiveis.forEach(linha => {
+                const celulas = Array.from(linha.cells);
+                const linhaDados = celulas.map(celula => {
+                    // Remove os links de WhatsApp, mantendo apenas o texto
+                    if (celula.querySelector('.whatsapp-link')) {
+                        return celula.querySelector('.whatsapp-link').textContent.replace('WhatsApp', '').trim();
+                    }
+                    // Pega o texto do status
+                    if (celula.querySelector('.status-badge')) {
+                        return celula.querySelector('.status-badge').textContent;
+                    }
+                    return celula.textContent;
+                });
+                // Remove a coluna de ações
+                linhaDados.pop();
+                dados.push(linhaDados);
+            });
+            
+            // Criar planilha
+            const ws = XLSX.utils.aoa_to_sheet(dados);
+            
+            // Adicionar planilha ao livro
+            XLSX.utils.book_append_sheet(wb, ws, "Entregas");
+            
+            // Gerar arquivo Excel
+            const nomeArquivo = `entregas_${document.getElementById('mesFilter').value}_${document.getElementById('anoFilter').value}.xlsx`;
+            XLSX.writeFile(wb, nomeArquivo);
+        }
+        
+        // Adicionar eventos aos filtros
         document.getElementById('vendedorFilter').addEventListener('change', () => {
             currentFilters.vendedor = document.getElementById('vendedorFilter').value;
             filtrarTabela();
@@ -890,14 +1383,16 @@
             filtrarTabela();
         });
         
-        // Inicialização
+        // Definir mês atual como padrão
         const dataAtual = new Date();
         document.getElementById('mesFilter').value = (dataAtual.getMonth() + 1).toString().padStart(2, '0');
         document.getElementById('anoFilter').value = dataAtual.getFullYear().toString();
         
+        // Inicializa os filtros atuais
         currentFilters.mes = document.getElementById('mesFilter').value;
         currentFilters.ano = document.getElementById('anoFilter').value;
         
+        // Carrega os dados quando a página é carregada
         document.addEventListener('DOMContentLoaded', carregarDados);
     </script>
 </body>
