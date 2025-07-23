@@ -361,10 +361,10 @@
         <td></td>
       </tr>
       <tr>
-        <td>Operador:<br><input type="text" id="operador" placeholder="Nome do Operador"></td>
+        <td>Vendedor:<br><input type="text" id="operador" placeholder="Nome do Vendedor"></td>
         <td>Número:<br><input type="text" id="inputNumero" readonly></td>
+        <td>N° Nota Fiscal:<br><input type="text" id="notaFiscal" placeholder="Número da NF"></td>
         <td>Valor de NF:<br><input type="text" id="valorNF" placeholder="R$ 0,00"></td>
-        <td></td>
       </tr>
     </table>
 
@@ -470,16 +470,17 @@
         <th>Observação</th>
       </tr>
       <tr>
-        <td><textarea id="observacao" rows="3" style="resize: none;" placeholder="Observações adicionais"></textarea></td>
+        <td style="height: 120px;"><textarea id="observacao" rows="8" style="resize: none; height: 100%;" placeholder="Observações adicionais"></textarea></td>
       </tr>
     </table>
 
+    <!-- TABELA COM ESPAÇO AUMENTADO PARA O NOME DO MOTORISTA -->
     <table>
       <tr>
-        <td colspan="3">Motorista: <input type="text" id="motoristaNome" placeholder="Nome do Motorista"></td>
-        <td>CPF: <input type="text" id="motoristaCPF" placeholder="000.000.000-00"></td>
-        <td>RG: <input type="text" id="motoristaRG" placeholder="Número do RG"></td>
-        <td>CNH: <input type="text" id="motoristaCNH" placeholder="Número da CNH"></td>
+        <td style="width: 45%;">Motorista: <input type="text" id="motoristaNome" placeholder="Nome do Motorista" style="width: 90%;"></td>
+        <td style="width: 18%;">CPF: <input type="text" id="motoristaCPF" placeholder="000.000.000-00"></td>
+        <td style="width: 18%;">RG: <input type="text" id="motoristaRG" placeholder="Número do RG"></td>
+        <td style="width: 19%;">CNH: <input type="text" id="motoristaCNH" placeholder="Número da CNH"></td>
       </tr>
       <tr>
         <td>Veículo: 
@@ -503,26 +504,6 @@
         </td>
         <td>Placa: <input type="text" id="veiculoPlaca" placeholder="AAA0A00"></td>
         <td>Carreta: <input type="text" id="veiculoCarreta" placeholder="Placa da Carreta"></td>
-        <td>Veículo 2: 
-          <select id="veiculo2">
-            <option value="">Nenhum</option>
-            <option value="Toco">Toco</option>
-            <option value="Truck">Truck</option>
-            <option value="Bitruck">Bitruck</option>
-            <option value="Cavalo Mecânico">Cavalo Mecânico</option>
-            <option value="Bitrem">Bitrem</option>
-            <option value="Rodotrem">Rodotrem</option>
-            <option value="Caminhão baú">Caminhão baú</option>
-            <option value="Caminhão Munck">Caminhão Munck</option>
-            <option value="Carreta">Carreta</option>
-            <option value="Vanderléia">Vanderléia</option>
-            <option value="Furgão">Furgão</option>
-            <option value="Camionete">Camionete</option>
-            <option value="Utilitário">Utilitário</option>
-            <option value="Outros">Outros</option>
-          </select>
-        </td>
-        <td>Placa 2: <input type="text" id="veiculo2Placa" placeholder="Placa do Veículo 2"></td>
         <td>Carreta 2: <input type="text" id="veiculo2Carreta" placeholder="Placa da Carreta 2"></td>
       </tr>
     </table>
@@ -821,12 +802,12 @@
         document.getElementById('numeroOrdem').textContent = novoNumero;
         
         const camposParaLimpar = [
-          'operador', 'valorNF', 'remetenteNome', 'remetenteCNPJ', 'remetenteCEP', 'remetenteCidade',
+          'operador', 'valorNF', 'notaFiscal', 'remetenteNome', 'remetenteCNPJ', 'remetenteCEP', 'remetenteCidade',
           'destinatarioNome', 'destinatarioCNPJ', 'destinatarioCEP', 'destinatarioCidade',
           'produtoDescricao', 'pesoUnitario', 'pesoBruto', 
           'destino', 'destinoCEP', 'quantidade', 'pedido', 'observacao',
           'motoristaNome', 'motoristaCPF', 'motoristaRG', 'motoristaCNH',
-          'veiculoPlaca', 'veiculoCarreta', 'veiculo2Placa', 'veiculo2Carreta'
+          'veiculoPlaca', 'veiculoCarreta', 'veiculo2Carreta'
         ];
         
         camposParaLimpar.forEach(id => {
@@ -839,7 +820,6 @@
         
         document.getElementById('especie').selectedIndex = 0;
         document.getElementById('veiculo').selectedIndex = 0;
-        document.getElementById('veiculo2').selectedIndex = 0;
         document.getElementById('remetenteUF').value = 'BA';
         document.getElementById('destinatarioUF').value = 'BA';
         
