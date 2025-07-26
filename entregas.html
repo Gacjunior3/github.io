@@ -214,7 +214,6 @@
             box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
         }
 
-        /* Estilos para as abas */
         .tabs {
             display: flex;
             margin-bottom: 15px;
@@ -246,7 +245,6 @@
             background-color: #e6e6e6;
         }
 
-        /* Modal para senha */
         .modal {
             display: none;
             position: fixed;
@@ -285,7 +283,6 @@
 <body>
     <div class="copy-notification" id="copyNotification">Número copiado!</div>
     
-    <!-- Modal para senha -->
     <div id="passwordModal" class="modal">
         <div class="modal-content">
             <h3>Digite a senha para excluir</h3>
@@ -300,7 +297,6 @@
     
     <h1>📦 Acompanhamento de Entregas</h1>
     
-    <!-- Abas para filtros rápidos -->
     <div class="tabs">
         <div class="tab active" onclick="filtrarPorAba('todos')">Todos</div>
         <div class="tab" onclick="filtrarPorAba('coletando')">Coletando</div>
@@ -396,7 +392,7 @@
     </table>
 
     <script>
-        // Configuração do Firebase (substitua com suas credenciais)
+        // Configuração do Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAG60_tih4qVGIlT1bs_kt-_E_77xw-XX8",
             authDomain: "acompanhamento-transportes.firebaseapp.com",
@@ -412,13 +408,64 @@
         const database = firebase.database();
         const entregasRef = database.ref('entregas');
         
-        // Variável para controlar o ID das entregas
+        // Variáveis globais
         let proximoId = 1;
-        
-        // Variáveis para controle de exclusão
         let currentDeleteId = null;
-        const SENHA_EXCLUSAO = "axd236"; // Defina sua senha aqui
+        const SENHA_EXCLUSAO = "axd236";
         
+        // Configuração da API de Voz
+        let speechSynthesis = window.speechSynthesis || window.webkitSpeechSynthesis;
+        let lastAddedDeliveryKey = null;
+        
+        // Função para falar um texto
+        function speak(text) {
+            if (!speechSynthesis) {
+                console.log("API de síntese de voz não suportada neste navegador");
+                return;
+            }
+            
+            if (speechSynthesis.speaking) {
+                speechSynthesis.cancel();
+            }
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'pt-BR';
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+            
+            speechSynthesis.speak(utterance);
+        }
+        
+        // Monitorar adições de novas entregas
+        function monitorNewDeliveries() {
+            entregasRef.orderByChild('timestamp').limitToLast(1).on('child_added', (snapshot) => {
+                const newDelivery = snapshot.val();
+                const deliveryKey = snapshot.key;
+                
+                if (deliveryKey !== lastAddedDeliveryKey && lastAddedDeliveryKey !== null) {
+                    lastAddedDeliveryKey = deliveryKey;
+                    
+                    const message = `Nova entrega adicionada para o cliente ${newDelivery.cliente} com destino a ${newDelivery.destino}. Status: ${getStatusName(newDelivery.status)}`;
+                    speak(message);
+                }
+                
+                if (lastAddedDeliveryKey === null) {
+                    lastAddedDeliveryKey = deliveryKey;
+                }
+            });
+        }
+        
+        // Função auxiliar para obter o nome do status
+        function getStatusName(status) {
+            const statusMap = {
+                'coletando': 'Coletando',
+                'transito': 'Em trânsito',
+                'parado': 'Parado',
+                'entregue': 'Entregue'
+            };
+            return statusMap[status] || status;
+        }
+
         // Função para mostrar o modal de senha
         function showPasswordModal(id) {
             currentDeleteId = id;
@@ -457,7 +504,6 @@
         
         // Função para filtrar por aba
         function filtrarPorAba(aba) {
-            // Atualiza a aba ativa
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
                 if (tab.textContent.toLowerCase().includes(aba) || 
@@ -466,7 +512,6 @@
                 }
             });
 
-            // Atualiza o filtro de status
             const statusFilter = document.getElementById('statusFilter');
             if (aba === 'todos') {
                 statusFilter.value = '';
@@ -474,7 +519,6 @@
                 statusFilter.value = aba;
             }
 
-            // Aplica o filtro
             filtrarTabela();
         }
         
@@ -490,19 +534,17 @@
                 console.error('Erro ao copiar número: ', err);
                 alert('Não foi possível copiar o número. Por favor, copie manualmente.');
             });
-            return false; // Evita que o link siga o href
+            return false;
         }
         
         // Função para adicionar nova linha editável
         function adicionarNovaLinha() {
             const tabela = document.getElementById('corpoTabela');
             
-            // Cria uma nova linha com campos editáveis
             const newRow = document.createElement('tr');
             newRow.className = 'edit-row';
             newRow.dataset.id = 'new-' + Date.now();
             
-            // Obtém a data atual no formato YYYY-MM-DD
             const today = new Date();
             const year = today.getFullYear();
             const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -546,7 +588,6 @@
                 </td>
             `;
             
-            // Adiciona máscara aos campos de telefone
             newRow.querySelectorAll('input[type="text"]').forEach(input => {
                 if (input.placeholder.includes('(XX)')) {
                     input.addEventListener('input', formatarTelefoneInput);
@@ -555,10 +596,7 @@
                 }
             });
             
-            // Adiciona a nova linha no início da tabela
             tabela.insertBefore(newRow, tabela.firstChild);
-            
-            // Foca no primeiro campo
             newRow.querySelector('input').focus();
         }
         
@@ -568,18 +606,15 @@
             const inputs = linha.querySelectorAll('input, select');
             const id = linha.dataset.id;
             
-            // Validação básica
             if (!inputs[0].value || !inputs[2].value || !inputs[3].value || !inputs[4].value || !inputs[5].value) {
                 alert('Por favor, preencha os campos obrigatórios: Data, Cliente, Telefone Cliente, Motorista e Telefone Motorista');
                 return;
             }
             
-            // Ajuste para a data - pega o valor exato do input sem conversão
             const dataInput = inputs[0].value;
             
-            // Cria objeto com os dados da entrega
             const entrega = {
-                data: dataInput, // Usa o valor direto do input
+                data: dataInput,
                 vendedor: inputs[1].value,
                 cliente: inputs[2].value,
                 telefoneCliente: inputs[3].value.replace(/\D/g, ''),
@@ -595,9 +630,7 @@
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             };
             
-            // Salva no Firebase
             if (id.startsWith('new-')) {
-                // Nova entrega
                 entregasRef.push(entrega)
                     .then(() => {
                         linha.remove();
@@ -607,7 +640,6 @@
                         alert("Erro ao salvar os dados. Por favor, tente novamente.");
                     });
             } else {
-                // Edição de entrega existente
                 entregasRef.child(id).update(entrega)
                     .catch(error => {
                         console.error("Erro ao atualizar:", error);
@@ -622,15 +654,12 @@
             const id = linha.dataset.id;
             const celulas = linha.cells;
             
-            // Salva o conteúdo original para possível cancelamento
             linha.dataset.originalContent = linha.innerHTML;
             
-            // Pega a data no formato DD/MM/YYYY e converte para YYYY-MM-DD
             const dataDisplay = celulas[0].textContent;
             const [dia, mes, ano] = dataDisplay.split('/');
             const dataFormatada = `${ano}-${mes}-${dia}`;
             
-            // Converte o prazo para o formato do input (se existir)
             const prazoInput = celulas[11].textContent;
             let prazoFormatado = '';
             if (prazoInput !== '-') {
@@ -638,11 +667,9 @@
                 prazoFormatado = `${anoP}-${mesP}-${diaP}`;
             }
             
-            // Obtém o status atual
             const statusClass = celulas[10].className;
             const statusAtual = statusClass.replace('status-', '');
             
-            // Cria os campos editáveis
             linha.className = 'edit-row';
             linha.innerHTML = `
                 <td><input type="date" value="${dataFormatada}"></td>
@@ -681,7 +708,6 @@
                 </td>
             `;
             
-            // Adiciona máscara aos campos de telefone
             linha.querySelectorAll('input[type="text"]').forEach(input => {
                 if (input.value.includes('(')) {
                     input.addEventListener('input', formatarTelefoneInput);
@@ -690,7 +716,6 @@
                 }
             });
             
-            // Foca no primeiro campo
             linha.querySelector('input').focus();
         }
         
@@ -699,11 +724,9 @@
             const linha = botao.closest('tr');
             
             if (linha.dataset.originalContent) {
-                // Restaura o conteúdo original (edição)
                 linha.innerHTML = linha.dataset.originalContent;
                 linha.className = '';
             } else {
-                // Remove a linha (adição nova)
                 linha.remove();
             }
         }
@@ -781,7 +804,6 @@
         
         // Função auxiliar para adicionar uma linha na tabela
         function adicionarLinhaTabela(tabela, id, entrega) {
-            // Formata a data diretamente do valor salvo (formato YYYY-MM-DD)
             const [ano, mes, dia] = entrega.data.split('-');
             const dataFormatada = `${dia}/${mes}/${ano}`;
             
@@ -828,11 +850,9 @@
             const mes = document.getElementById('mesFilter').value;
             const ano = document.getElementById('anoFilter').value;
             
-            // Limpar filtros ativos
             document.getElementById('vendedorFilter').value = '';
             document.getElementById('statusFilter').value = '';
             
-            // Carrega todos os dados e filtra localmente
             entregasRef.once('value', (snapshot) => {
                 const entregas = snapshot.val() || {};
                 const tabela = document.getElementById('corpoTabela');
@@ -842,9 +862,8 @@
                 
                 Object.keys(entregas).forEach(id => {
                     const entrega = entregas[id];
-                    const dataEntrega = entrega.data; // Formato esperado: YYYY-MM-DD
+                    const dataEntrega = entrega.data;
                     
-                    // Verifica se a entrega é do mês/ano selecionado
                     if (dataEntrega) {
                         const [anoEntrega, mesEntrega] = dataEntrega.split('-');
                         
@@ -896,45 +915,32 @@
                 return;
             }
             
-            // Criar uma nova planilha
             const wb = XLSX.utils.book_new();
-            
-            // Converter a tabela para uma matriz de dados
             const dados = [];
             
-            // Adicionar cabeçalhos
             const cabecalhos = Array.from(tabela.querySelectorAll('thead th'))
                 .map(th => th.textContent);
-            // Remove a coluna de ações
             cabecalhos.pop();
             dados.push(cabecalhos);
             
-            // Adicionar linhas de dados (apenas as visíveis)
             linhasVisiveis.forEach(linha => {
                 const celulas = Array.from(linha.cells);
                 const linhaDados = celulas.map(celula => {
-                    // Remove os links de WhatsApp, mantendo apenas o texto
                     if (celula.querySelector('.whatsapp-link')) {
                         return celula.querySelector('.whatsapp-link').textContent;
                     }
-                    // Pega o valor selecionado do status
                     if (celula.querySelector('.status-select')) {
                         return celula.querySelector('.status-select').value;
                     }
                     return celula.textContent;
                 });
-                // Remove a coluna de ações
                 linhaDados.pop();
                 dados.push(linhaDados);
             });
             
-            // Criar planilha
             const ws = XLSX.utils.aoa_to_sheet(dados);
-            
-            // Adicionar planilha ao livro
             XLSX.utils.book_append_sheet(wb, ws, "Entregas");
             
-            // Gerar arquivo Excel
             const nomeArquivo = `entregas_${document.getElementById('mesFilter').value}_${document.getElementById('anoFilter').value}.xlsx`;
             XLSX.writeFile(wb, nomeArquivo);
         }
@@ -949,7 +955,14 @@
         document.getElementById('anoFilter').value = dataAtual.getFullYear().toString();
         
         // Carrega os dados quando a página é carregada
-        document.addEventListener('DOMContentLoaded', carregarDados);
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarDados();
+            monitorNewDeliveries();
+            
+            if (!('speechSynthesis' in window)) {
+                console.warn("Seu navegador não suporta a API de síntese de voz");
+            }
+        });
     </script>
 </body>
 </html>
