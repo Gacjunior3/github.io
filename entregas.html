@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acompanhamento de Entregas</title>
+    <title>📦 Acompanhamento de Entregas</title>
     <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -278,6 +278,123 @@
             font-style: italic;
             color: #666;
         }
+        
+        /* Estilos para o botão de voz */
+        .voice-toggle {
+            background-color: #607d8b;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .voice-toggle:hover {
+            background-color: #546e7a;
+        }
+        
+        .voice-toggle.active {
+            background-color: #009688;
+        }
+        
+        .voice-toggle.active:hover {
+            background-color: #00897b;
+        }
+        
+        /* Estilo da notificação estilo WhatsApp */
+        .whatsapp-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+            animation: slideIn 0.3s ease-out;
+            border-left: 4px solid #25D366;
+        }
+
+        .whatsapp-notification-header {
+            background-color: #f0f2f5;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #e9edef;
+        }
+
+        .whatsapp-notification-title {
+            font-weight: bold;
+            color: #111b21;
+            font-size: 14px;
+        }
+
+        .whatsapp-notification-close {
+            background: none;
+            border: none;
+            color: #667781;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .whatsapp-notification-body {
+            padding: 15px;
+            color: #3b4a54;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .whatsapp-notification-footer {
+            padding: 8px 15px;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: flex-end;
+            border-top: 1px solid #e9edef;
+        }
+
+        .whatsapp-notification-button {
+            background-color: #25D366;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+
+        .whatsapp-notification-button.secondary {
+            background-color: #e9edef;
+            color: #3b4a54;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #f44336;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -365,6 +482,9 @@
         
         <button class="add-btn" onclick="adicionarNovaLinha()">Adicionar Entrega</button>
         <button class="export-btn" onclick="exportarExcel()">Exportar para Excel</button>
+        <button id="voiceToggleBtn" class="voice-toggle" onclick="toggleVoiceNotifications()">
+            <span id="voiceIcon">🔇</span> Aviso por Voz
+        </button>
     </div>
     
     <table id="tabelaEntregas">
@@ -391,6 +511,27 @@
         </tbody>
     </table>
 
+    <!-- Notificação estilo WhatsApp -->
+    <div id="whatsappNotification" class="whatsapp-notification">
+        <div class="whatsapp-notification-header">
+            <span class="whatsapp-notification-title">Nova Entrega Adicionada</span>
+            <button class="whatsapp-notification-close" onclick="fecharNotificacao()">×</button>
+        </div>
+        <div class="whatsapp-notification-body" id="notificationContent">
+            <!-- O conteúdo será preenchido dinamicamente -->
+        </div>
+        <div class="whatsapp-notification-footer">
+            <button class="whatsapp-notification-button secondary" onclick="fecharNotificacao()">Fechar</button>
+            <button class="whatsapp-notification-button" onclick="verEntrega()">Ver Entrega</button>
+        </div>
+    </div>
+
+    <!-- Ícone de notificação -->
+    <div id="notificationIcon" style="position: fixed; bottom: 20px; right: 20px; display: none; cursor: pointer;" onclick="mostrarNotificacao()">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" width="50" height="50">
+        <div id="notificationCount" class="notification-badge" style="display: none;">0</div>
+    </div>
+
     <script>
         // Configuração do Firebase
         const firebaseConfig = {
@@ -412,15 +553,71 @@
         let proximoId = 1;
         let currentDeleteId = null;
         const SENHA_EXCLUSAO = "axd236";
+        let voiceNotificationsEnabled = false;
+        let lastDeliveryKey = null;
+        
+        // Variáveis para controle de notificações
+        let notificationsQueue = [];
+        let currentNotification = null;
+        let notificationCount = 0;
         
         // Configuração da API de Voz
         let speechSynthesis = window.speechSynthesis || window.webkitSpeechSynthesis;
-        let lastAddedDeliveryKey = null;
+        
+        // Função para verificar e carregar preferência de voz
+        function loadVoicePreference() {
+            const savedPreference = localStorage.getItem('voiceNotificationsEnabled');
+            voiceNotificationsEnabled = savedPreference === 'true';
+            updateVoiceButton();
+            
+            // Se for a primeira vez, ativar por padrão se o navegador suportar
+            if (savedPreference === null && 'speechSynthesis' in window) {
+                voiceNotificationsEnabled = true;
+                saveVoicePreference();
+            }
+        }
+        
+        // Função para salvar preferência de voz
+        function saveVoicePreference() {
+            localStorage.setItem('voiceNotificationsEnabled', voiceNotificationsEnabled);
+            updateVoiceButton();
+        }
+        
+        // Função para atualizar o botão de voz
+        function updateVoiceButton() {
+            const btn = document.getElementById('voiceToggleBtn');
+            const icon = document.getElementById('voiceIcon');
+            
+            if (voiceNotificationsEnabled) {
+                btn.classList.add('active');
+                icon.textContent = '🔊';
+                btn.title = 'Avisos por voz ativados';
+            } else {
+                btn.classList.remove('active');
+                icon.textContent = '🔇';
+                btn.title = 'Avisos por voz desativados';
+            }
+        }
+        
+        // Função para alternar notificações de voz
+        function toggleVoiceNotifications() {
+            if (!('speechSynthesis' in window)) {
+                alert('Seu navegador não suporta a API de síntese de voz.');
+                return;
+            }
+            
+            voiceNotificationsEnabled = !voiceNotificationsEnabled;
+            saveVoicePreference();
+            
+            if (voiceNotificationsEnabled) {
+                // Se acabou de ativar, verificar se há permissão
+                speak('Notificações por voz ativadas');
+            }
+        }
         
         // Função para falar um texto
         function speak(text) {
-            if (!speechSynthesis) {
-                console.log("API de síntese de voz não suportada neste navegador");
+            if (!speechSynthesis || !voiceNotificationsEnabled) {
                 return;
             }
             
@@ -434,25 +631,6 @@
             utterance.pitch = 1.0;
             
             speechSynthesis.speak(utterance);
-        }
-        
-        // Monitorar adições de novas entregas
-        function monitorNewDeliveries() {
-            entregasRef.orderByChild('timestamp').limitToLast(1).on('child_added', (snapshot) => {
-                const newDelivery = snapshot.val();
-                const deliveryKey = snapshot.key;
-                
-                if (deliveryKey !== lastAddedDeliveryKey && lastAddedDeliveryKey !== null) {
-                    lastAddedDeliveryKey = deliveryKey;
-                    
-                    const message = `Nova entrega adicionada para o cliente ${newDelivery.cliente} com destino a ${newDelivery.destino}. Status: ${getStatusName(newDelivery.status)}`;
-                    speak(message);
-                }
-                
-                if (lastAddedDeliveryKey === null) {
-                    lastAddedDeliveryKey = deliveryKey;
-                }
-            });
         }
         
         // Função auxiliar para obter o nome do status
@@ -945,6 +1123,146 @@
             XLSX.writeFile(wb, nomeArquivo);
         }
         
+        // Função para mostrar notificação de nova entrega
+        function showNewDeliveryNotification(delivery) {
+            const notification = {
+                id: Date.now(),
+                delivery: delivery,
+                key: lastDeliveryKey
+            };
+            
+            notificationsQueue.push(notification);
+            notificationCount++;
+            updateNotificationIcon();
+            
+            if (!currentNotification) {
+                showNextNotification();
+            }
+        }
+        
+        // Função para mostrar a próxima notificação na fila
+        function showNextNotification() {
+            if (notificationsQueue.length === 0) {
+                currentNotification = null;
+                return;
+            }
+            
+            currentNotification = notificationsQueue.shift();
+            const delivery = currentNotification.delivery;
+            
+            // Formatar a data
+            const [ano, mes, dia] = delivery.data.split('-');
+            const dataFormatada = `${dia}/${mes}/${ano}`;
+            
+            // Configurar o conteúdo da notificação
+            const content = `
+                <strong>Vendedor:</strong> ${delivery.vendedor}<br>
+                <strong>Cliente:</strong> ${delivery.cliente}<br>
+                <strong>Destino:</strong> ${delivery.destino}<br>
+                <strong>Data:</strong> ${dataFormatada}<br>
+                <strong>Status:</strong> ${getStatusName(delivery.status)}
+            `;
+            
+            document.getElementById('notificationContent').innerHTML = content;
+            
+            // Mostrar a notificação
+            const notificationElement = document.getElementById('whatsappNotification');
+            notificationElement.style.display = 'block';
+            
+            // Esconder após 10 segundos se não interagir
+            notificationElement.timeout = setTimeout(() => {
+                if (currentNotification && currentNotification.id === notification.id) {
+                    fecharNotificacao();
+                }
+            }, 10000);
+        }
+        
+        // Função para fechar a notificação atual
+        function fecharNotificacao() {
+            const notificationElement = document.getElementById('whatsappNotification');
+            clearTimeout(notificationElement.timeout);
+            notificationElement.style.display = 'none';
+            
+            if (currentNotification) {
+                currentNotification = null;
+                showNextNotification();
+            }
+        }
+        
+        // Função para ver a entrega
+        function verEntrega() {
+            fecharNotificacao();
+            
+            if (currentNotification && currentNotification.key) {
+                // Rolar até a entrega correspondente
+                const row = document.querySelector(`tr[data-id="${currentNotification.key}"]`);
+                if (row) {
+                    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    
+                    // Destacar a linha por 3 segundos
+                    row.style.backgroundColor = '#fffde7';
+                    setTimeout(() => {
+                        row.style.backgroundColor = '';
+                    }, 3000);
+                }
+            }
+        }
+        
+        // Função para mostrar o ícone de notificação
+        function updateNotificationIcon() {
+            const icon = document.getElementById('notificationIcon');
+            const badge = document.getElementById('notificationCount');
+            
+            if (notificationCount > 0) {
+                icon.style.display = 'block';
+                badge.style.display = 'flex';
+                badge.textContent = notificationCount;
+            } else {
+                icon.style.display = 'none';
+                badge.style.display = 'none';
+            }
+        }
+        
+        // Função para mostrar a notificação ao clicar no ícone
+        function mostrarNotificacao() {
+            if (currentNotification) {
+                // Se já houver uma notificação sendo exibida, apenas trazer para frente
+                document.getElementById('whatsappNotification').style.display = 'block';
+            } else if (notificationsQueue.length > 0) {
+                // Mostrar a próxima notificação na fila
+                showNextNotification();
+            } else if (notificationCount > 0) {
+                // Se não houver notificações na fila mas o contador for positivo
+                // (pode acontecer se o usuário fechar todas sem interagir)
+                notificationCount = 0;
+                updateNotificationIcon();
+            }
+        }
+        
+        // Monitorar adições de novas entregas
+        function monitorNewDeliveries() {
+            entregasRef.orderByChild('timestamp').limitToLast(1).on('child_added', (snapshot) => {
+                const newDelivery = snapshot.val();
+                const deliveryKey = snapshot.key;
+                
+                if (deliveryKey !== lastDeliveryKey && lastDeliveryKey !== null) {
+                    lastDeliveryKey = deliveryKey;
+                    
+                    // Mostrar notificação
+                    showNewDeliveryNotification(newDelivery);
+                    
+                    if (voiceNotificationsEnabled) {
+                        const message = `Nova entrega adicionada para o cliente ${newDelivery.cliente} com destino a ${newDelivery.destino}. Status: ${getStatusName(newDelivery.status)}`;
+                        speak(message);
+                    }
+                }
+                
+                if (lastDeliveryKey === null) {
+                    lastDeliveryKey = deliveryKey;
+                }
+            });
+        }
+        
         // Adicionar eventos aos filtros
         document.getElementById('vendedorFilter').addEventListener('change', filtrarTabela);
         document.getElementById('statusFilter').addEventListener('change', filtrarTabela);
@@ -956,12 +1274,20 @@
         
         // Carrega os dados quando a página é carregada
         document.addEventListener('DOMContentLoaded', function() {
+            loadVoicePreference();
             carregarDados();
             monitorNewDeliveries();
             
             if (!('speechSynthesis' in window)) {
                 console.warn("Seu navegador não suporta a API de síntese de voz");
+                document.getElementById('voiceToggleBtn').disabled = true;
+                document.getElementById('voiceToggleBtn').title = 'API de voz não suportada neste navegador';
             }
+            
+            // Inicializar lastDeliveryKey com a última entrega
+            entregasRef.orderByChild('timestamp').limitToLast(1).once('child_added', (snapshot) => {
+                lastDeliveryKey = snapshot.key;
+            });
         });
     </script>
 </body>
