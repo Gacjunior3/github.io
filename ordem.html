@@ -214,74 +214,6 @@
       display: inline-block;
     }
 
-    .modal-pdf {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.9);
-    }
-
-    .modal-content {
-      margin: 20px auto;
-      display: block;
-      width: 90%;
-      max-width: 800px;
-      height: 85vh;
-      border: none;
-      background: #000;
-    }
-
-    .close {
-      position: absolute;
-      top: 15px;
-      right: 35px;
-      color: #f1f1f1;
-      font-size: 40px;
-      font-weight: bold;
-      cursor: pointer;
-      z-index: 1001;
-    }
-
-    .modal-buttons {
-      text-align: center;
-      margin: 20px 0;
-      position: relative;
-      z-index: 1001;
-    }
-
-    .modal-buttons button {
-      padding: 12px 25px;
-      margin: 0 15px;
-      border: none;
-      border-radius: 4px;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 14px;
-      transition: all 0.3s ease;
-    }
-
-    #btnSalvarPDF {
-      background: #2196F3;
-      color: white;
-    }
-
-    #btnSalvarPDF:hover {
-      background: #0b7dda;
-    }
-
-    #btnImprimirPDF {
-      background: #4CAF50;
-      color: white;
-    }
-
-    #btnImprimirPDF:hover {
-      background: #3e8e41;
-    }
-
     .footer {
       margin-top: 30px;
       text-align: center;
@@ -319,6 +251,186 @@
         position: static;
         width: 100%;
       }
+    }
+
+    /* Estilos para o gerenciamento de ordens */
+    .storage-buttons {
+      margin: 15px 0;
+      text-align: center;
+    }
+    
+    .storage-buttons button {
+      padding: 10px 15px;
+      margin: 0 5px;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 13px;
+      transition: all 0.3s ease;
+    }
+    
+    #btnSalvar {
+      background: #4CAF50;
+      color: white;
+    }
+    
+    #btnSalvar:hover {
+      background: #3e8e41;
+    }
+    
+    #btnExportar {
+      background: #2196F3;
+      color: white;
+    }
+    
+    #btnExportar:hover {
+      background: #0b7dda;
+    }
+    
+    #btnExportarBackup {
+      background: #673AB7;
+      color: white;
+    }
+    
+    #btnExportarBackup:hover {
+      background: #5E35B1;
+    }
+
+    #btnImportarBackup {
+      background: #FF9800;
+      color: white;
+    }
+
+    #btnImportarBackup:hover {
+      background: #e68a00;
+    }
+
+    #btnCarregar {
+      background: #9C27B0;
+      color: white;
+    }
+
+    #btnCarregar:hover {
+      background: #7B1FA2;
+    }
+
+    #btnLimparTudo {
+      background: #f44336;
+      color: white;
+    }
+
+    #btnLimparTudo:hover {
+      background: #d32f2f;
+    }
+
+    #fileInput, #fileBackupInput {
+      display: none;
+    }
+
+    .ordens-salvas {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80%;
+      max-width: 800px;
+      max-height: 80vh;
+      background: white;
+      border: 2px solid #000;
+      padding: 20px;
+      z-index: 1000;
+      overflow-y: auto;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      display: none;
+    }
+
+    .ordens-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .ordens-search {
+      display: flex;
+      gap: 10px;
+    }
+
+    .ordens-search input {
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      width: 300px;
+    }
+
+    .ordens-search button {
+      padding: 8px 15px;
+      background: #f44336;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .ordens-list {
+      margin-top: 10px;
+    }
+
+    .ordem-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+    }
+
+    .ordem-item:hover {
+      background-color: #f5f5f5;
+    }
+
+    .ordem-info {
+      flex: 1;
+    }
+
+    .ordem-numero {
+      font-weight: bold;
+      color: #2196F3;
+    }
+
+    .ordem-data {
+      color: #666;
+      font-size: 11px;
+      margin-left: 10px;
+    }
+
+    .ordem-cliente {
+      display: block;
+      margin-top: 5px;
+      font-size: 12px;
+      color: #555;
+    }
+
+    .ordem-actions button {
+      padding: 5px 10px;
+      background: #f44336;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    .ordem-actions button:hover {
+      background: #d32f2f;
+    }
+
+    .ordem-vazia {
+      padding: 20px;
+      text-align: center;
+      color: #666;
     }
   </style>
 </head>
@@ -532,23 +644,42 @@
     </button>
   </div>
 
-  <!-- Modal para visualização do PDF -->
-  <div id="pdfModal" class="modal-pdf">
-    <span class="close" onclick="fecharModal()">&times;</span>
-    <iframe id="pdfViewer" class="modal-content"></iframe>
-    <div class="modal-buttons">
-      <button id="btnSalvarPDF" onclick="salvarPDF()">
-        <i class="fas fa-download"></i> Salvar PDF
-      </button>
-      <button id="btnImprimirPDF" onclick="imprimirPDF()">
-        <i class="fas fa-print"></i> Imprimir
-      </button>
+  <div class="storage-buttons no-print">
+    <button id="btnSalvar" onclick="salvarOrdem()">
+      <i class="fas fa-save"></i> Salvar Ordem
+    </button>
+    <button id="btnExportar" onclick="exportarOrdem()">
+      <i class="fas fa-file-export"></i> Exportar Esta Ordem
+    </button>
+    <button id="btnExportarBackup" onclick="exportarBackup()">
+      <i class="fas fa-database"></i> Exportar Backup
+    </button>
+    <button id="btnImportarBackup" onclick="document.getElementById('fileBackupInput').click()">
+      <i class="fas fa-file-import"></i> Importar Backup
+    </button>
+    <button id="btnCarregar" onclick="toggleOrdensSalvas()">
+      <i class="fas fa-folder-open"></i> Gerenciar Ordens
+    </button>
+    <button id="btnLimparTudo" onclick="limparTodasOrdens()">
+      <i class="fas fa-trash-alt"></i> Limpar Tudo
+    </button>
+    <input type="file" id="fileInput" accept=".json" onchange="importarOrdem(event)">
+    <input type="file" id="fileBackupInput" accept=".json" onchange="importarBackup(event)">
+  </div>
+
+  <div id="ordensSalvas" class="ordens-salvas no-print">
+    <div class="ordens-header">
+      <h3>Ordens Salvas</h3>
+      <div class="ordens-search">
+        <input type="text" id="buscaOrdens" placeholder="Buscar ordens..." oninput="listarOrdensSalvas(this.value)">
+        <button onclick="toggleOrdensSalvas()">Fechar</button>
+      </div>
     </div>
+    <div class="ordens-list" id="ordensListContainer"></div>
   </div>
 
   <!-- Bibliotecas necessárias -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/imask/6.4.2/imask.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
@@ -556,7 +687,6 @@
     // Variáveis globais
     let numeroOrdem = Math.floor(Math.random() * 9000) + 1000;
     let qrCodeInstance = null;
-    let pdfBlob = null;
     let debounceTimer = null;
 
     // Dados das empresas
@@ -584,6 +714,10 @@
                 "Travessa Acalanto, 84 - Jardim das Margaridas - Salvador/BA"
       }
     };
+
+    // =============================================
+    // FUNÇÕES PRINCIPAIS DO FORMULÁRIO
+    // =============================================
 
     // Função para consultar CNPJ
     async function consultarCNPJ(cnpjInputId, tipo) {
@@ -654,82 +788,6 @@
           setTimeout(() => consultarCNPJ('destinatarioCNPJ', 'destinatario'), 500);
         }
       });
-    }
-
-    // Função para visualizar o PDF
-    async function visualizarPDF() {
-      document.querySelectorAll('.btn-buscar, .btn-consultar-cnpj').forEach(btn => {
-        btn.style.visibility = 'hidden';
-      });
-      
-      gerarQRCode();
-      
-      try {
-        const element = document.getElementById('containerPDF');
-        const opt = {
-          margin: [5, 5, 5, 5],
-          filename: `OrdemColeta_${document.getElementById('inputNumero').value}.pdf`,
-          image: { type: 'jpeg', quality: 1 },
-          html2canvas: { 
-            scale: 1.5,
-            logging: true,
-            useCORS: true,
-            allowTaint: true,
-            scrollX: 0,
-            scrollY: 0,
-            width: element.scrollWidth + 20,
-            height: element.scrollHeight + 20,
-            ignoreElements: (el) => el.classList.contains('btn-buscar') || el.classList.contains('btn-consultar-cnpj')
-          },
-          jsPDF: { 
-            unit: 'mm', 
-            format: 'a4', 
-            orientation: 'portrait',
-            compress: true,
-            hotfixes: ['px_scaling']
-          }
-        };
-
-        const result = await html2pdf().set(opt).from(element).outputPdf('blob');
-        pdfBlob = result;
-        
-        const url = URL.createObjectURL(result);
-        
-        document.getElementById('pdfViewer').src = url;
-        document.getElementById('pdfModal').style.display = 'block';
-        
-      } catch (error) {
-        console.error("Erro ao gerar PDF:", error);
-        alert("Erro ao gerar PDF. Verifique o console para detalhes.");
-      } finally {
-        document.querySelectorAll('.btn-buscar, .btn-consultar-cnpj').forEach(btn => {
-          btn.style.visibility = 'visible';
-        });
-      }
-    }
-
-    function fecharModal() {
-      document.getElementById('pdfModal').style.display = 'none';
-      if (pdfBlob) {
-        URL.revokeObjectURL(document.getElementById('pdfViewer').src);
-        pdfBlob = null;
-      }
-    }
-
-    function salvarPDF() {
-      if (pdfBlob) {
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(pdfBlob);
-        link.download = `OrdemColeta_${document.getElementById('inputNumero').value}.pdf`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        fecharModal();
-      }
-    }
-
-    function imprimirPDF() {
-      window.print();
     }
 
     function gerarDadosQRCode() {
@@ -815,8 +873,8 @@
           if (element) element.value = '';
         });
         
-        document.getElementById('destinatarioEndereco').innerText = '';
-        document.getElementById('remetenteEndereco').innerText = '';
+        document.getElementById('destinatarioEndereco').textContent = '';
+        document.getElementById('remetenteEndereco').textContent = '';
         
         document.getElementById('especie').selectedIndex = 0;
         document.getElementById('veiculo').selectedIndex = 0;
@@ -848,7 +906,7 @@
         }
         
         if (tipo !== 'destino') {
-          document.getElementById(tipo + 'Endereco').innerText = 
+          document.getElementById(tipo + 'Endereco').textContent = 
             `${data.logradouro || ''} ${data.complemento || ''} - ${data.bairro || ''}`;
           document.getElementById(tipo + 'Cidade').value = data.localidade || '';
           document.getElementById(tipo + 'UF').value = data.uf || '';
@@ -921,6 +979,360 @@
       elemento.value = valor;
     }
 
+    // =============================================
+    // FUNÇÕES PARA SALVAR/EXPORTAR/IMPORTAR
+    // =============================================
+
+    // Obter todos os dados do formulário
+    function obterDadosOrdem() {
+      return {
+        id: document.getElementById('inputNumero').value, // Usa o número da ordem como ID
+        numeroOrdem: document.getElementById('inputNumero').value,
+        dataEmissao: document.getElementById('dataEmissao').value,
+        operador: document.getElementById('operador').value,
+        notaFiscal: document.getElementById('notaFiscal').value,
+        valorNF: document.getElementById('valorNF').value,
+        
+        remetente: {
+          nome: document.getElementById('remetenteNome').value,
+          cnpj: document.getElementById('remetenteCNPJ').value,
+          cep: document.getElementById('remetenteCEP').value,
+          endereco: document.getElementById('remetenteEndereco').textContent,
+          cidade: document.getElementById('remetenteCidade').value,
+          uf: document.getElementById('remetenteUF').value
+        },
+        
+        destinatario: {
+          nome: document.getElementById('destinatarioNome').value,
+          cnpj: document.getElementById('destinatarioCNPJ').value,
+          cep: document.getElementById('destinatarioCEP').value,
+          endereco: document.getElementById('destinatarioEndereco').textContent,
+          cidade: document.getElementById('destinatarioCidade').value,
+          uf: document.getElementById('destinatarioUF').value
+        },
+        
+        produto: {
+          descricao: document.getElementById('produtoDescricao').value,
+          especie: document.getElementById('especie').value,
+          pesoUnitario: document.getElementById('pesoUnitario').value,
+          pesoBruto: document.getElementById('pesoBruto').value
+        },
+        
+        destino: {
+          local: document.getElementById('destino').value,
+          cep: document.getElementById('destinoCEP').value,
+          quantidade: document.getElementById('quantidade').value,
+          pedido: document.getElementById('pedido').value
+        },
+        
+        observacao: document.getElementById('observacao').value,
+        
+        motorista: {
+          nome: document.getElementById('motoristaNome').value,
+          cpf: document.getElementById('motoristaCPF').value,
+          rg: document.getElementById('motoristaRG').value,
+          cnh: document.getElementById('motoristaCNH').value
+        },
+        
+        veiculo: {
+          tipo: document.getElementById('veiculo').value,
+          placa: document.getElementById('veiculoPlaca').value,
+          carreta: document.getElementById('veiculoCarreta').value,
+          carreta2: document.getElementById('veiculo2Carreta').value
+        },
+        
+        dataAssinatura: document.getElementById('dataAssinatura').value,
+        empresa: document.getElementById('empresa-select').value,
+        dataCriacao: new Date().toISOString(),
+        dataModificacao: new Date().toISOString()
+      };
+    }
+
+    // Preencher formulário com dados
+    function preencherFormulario(dados) {
+      document.getElementById('inputNumero').value = dados.numeroOrdem;
+      document.getElementById('numeroOrdem').textContent = dados.numeroOrdem;
+      document.getElementById('dataEmissao').value = dados.dataEmissao;
+      document.getElementById('operador').value = dados.operador || '';
+      document.getElementById('notaFiscal').value = dados.notaFiscal || '';
+      document.getElementById('valorNF').value = dados.valorNF || '';
+      
+      // Remetente
+      document.getElementById('remetenteNome').value = dados.remetente.nome || '';
+      document.getElementById('remetenteCNPJ').value = dados.remetente.cnpj || '';
+      document.getElementById('remetenteCEP').value = dados.remetente.cep || '';
+      document.getElementById('remetenteEndereco').textContent = dados.remetente.endereco || '';
+      document.getElementById('remetenteCidade').value = dados.remetente.cidade || '';
+      document.getElementById('remetenteUF').value = dados.remetente.uf || 'BA';
+      
+      // Destinatário
+      document.getElementById('destinatarioNome').value = dados.destinatario.nome || '';
+      document.getElementById('destinatarioCNPJ').value = dados.destinatario.cnpj || '';
+      document.getElementById('destinatarioCEP').value = dados.destinatario.cep || '';
+      document.getElementById('destinatarioEndereco').textContent = dados.destinatario.endereco || '';
+      document.getElementById('destinatarioCidade').value = dados.destinatario.cidade || '';
+      document.getElementById('destinatarioUF').value = dados.destinatario.uf || 'BA';
+      
+      // Produto
+      document.getElementById('produtoDescricao').value = dados.produto.descricao || '';
+      document.getElementById('especie').value = dados.produto.especie || '';
+      document.getElementById('pesoUnitario').value = dados.produto.pesoUnitario || '0,00';
+      document.getElementById('pesoBruto').value = dados.produto.pesoBruto || '0,00';
+      
+      // Destino
+      document.getElementById('destino').value = dados.destino.local || '';
+      document.getElementById('destinoCEP').value = dados.destino.cep || '';
+      document.getElementById('quantidade').value = dados.destino.quantidade || '0,00';
+      document.getElementById('pedido').value = dados.destino.pedido || '';
+      
+      // Observação
+      document.getElementById('observacao').value = dados.observacao || '';
+      
+      // Motorista
+      document.getElementById('motoristaNome').value = dados.motorista.nome || '';
+      document.getElementById('motoristaCPF').value = dados.motorista.cpf || '';
+      document.getElementById('motoristaRG').value = dados.motorista.rg || '';
+      document.getElementById('motoristaCNH').value = dados.motorista.cnh || '';
+      
+      // Veículo
+      document.getElementById('veiculo').value = dados.veiculo.tipo || '';
+      document.getElementById('veiculoPlaca').value = dados.veiculo.placa || '';
+      document.getElementById('veiculoCarreta').value = dados.veiculo.carreta || '';
+      document.getElementById('veiculo2Carreta').value = dados.veiculo.carreta2 || '';
+      
+      // Data assinatura
+      document.getElementById('dataAssinatura').value = dados.dataAssinatura || '';
+      
+      // Empresa
+      if (dados.empresa) {
+        document.getElementById('empresa-select').value = dados.empresa;
+        trocarEmpresa();
+      }
+      
+      gerarQRCode();
+    }
+
+    // =============================================
+    // FUNÇÕES PARA GERENCIAMENTO DE MÚLTIPLAS ORDENS
+    // =============================================
+
+    // Obter todas as ordens salvas
+    function getOrdensSalvas() {
+      return JSON.parse(localStorage.getItem('ordensColeta')) || {};
+    }
+
+    // Salvar todas as ordens
+    function saveOrdens(ordens) {
+      localStorage.setItem('ordensColeta', JSON.stringify(ordens));
+    }
+
+    // Gerar ID único para cada ordem
+    function generateOrderId() {
+      return Date.now().toString();
+    }
+
+    // Salvar ordem (nova ou existente)
+    function salvarOrdem() {
+      const dados = obterDadosOrdem();
+      const ordens = getOrdensSalvas();
+      
+      // Se não tem ID, é uma nova ordem
+      if (!dados.id) {
+        dados.id = generateOrderId();
+        dados.dataCriacao = new Date().toISOString();
+      }
+      
+      // Atualizar data de modificação
+      dados.dataModificacao = new Date().toISOString();
+      
+      // Salvar/atualizar ordem
+      ordens[dados.id] = dados;
+      saveOrdens(ordens);
+      
+      alert(`Ordem ${dados.numeroOrdem} salva com sucesso!`);
+      listarOrdensSalvas();
+    }
+
+    // Listar ordens salvas com filtros
+    function listarOrdensSalvas(filtro = '') {
+      const ordens = getOrdensSalvas();
+      const container = document.getElementById('ordensListContainer');
+      
+      // Se não tiver ordens
+      if (Object.keys(ordens).length === 0) {
+        container.innerHTML = '<div class="ordem-vazia">Nenhuma ordem salva encontrada.</div>';
+        return;
+      }
+      
+      // Converter para array e ordenar por data (mais recente primeiro)
+      const ordensArray = Object.values(ordens).sort((a, b) => 
+        new Date(b.dataCriacao) - new Date(a.dataCriacao));
+      
+      // Aplicar filtro se existir
+      const ordensFiltradas = filtro ? 
+        ordensArray.filter(ordem => 
+          ordem.numeroOrdem.toLowerCase().includes(filtro.toLowerCase()) ||
+          (ordem.remetente.nome && ordem.remetente.nome.toLowerCase().includes(filtro.toLowerCase())) ||
+          (ordem.destinatario.nome && ordem.destinatario.nome.toLowerCase().includes(filtro.toLowerCase()))
+        ) : ordensArray;
+      
+      // Gerar HTML
+      let html = '';
+      
+      if (ordensFiltradas.length === 0) {
+        html = '<div class="ordem-vazia">Nenhuma ordem encontrada com o filtro aplicado.</div>';
+      } else {
+        ordensFiltradas.forEach(ordem => {
+          html += `
+            <div class="ordem-item" data-id="${ordem.id}">
+              <div class="ordem-info" onclick="carregarOrdem('${ordem.id}')">
+                <span class="ordem-numero">${ordem.numeroOrdem}</span>
+                <span class="ordem-data">${new Date(ordem.dataCriacao).toLocaleString('pt-BR')}</span>
+                <span class="ordem-cliente">De: ${ordem.remetente.nome || 'Sem remetente'} | Para: ${ordem.destinatario.nome || 'Sem destinatário'}</span>
+              </div>
+              <div class="ordem-actions">
+                <button class="btn-excluir" onclick="excluirOrdem('${ordem.id}', event)">Excluir</button>
+              </div>
+            </div>
+          `;
+        });
+      }
+      
+      container.innerHTML = html;
+    }
+
+    // Carregar ordem específica
+    function carregarOrdem(id) {
+      const ordens = getOrdensSalvas();
+      const ordem = ordens[id];
+      
+      if (ordem) {
+        if (confirm(`Carregar ordem ${ordem.numeroOrdem}? Os dados atuais serão perdidos.`)) {
+          preencherFormulario(ordem);
+          toggleOrdensSalvas();
+        }
+      } else {
+        alert('Ordem não encontrada!');
+      }
+    }
+
+    // Excluir ordem específica
+    function excluirOrdem(id, event) {
+      event.stopPropagation(); // Evita que o evento de clique no item seja acionado
+      
+      if (confirm('Tem certeza que deseja excluir esta ordem?')) {
+        const ordens = getOrdensSalvas();
+        delete ordens[id];
+        saveOrdens(ordens);
+        listarOrdensSalvas(document.getElementById('buscaOrdens').value);
+      }
+    }
+
+    // Exportar ordem como arquivo JSON
+    function exportarOrdem() {
+      const dados = obterDadosOrdem();
+      const dadosStr = JSON.stringify(dados, null, 2);
+      const blob = new Blob([dadosStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `ordem_coleta_${dados.numeroOrdem}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // Importar ordem de arquivo JSON
+    function importarOrdem(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const dados = JSON.parse(e.target.result);
+          if (confirm(`Deseja carregar a ordem ${dados.numeroOrdem}?`)) {
+            preencherFormulario(dados);
+          }
+        } catch (error) {
+          alert('Erro ao ler arquivo: ' + error.message);
+        }
+      };
+      reader.readAsText(file);
+      
+      // Limpar input para permitir nova importação do mesmo arquivo
+      event.target.value = '';
+    }
+
+    // Exportar todas as ordens como backup
+    function exportarBackup() {
+      const ordens = getOrdensSalvas();
+      const dadosStr = JSON.stringify(ordens, null, 2);
+      const blob = new Blob([dadosStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `backup_ordens_coleta_${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // Importar backup de ordens
+    function importarBackup(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      if (!confirm('Importar backup? Todas as ordens atuais serão substituídas.')) {
+        event.target.value = '';
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const dados = JSON.parse(e.target.result);
+          saveOrdens(dados);
+          alert('Backup importado com sucesso!');
+          listarOrdensSalvas();
+        } catch (error) {
+          alert('Erro ao importar backup: ' + error.message);
+        }
+      };
+      reader.onerror = function() {
+        alert('Erro ao ler arquivo de backup.');
+      };
+      reader.readAsText(file);
+      
+      // Limpar input para permitir nova importação do mesmo arquivo
+      event.target.value = '';
+    }
+
+    // Limpar todas as ordens salvas
+    function limparTodasOrdens() {
+      if (confirm('Tem certeza que deseja excluir TODAS as ordens salvas? Esta ação não pode ser desfeita.')) {
+        localStorage.removeItem('ordensColeta');
+        listarOrdensSalvas();
+        alert('Todas as ordens foram removidas.');
+      }
+    }
+
+    // Alternar visibilidade da lista de ordens
+    function toggleOrdensSalvas() {
+      const container = document.getElementById('ordensSalvas');
+      if (container.style.display === 'block') {
+        container.style.display = 'none';
+      } else {
+        container.style.display = 'block';
+        listarOrdensSalvas();
+      }
+    }
+
+    // Inicialização
     window.onload = function() {
       const novoNumero = gerarNumeroOrdem();
       document.getElementById('inputNumero').value = novoNumero;
@@ -948,7 +1360,15 @@
         input.addEventListener('input', formatarCEP);
       });
 
-      gerarQRCode();
+      // Carregar última ordem salva (opcional)
+      const ordensSalvas = getOrdensSalvas();
+      if (Object.keys(ordensSalvas).length > 0) {
+        const ultimaOrdem = Object.values(ordensSalvas)
+          .sort((a, b) => new Date(b.dataCriacao) - new Date(a.dataCriacao))[0];
+        preencherFormulario(ultimaOrdem);
+      } else {
+        gerarQRCode();
+      }
     };
   </script>
 </body>
