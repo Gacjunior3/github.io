@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -55,6 +54,7 @@
     justify-content: space-between;
     margin-top: 10px;
     font-size: 13px;
+    gap: 2%;
   }
   .coluna { width: 48%; }
   .coluna-pequena { width: 30%; }
@@ -242,11 +242,11 @@
     </div>
 
     <div class="linha">
-      <div class="coluna">
+      <div class="coluna" style="width: 20%;">
         CEP:<br>
         <input type="text" id="cep">
       </div>
-      <div class="coluna">
+      <div class="coluna" style="width: 78%;">
         Endereço:<br>
         <input type="text" id="endereco">
       </div>
@@ -375,7 +375,7 @@
         const decimal = Math.round((num - inteiro) * 100);
         
         function converterNumero(num) {
-            const unidades = ['', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove'];
+            const unidades = ['', 'um', 'dois', 'três', 'quatro', 'cinco', 'cinco', 'sete', 'oito', 'nove'];
             const dez_a_dezenove = ['dez', 'onze', 'doze', 'treze', 'quatorze', 'quinze', 'dezesseis', 'dezessete', 'dezoito', 'dezenove'];
             const dezenas = ['', 'dez', 'vinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa'];
             const centenas = ['', 'cento', 'duzentos', 'trezentos', 'quatrocentos', 'quinhentos', 'seiscentos', 'setecentos', 'oitocentos', 'novecentos'];
