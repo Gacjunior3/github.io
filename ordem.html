@@ -1136,6 +1136,22 @@
       const dados = obterDadosOrdem();
       const ordens = getOrdensSalvas();
       
+      // Verificar se já existe uma ordem com o mesmo número
+      const ordemExistente = Object.values(ordens).find(ordem => 
+        ordem.numeroOrdem === dados.numeroOrdem && ordem.id !== dados.id);
+      
+      if (ordemExistente && !dados.id) {
+        if (!confirm(`Já existe uma ordem com o número ${dados.numeroOrdem}. Deseja criar uma nova ordem com um número diferente?`)) {
+          return;
+        }
+        // Gerar novo número de ordem
+        numeroOrdem++;
+        const novoNumero = gerarNumeroOrdem();
+        document.getElementById('inputNumero').value = novoNumero;
+        document.getElementById('numeroOrdem').textContent = novoNumero;
+        dados.numeroOrdem = novoNumero;
+      }
+      
       // Se não tem ID, é uma nova ordem
       if (!dados.id) {
         dados.id = generateOrderId();
