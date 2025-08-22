@@ -227,7 +227,7 @@
   <div class="container">
     <div class="cabecalho">
       <div class="logo-container">
-        <img id="logo" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjYwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjx0ZXh0IHg9IjEwIiB5PSIzNSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE4IiBmaWxsPSIjMDAzMzY2Ij5BWEQgTG9nPC90ZXh0Pjwvc3ZnPg==" alt="Logo">
+        <img id="logo" src="img/logo_axdlog.png" alt="Logo" style="height: 60px;">
         <div class="dados-empresa" id="dados-empresa">
           CNPJ: 59.352.973/0001-32<br>
           Rua Jubiabá, 292<br>
@@ -450,11 +450,11 @@ Carga 100% assegurada – averbação conforme valor de nota fiscal; - KORV
       const rodape = document.getElementById('rodape');
 
       if (empresa === 'Rodovar') {
-        logo.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjYwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjx0ZXh0IHg9IjEwIiB5PSIzNSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE4IiBmaWxsPSIjMDA2NjAwIj5Sb2RvdmFyPC90ZXh0Pjwvc3ZnPg==';
+        logo.src = 'img/logo_rodovar.png';
         dadosEmpresa.innerHTML = `CNPJ: 49.908.710/0001-03<br>Endereço: Travessa Acalanto, 84<br>Jardim das Margaridas, Salvador-BA`;
         rodape.innerHTML = `CNPJ: 49.908.710/0001-03 | RODOVAR TRANSPORTES LTDA - Travessa Acalanto, 84 - Salvador - BA`;
       } else {
-        logo.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjYwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjx0ZXh0IHg9IjEwIiB5PSIzNSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE4IiBmaWxsPSIjMDAzMzY2Ij5BWEQgTG9nPC90ZXh0Pjwvc3ZnPg==';
+        logo.src = 'img/logo_axdlog.png';
         dadosEmpresa.innerHTML = `CNPJ: 59.352.973/0001-32<br>Rua Jubiabá, 292<br>Luis Eduardo Magalhães, Simões Filho - BA`;
         rodape.innerHTML = `CNPJ: 59.352.973/0001-32 | AXD LOG TRANSPORTES LTDA - Rua Jubiabá, 292 - Simões Filho - BA`;
       }
@@ -462,10 +462,9 @@ Carga 100% assegurada – averbação conforme valor de nota fiscal; - KORV
       document.querySelector('.container').style.borderColor = '#000';
     }
 
-    // NOVA IMPLEMENTAÇÃO: Carregar estados usando BrasilAPI
     async function carregarEstados() {
       try {
-        const response = await fetch('https://brasilapi.com.br/api/ibge/uf/v1');
+        const response = await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados');
         const estados = await response.json();
         estados.sort((a, b) => a.sigla.localeCompare(b.sigla));
         
@@ -476,50 +475,28 @@ Carga 100% assegurada – averbação conforme valor de nota fiscal; - KORV
         ufDestino.innerHTML = '<option value="">Selecione UF</option>';
         
         estados.forEach(estado => {
-          ufOrigem.innerHTML += `<option value="${estado.sigla}">${estado.sigla}</option>`;
-          ufDestino.innerHTML += `<option value="${estado.sigla}">${estado.sigla}</option>`;
+          ufOrigem.innerHTML += `<option value="${estado.id}">${estado.sigla}</option>`;
+          ufDestino.innerHTML += `<option value="${estado.id}">${estado.sigla}</option>`;
         });
       } catch (error) {
         console.error('Erro ao carregar estados:', error);
-        // Fallback: lista estática de UFs caso a API falhe
-        const estadosFallback = [
-          "AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", 
-          "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", 
-          "RO", "RR", "RS", "SC", "SE", "SP", "TO"
-        ];
-        
-        const ufOrigem = document.getElementById('uf-origem');
-        const ufDestino = document.getElementById('uf-destino');
-        
-        ufOrigem.innerHTML = '<option value="">Selecione UF</option>';
-        ufDestino.innerHTML = '<option value="">Selecione UF</option>';
-        
-        estadosFallback.forEach(uf => {
-          ufOrigem.innerHTML += `<option value="${uf}">${uf}</option>`;
-          ufDestino.innerHTML += `<option value="${uf}">${uf}</option>`;
-        });
       }
     }
 
-    // NOVA IMPLEMENTAÇÃO: Carregar cidades usando BrasilAPI
-    async function carregarCidades(ufSigla, destino) {
-      if (!ufSigla) return;
+    async function carregarCidades(estadoId, destino) {
+      if (!estadoId) return;
       
       try {
-        const response = await fetch(`https://brasilapi.com.br/api/ibge/municipios/v1/${ufSigla}?providers=dados-abertos-br,gov,wikipedia`);
+        const response = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${estadoId}/municipios`);
         const cidades = await response.json();
         const select = document.getElementById(destino);
         
         select.innerHTML = '<option value="">Selecione a cidade</option>';
-        cidades.sort((a, b) => a.nome.localeCompare(b.nome));
-        
         cidades.forEach(cidade => {
           select.innerHTML += `<option value="${cidade.nome}">${cidade.nome}</option>`;
         });
       } catch (error) {
         console.error('Erro ao carregar cidades:', error);
-        const select = document.getElementById(destino);
-        select.innerHTML = '<option value="">Erro ao carregar cidades</option>';
       }
     }
 
