@@ -9,7 +9,7 @@
       font-size: 12px;
       margin: 0;
       padding: 20px;
-      background-color: #000000;
+      background-color: #f0f0f0;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -433,8 +433,6 @@
       color: #666;
     }
 
-    /* NOVOS ESTILOS PARA AS ALTERAÇÕES SOLICITADAS */
-    
     /* Campo de observação maior */
     #observacao {
       height: 80px;
@@ -511,6 +509,116 @@
       font-weight: bold;
       white-space: nowrap;
     }
+
+    /* NOVOS ESTILOS PARA SELEÇÃO DE MOTORISTA COM SETA */
+    .motorista-select-container {
+      position: relative;
+      width: 100%;
+    }
+    
+    .motorista-select-trigger {
+      position: absolute;
+      right: 5px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 14px;
+      background: none;
+      border: none;
+      z-index: 10;
+    }
+    
+    .motorista-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #ddd;
+      border-top: none;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 1000;
+      display: none;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .motorista-dropdown-item {
+      padding: 8px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .motorista-dropdown-item:hover {
+      background-color: #f5f5f5;
+    }
+    
+    .motorista-name {
+      font-weight: bold;
+    }
+    
+    .motorista-cpf {
+      color: #666;
+      font-size: 11px;
+    }
+    
+    /* ESTILOS PARA SELEÇÃO DE VEÍCULOS COM SETA */
+    .veiculo-select-container {
+      position: relative;
+      width: 100%;
+    }
+    
+    .veiculo-select-trigger {
+      position: absolute;
+      right: 5px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 14px;
+      background: none;
+      border: none;
+      z-index: 10;
+    }
+    
+    .veiculo-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #ddd;
+      border-top: none;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 1000;
+      display: none;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .veiculo-dropdown-item {
+      padding: 8px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .veiculo-dropdown-item:hover {
+      background-color: #f5f5f5;
+    }
+    
+    .veiculo-modelo {
+      font-weight: bold;
+    }
+    
+    .veiculo-placa {
+      color: #666;
+      font-size: 11px;
+    }
   </style>
 </head>
 <body>
@@ -528,7 +636,7 @@
       <tr>
         <td class="logo-cell" rowspan="3">
           <div class="logo-container">
-            <img id="logotipo" class="logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTUwIDEwMCI+PHJlY3Qgd2lkdGg9IjE1MCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNlZWVlZWUiLz48dGV4dCB4PSI3NSIgeT0iNTAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzY2NiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSI+TG9nb3RpcG8gUk9ET1ZBUjwvdGV4dD48L3N2Zz4=" alt="Logotipo RODOVAR">
+            <img id="logotipo" class="logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTUwIDEwMCI+PHJlY3Qgd2lkdGg=" alt="Logotipo RODOVAR">
           </div>
         </td>
         <td colspan="2" id="empresa-info">
@@ -673,32 +781,30 @@
     <!-- TABELA COM ESPAÇO AUMENTADO PARA O NOME DO MOTORISTA -->
     <table>
       <tr>
-        <td style="width: 45%;">Motorista: <input type="text" id="motoristaNome" placeholder="Nome do Motorista" style="width: 90%;"></td>
+        <td style="width: 45%;">
+          <div class="motorista-select-container">
+            Motorista: 
+            <input type="text" id="motoristaNome" placeholder="Nome do Motorista" style="width: 85%;">
+            <button class="motorista-select-trigger no-print" onclick="toggleMotoristaDropdown()">▼</button>
+            <div id="motoristaDropdown" class="motorista-dropdown"></div>
+          </div>
+        </td>
         <td style="width: 18%;">CPF: <input type="text" id="motoristaCPF" placeholder="000.000.000-00"></td>
         <td style="width: 18%;">RG: <input type="text" id="motoristaRG" placeholder="Número do RG"></td>
         <td style="width: 19%;">CNH: <input type="text" id="motoristaCNH" placeholder="Número da CNH"></td>
       </tr>
       <tr>
-        <td>Veículo: 
-          <select id="veiculo">
-            <option value="">Selecione</option>
-            <option value="Toco">Toco</option>
-            <option value="Truck">Truck</option>
-            <option value="Bitruck">Bitruck</option>
-            <option value="Cavalo Mecânico">Cavalo Mecânico</option>
-            <option value="Bitrem">Bitrem</option>
-            <option value="Rodotrem">Rodotrem</option>
-            <option value="Caminhão baú">Caminhão baú</option>
-            <option value="Caminhão Munck">Caminhão Munck</option>
-            <option value="Carreta">Carreta</option>
-            <option value="Vanderléia">Vanderléia</option>
-            <option value="Furgão">Furgão</option>
-            <option value="Camionete">Camionete</option>
-            <option value="Utilitário">Utilitário</option>
-            <option value="Outros">Outros</option>
-          </select>
+        <td>
+          <div class="veiculo-select-container">
+            Veículo: 
+            <input type="text" id="veiculo" placeholder="Modelo do Veículo" style="width: 85%;">
+            <button class="veiculo-select-trigger no-print" onclick="toggleVeiculoDropdown()">▼</button>
+            <div id="veiculoDropdown" class="veiculo-dropdown"></div>
+          </div>
         </td>
-        <td>Placa: <input type="text" id="veiculoPlaca" placeholder="AAA0A00"></td>
+        <td>
+          Placa: <input type="text" id="veiculoPlaca" placeholder="AAA0A00" style="width: 85%;">
+        </td>
         <td>Carreta: <input type="text" id="veiculoCarreta" placeholder="Placa da Carreta"></td>
         <td>Carreta 2: <input type="text" id="veiculo2Carreta" placeholder="Placa da Carreta 2"></td>
       </tr>
@@ -768,6 +874,84 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
   <script>
+    // =============================================
+    // DADOS DOS MOTORISTAS FORNECIDOS
+    // =============================================
+    const motoristas = [
+      {
+        nome: "YAGO REZENDE RIBEIRO",
+        cpf: "077.067.175-69",
+        cnh: "07567666291",
+        rg: "2036612814"
+      },
+      {
+        nome: "JOSE AUGUSTO DA SILRA SANTOS",
+        cpf: "014.660.965-43",
+        cnh: "02429919260",
+        rg: "843999454"
+      },
+      {
+        nome: "FRANCISCO EUDES DE FREITAS",
+        cpf: "824.606.713-34",
+        cnh: "506470404",
+        rg: "506470404"
+      },
+      {
+        nome: "MARCOS ANTONIO DA ANUNCIACAO COSTA",
+        cpf: "459.105.295-87",
+        cnh: "01408541442",
+        rg: "350451320"
+      },
+      {
+        nome: "RAFAEL ARAUJO DE LIMA",
+        cpf: "045.385.313-75",
+        cnh: "06757993225",
+        rg: "3597268"
+      },
+      {
+        nome: "WESLEY CAIQUE DOS SANTOS BARBOSA",
+        cpf: "104.615.225-43",
+        cnh: "08700954074",
+        rg: "2077683740"
+      },
+      {
+        nome: "DERMEVAL REIS BOMFIM",
+        cpf: "882.529.905-25",
+        cnh: "01816052640",
+        rg: "485589826"
+      }
+    ];
+
+    // =============================================
+    // DADOS DOS VEÍCULOS FORNECIDOS
+    // =============================================
+    const veiculos = [
+      {
+        modelo: "STRADA",
+        placa: "SHD8H83"
+      },
+      {
+        modelo: "IVECO",
+        placa: "NTR8D64"
+      },
+      {
+        modelo: "TRUCK",
+        placa: "KIS3B61"
+      },
+      {
+        modelo: "HYUNDAI",
+        placa: "SJY8F42"
+      },
+      {
+        modelo: "VW15.180",
+        placa: "JQR7F07"
+      },
+      {
+        modelo: "HR",
+        placa: "PLB4B47"
+      }
+    ];
+
     // Variáveis globais
     let qrCodeInstance = null;
     let debounceTimer = null;
@@ -781,7 +965,7 @@
         endereco: "RUA Jubiabá, 292 - Bairro: Luis Eduardo Magalhães",
         cidade: "Simões Filho",
         uf: "BA",
-        logo: "logo_axd.png",
+        logo: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTUwIDEwMCI+PHJlY3Qgd2lkdGg=",
         footer: "AXD - CNPJ: 59.352.973/0001-32 - Insc. Estadual: 228.253.729 ME<br>" +
                 "RUA Jubiabá, 292 - Bairro: Luis Eduardo Magalhães - Simões Filho/BA"
       },
@@ -792,11 +976,128 @@
         endereco: "Travessa Acalanto, 84 - Jardim das Margaridas",
         cidade: "Salvador",
         uf: "BA",
-        logo: "logo_rodovar.png",
+        logo: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTUwIDEwMCI+PHJlY3Qgd2lkdGg=",
         footer: "RODOVAR LTDA - CNPJ: 49.908.710/0001-03 - Insc. Estadual: 228.253.729 ME<br>" +
                 "Travessa Acalanto, 84 - Jardim das Margaridas - Salvador/BA"
       }
     };
+
+    // =============================================
+    // FUNÇÕES PARA SELEÇÃO DE MOTORISTA COM DROPDOWN
+    // =============================================
+
+    // Alternar a exibição do dropdown de motoristas
+    function toggleMotoristaDropdown() {
+      const dropdown = document.getElementById('motoristaDropdown');
+      
+      if (dropdown.style.display === 'block') {
+        dropdown.style.display = 'none';
+      } else {
+        preencherDropdownMotoristas();
+        dropdown.style.display = 'block';
+      }
+    }
+
+    // Preencher o dropdown com a lista de motoristas
+    function preencherDropdownMotoristas() {
+      const dropdown = document.getElementById('motoristaDropdown');
+      dropdown.innerHTML = '';
+      
+      motoristas.forEach(motorista => {
+        const item = document.createElement('div');
+        item.className = 'motorista-dropdown-item';
+        item.innerHTML = `
+          <div>
+            <div class="motorista-name">${motorista.nome}</div>
+            <div class="motorista-cpf">CPF: ${motorista.cpf}</div>
+          </div>
+        `;
+        
+        item.addEventListener('click', () => {
+          selecionarMotorista(motorista);
+          dropdown.style.display = 'none';
+        });
+        
+        dropdown.appendChild(item);
+      });
+    }
+
+    // Preencher os campos com os dados do motorista selecionado
+    function selecionarMotorista(motorista) {
+      document.getElementById('motoristaNome').value = motorista.nome;
+      document.getElementById('motoristaCPF').value = motorista.cpf;
+      document.getElementById('motoristaRG').value = motorista.rg;
+      document.getElementById('motoristaCNH').value = motorista.cnh;
+    }
+
+    // =============================================
+    // FUNÇÕES PARA SELEÇÃO DE VEÍCULO COM DROPDOWN
+    // =============================================
+
+    // Alternar a exibição do dropdown de veículos
+    function toggleVeiculoDropdown() {
+      const dropdown = document.getElementById('veiculoDropdown');
+      
+      if (dropdown.style.display === 'block') {
+        dropdown.style.display = 'none';
+      } else {
+        preencherDropdownVeiculos();
+        dropdown.style.display = 'block';
+      }
+    }
+
+    // Preencher o dropdown com a lista de veículos
+    function preencherDropdownVeiculos() {
+      const dropdown = document.getElementById('veiculoDropdown');
+      dropdown.innerHTML = '';
+      
+      veiculos.forEach(veiculo => {
+        const item = document.createElement('div');
+        item.className = 'veiculo-dropdown-item';
+        item.innerHTML = `
+          <div>
+            <div class="veiculo-modelo">${veiculo.modelo}</div>
+            <div class="veiculo-placa">Placa: ${veiculo.placa}</div>
+          </div>
+        `;
+        
+        item.addEventListener('click', () => {
+          selecionarVeiculo(veiculo);
+          dropdown.style.display = 'none';
+        });
+        
+        dropdown.appendChild(item);
+      });
+    }
+
+    // Preencher os campos com os dados do veículo selecionado
+    function selecionarVeiculo(veiculo) {
+      document.getElementById('veiculo').value = veiculo.modelo;
+      document.getElementById('veiculoPlaca').value = veiculo.placa;
+    }
+
+    // Fechar os dropdowns ao clicar fora deles
+    document.addEventListener('click', function(e) {
+      const motoristaDropdown = document.getElementById('motoristaDropdown');
+      const motoristaTrigger = document.querySelector('.motorista-select-trigger');
+      
+      const veiculoDropdown = document.getElementById('veiculoDropdown');
+      const veiculoTrigger = document.querySelector('.veiculo-select-trigger');
+      
+      // Fechar dropdown de motoristas
+      if (motoristaDropdown && motoristaDropdown.style.display === 'block' && 
+          !motoristaDropdown.contains(e.target) && 
+          e.target !== motoristaTrigger) {
+        motoristaDropdown.style.display = 'none';
+      }
+      
+      // Fechar dropdown de veículos
+      if (veiculoDropdown && veiculoDropdown.style.display === 'block' && 
+          !veiculoDropdown.contains(e.target) && 
+          e.target !== veiculoTrigger) {
+        veiculoDropdown.style.display = 'none';
+      }
+    });
 
     // =============================================
     // FUNÇÕES PRINCIPAIS DO FORMULÁRIO
@@ -1013,7 +1314,7 @@
           'produtoDescricao', 'volumes', 'pesoBruto', 
           'observacao',
           'motoristaNome', 'motoristaCPF', 'motoristaRG', 'motoristaCNH',
-          'veiculoPlaca', 'veiculoCarreta', 'veiculo2Carreta',
+          'veiculo', 'veiculoPlaca', 'veiculoCarreta', 'veiculo2Carreta',
           'clienteCNPJ', 'clienteNomeInput'
         ];
         
@@ -1025,9 +1326,10 @@
         document.getElementById('destinoEndereco').textContent = '';
         document.getElementById('localColetaEndereco').textContent = '';
         document.getElementById('clienteInfo').style.display = 'none';
+        document.getElementById('motoristaDropdown').style.display = 'none';
+        document.getElementById('veiculoDropdown').style.display = 'none';
         
         document.getElementById('especie').selectedIndex = 0;
-        document.getElementById('veiculo').selectedIndex = 0;
         document.getElementById('localColetaUF').value = 'BA';
         document.getElementById('destinoUF').value = 'BA';
         
@@ -1118,6 +1420,41 @@
         currency: 'BRL'
       });
       elemento.value = valor;
+    }
+
+    // Configurar máscaras para os campos do motorista
+    function configurarMascarasMotorista() {
+      // Máscara para CPF do motorista
+      IMask(document.getElementById('motoristaCPF'), {
+        mask: '000.000.000-00'
+      });
+      
+      // Máscara para placa do veículo
+      IMask(document.getElementById('veiculoPlaca'), {
+        mask: 'AAA-0000',
+        definitions: {
+          'A': /[A-Za-z]/,
+          '0': /[0-9]/
+        }
+      });
+      
+      // Máscara para placa da carreta
+      IMask(document.getElementById('veiculoCarreta'), {
+        mask: 'AAA-0000',
+        definitions: {
+          'A': /[A-Za-z]/,
+          '0': /[0-9]/
+        }
+      });
+      
+      // Máscara para placa da carreta 2
+      IMask(document.getElementById('veiculo2Carreta'), {
+        mask: 'AAA-0000',
+        definitions: {
+          'A': /[A-Za-z]/,
+          '0': /[0-9]/
+        }
+      });
     }
 
     // =============================================
@@ -1478,7 +1815,7 @@
 
     // Limpar todas as ordens salvas
     function limparTodasOrdens() {
-      if (confirm('Tem certeza que deseja excluir TODAS as ordens salvas? Esta ação não pode ser desfeita.')) {
+      if (confirm('Tem certeza que deseja excluir TODAS as ordens salvas? Esta ação não pode be desfeita.')) {
         localStorage.removeItem('ordensColeta');
         listarOrdensSalvas();
         alert('Todas as ordens foram removidas.');
@@ -1504,6 +1841,7 @@
       
       carregarEstados();
       configurarMascarasCNPJ();
+      configurarMascarasMotorista();
       
       // Gerar número da ordem automaticamente
       gerarNumeroOrdem();
