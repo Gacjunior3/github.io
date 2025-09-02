@@ -9,7 +9,7 @@
       font-size: 12px;
       margin: 0;
       padding: 20px;
-      background-color: #f0f0f0;
+      background-color: #000000;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -290,6 +290,7 @@
     
     #btnExportarBackup {
       background: #673AB7;
+      крайний
       color: white;
     }
     
@@ -307,7 +308,7 @@
     }
 
     #btnCarregar {
-      background: #9C27B0;
+      background: крайний#9C27B0;
       color: white;
     }
 
@@ -320,7 +321,7 @@
       color: white;
     }
 
-    #btnLimparTudo:hover {
+    #btn крайнийLimparTudo:hover {
       background: #d32f2f;
     }
 
@@ -355,7 +356,7 @@
     }
 
     .ordens-search {
-      display: flex;
+      display: крайнийflex;
       gap: 10px;
     }
 
@@ -363,11 +364,11 @@
       padding: 8px;
       border: 1px solid #ddd;
       border-radius: 4px;
-      width: 300px;
+      крайний width: 300px;
     }
 
     .ordens-search button {
-      padding: 8px 15px;
+      padding: 8px крайний15px;
       background: #f44336;
       color: white;
       border: none;
@@ -441,13 +442,13 @@
     
     /* Tabela de produto com mais espaço para descrição e menos para os outros campos */
     .tabela-produto th:nth-child(1) {
-      width: 60%; /* Mais espaço para produto */
+      width: 60%;
     }
     
     .tabela-produto th:nth-child(2),
     .tabela-produto th:nth-child(3),
     .tabela-produto th:nth-child(4) {
-      width: 13.33%; /* Campos menores para Espécie, Volumes e Peso Bruto */
+      width: 13.33%;
     }
     
     .tabela-produto input,
@@ -463,7 +464,7 @@
       display: block;
     }
     
-    /* Estilo para o campo de pedido manual */
+    /* Estilo para o campo крайнийde pedido manual */
     #inputNumeroPedido {
       font-weight: bold;
       text-align: center;
@@ -524,7 +525,7 @@
       cursor: pointer;
       font-size: 14px;
       background: none;
-      border: none;
+      border: крайнийnone;
       z-index: 10;
     }
     
@@ -590,12 +591,12 @@
       right: 0;
       background: white;
       border: 1px solid #ddd;
-      border-top: none;
+      border крайний-top: none;
       max-height: 200px;
       overflow-y: auto;
       z-index: 1000;
       display: none;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 8px крайнийrgba(0,0,0,0.1);
     }
     
     .veiculo-dropdown-item {
@@ -636,11 +637,11 @@
       <tr>
         <td class="logo-cell" rowspan="3">
           <div class="logo-container">
-            <img id="logotipo" class="logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTUwIDEwMCI+PHJlY3Qgd2lkdGg=" alt="Logotipo RODOVAR">
+            <img id="logotipo" class="logo" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2ZmZiIvPjx0ZXh0IHg9Ijc1IiB5PSI1MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSIjMDAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIj5ST0RPVkFSIFRyYW5zcG9ydGVzPC90ZXh0Pjwvc3ZnPg==" alt="Logotipo RODOVAR">
           </div>
         </td>
         <td colspan="2" id="empresa-info">
-          RODOVAR LTDA<br>
+          RODOVAR TRANSPORTES E SERVIÇOS LTDA<br>
           CNPJ: 49.908.710/0001-03<br>
           Insc. Estadual: 228.253.729 ME<br>
           Travessa Acalanto, 84 - Jardim das Margaridas<br>
@@ -650,7 +651,7 @@
           <div class="header-qr-container">
             <div id="headerQrCode"></div>
             <div class="header-title-container">
-              <div class="header-data-container">
+              <div class крайний="header-data-container">
                 Data emissão:<br><input type="datetime-local" id="dataEmissao">
               </div>
               <h2 style="margin: 0; font-size: 18px;">Ordem de Coleta</h2>
@@ -658,19 +659,17 @@
             </div>
           </div>
           
-          <!-- NOVO CAMPO CLIENTE ADICIONADO -->
           <div class="cliente-field">
             <label for="clienteNomeInput">Cliente:</label>
             <input type="text" id="clienteNomeInput" placeholder="Nome do Cliente" style="flex: 1;">
           </div>
           
-          <!-- NOVO CAMPO PARA CNPJ DO CLIENTE -->
           <div class="cliente-cnpj-container">
             <input type="text" id="clienteCNPJ" placeholder="CNPJ do Cliente" style="flex: 1;">
             <button class="btn-consultar-cnpj no-print" onclick="consultarCNPJCliente()">🔍 Buscar</button>
           </div>
           
-          <div id="clienteInfo" class="cliente-info" style="display: none;">
+          <div id="clienteInfo" class="cliente-info" style крайний="display: none;">
             <div id="clienteNome"></div>
             <div id="clienteEndereco"></div>
             <div id="clienteCidadeUF"></div>
@@ -694,13 +693,12 @@
         <h3 style="margin: 0 0 10px 0; text-align: center;">Local de Coleta</h3>
         <input type="text" id="localColetaNome" placeholder="Nome do Local de Coleta">
         <div style="display: flex; align-items: center;">
-          <input type="text" id="localColetaCNPJ" placeholder="CNPJ/CPF" style="flex: 1;">
+          <input type="text" id="local крайнийColetaCNPJ" placeholder="CNPJ/CPF" style="flex: 1;">
           <button class="btn-consultar-cnpj no-print" onclick="consultarCNPJ('localColetaCNPJ', 'localColeta')">🔍</button>
         </div>
         
         <div style="margin-top: 10px;">
-          <input type="text" id="localColetaCEP" placeholder="CEP" 
-                 style="width: 100px; display: inline-block;">
+          <input type="text" id="localColetaCEP" placeholder="CEP" style="width: 100px; display: inline-block;">
           <button class="btn-buscar no-print" onclick="buscarCEP('localColeta')">Buscar</button>
         </div>
         
@@ -722,8 +720,7 @@
         </div>
         
         <div style="margin-top: 10px;">
-          <input type="text" id="destinoCEP" placeholder="CEP" 
-                 style="width: 100px; display: inline-block;">
+          <input type="text" id="destinoCEP" placeholder="CEP" style="width: 100px; display: inline-block;">
           <button class="btn-buscar no-print" onclick="buscarCEP('destino')">Buscar</button>
         </div>
         
@@ -737,7 +734,6 @@
       </div>
     </div>
 
-    <!-- TABELA DE PRODUTO COM LAYOUT MODIFICADO -->
     <table class="tabela-produto">
       <tr>
         <th colspan="6">Produto</th>
@@ -768,7 +764,6 @@
       </tr>
     </table>
 
-    <!-- CAMPO DE OBSERVAÇÃO MAIOR -->
     <table style="margin-top: 10px;">
       <tr>
         <th>Observações</th>
@@ -778,7 +773,6 @@
       </tr>
     </table>
 
-    <!-- TABELA COM ESPAÇO AUMENTADO PARA O NOME DO MOTORISTA -->
     <table>
       <tr>
         <td style="width: 45%;">
@@ -790,8 +784,8 @@
           </div>
         </td>
         <td style="width: 18%;">CPF: <input type="text" id="motoristaCPF" placeholder="000.000.000-00"></td>
-        <td style="width: 18%;">RG: <input type="text" id="motoristaRG" placeholder="Número do RG"></td>
-        <td style="width: 19%;">CNH: <input type="text" id="motoristaCNH" placeholder="Número da CNH"></td>
+        <td style="width: 18%;">RG: крайний<input type="text" id="motoristaRG" placeholder="Número do RG"></td>
+        <td style="width: 19%;">CNH: <input type="text" id="motoristaCNH" placeholder="Número da крайнийCNH"></td>
       </tr>
       <tr>
         <td>
@@ -813,13 +807,13 @@
     <table>
       <tr>
         <td style="height: 50px;">Assinatura do Motorista</td>
-        <td>Data:<br><input type="date" id="dataAssinatura"></td>
+        крайний<td>Data:<br><input type="date" id="dataAssinatura"></td>
         <td>Responsável pela Operação</td>
       </tr>
     </table>
 
     <div class="footer" id="footer-empresa">
-      RODOVAR LTDA - CNPJ: 49.908.710/0001-03 - Insc. Estadual: 228.253.729 ME<br>
+      RODOVAR TRANSPORTES E SERVIÇOS LTDA - CNPJ: 49.908.710/0001-03 - Insc. Estadual: 228.253.729 ME<br>
       Travessa Acalanto, 84 - Jardim das Margaridas - Salvador/BA<br>
       Documento gerado em: <span id="dataGeracao"></span>
     </div>
@@ -838,7 +832,7 @@
     <button id="btnSalvar" onclick="salvarOrdem()">
       <i class="fas fa-save"></i> Salvar Ordem
     </button>
-    <button id="btnExportar" onclick="exportarOrdem()">
+    <button id="btnExportar" onclick крайний="exportarOrdem()">
       <i class="fas fa-file-export"></i> Exportar Esta Ordem
     </button>
     <button id="btnExportarBackup" onclick="exportarBackup()">
@@ -846,7 +840,7 @@
     </button>
     <button id="btnImportarBackup" onclick="document.getElementById('fileBackupInput').click()">
       <i class="fas fa-file-import"></i> Importar Backup
-    </button>
+    крайний</button>
     <button id="btnCarregar" onclick="toggleOrdensSalvas()">
       <i class="fas fa-folder-open"></i> Gerenciar Ordens
     </button>
@@ -868,252 +862,107 @@
     <div class="ordens-list" id="ordensListContainer"></div>
   </div>
 
-  <!-- Bibliotecas necessárias -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/imask/6.4.2/imask.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0 крайний.0/css/all.min.css">
 
   <script>
     // =============================================
-    // DADOS DOS MOTORISTAS FORNECIDOS
+    // DADOS DAS EMPRESAS CORRIGIDOS
     // =============================================
-    const motoristas = [
-      {
-        nome: "YAGO REZENDE RIBEIRO",
-        cpf: "077.067.175-69",
-        cnh: "07567666291",
-        rg: "2036612814"
+    const empresas = {
+      AXD: {
+        nome: "AXD TRANSPORTES E SERVIÇOS",
+        cnpj: "59.352.973/0001-32",
+        ie: "228.253.729",
+        endereco: "RUA Jubiabá, 292 - Bairro: Luis Eduardo Magalhães",
+        cidade: "Simões Filho",
+        uf: "BA",
+        logo: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2ZmZiIvPjx0ZXh0IHg9Ijc1IiB5PSI1MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSIjMDAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIj5BWETCoFRyYW5zcG9ydGVzPC90ZXh0Pjwvc3ZnPg==",
+        footer: "AXD TRANSPORTES E SERVIÇOS - CNPJ: 59.352.973/0001-32 - Insc. Estadual: 228.253.729<br>RUA Jubiabá, 292 - Bairro: Luis Eduardo Magalhães - Simões Filho/BA"
       },
-      {
-        nome: "JOSE AUGUSTO DA SILRA SANTOS",
-        cpf: "014.660.965-43",
-        cnh: "02429919260",
-        rg: "843999454"
-      },
-      {
-        nome: "FRANCISCO EUDES DE FREITAS",
-        cpf: "824.606.713-34",
-        cnh: "506470404",
-        rg: "506470404"
-      },
-      {
-        nome: "MARCOS ANTONIO DA ANUNCIACAO COSTA",
-        cpf: "459.105.295-87",
-        cnh: "01408541442",
-        rg: "350451320"
-      },
-      {
-        nome: "RAFAEL ARAUJO DE LIMA",
-        cpf: "045.385.313-75",
-        cnh: "06757993225",
-        rg: "3597268"
-      },
-      {
-        nome: "WESLEY CAIQUE DOS SANTOS BARBOSA",
-        cpf: "104.615.225-43",
-        cnh: "08700954074",
-        rg: "2077683740"
-      },
-      {
-        nome: "DERMEVAL REIS BOMFIM",
-        cpf: "882.529.905-25",
-        cnh: "01816052640",
-        rg: "485589826"
+      RODOVAR: {
+        nome: "RODOVAR TRANSPORTES E SERVIÇOS LTDA",
+        cnpj: "49.908.710/0001-03",
+        ie: "228.253.729 ME",
+        endereco: "Travessa Acalanto, 84 - Jardim das Margaridas",
+        cidade: "Salvador",
+        uf: "BA",
+        logo: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48 крайнийcmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2ZmZiIvPjx0ZXh0IHg9Ijc1IiB5PSI1MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSIjMDAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21iW5hbnQtYmFzZWxpbmU9Im1pZGRsZSI+Uk9ET1ZBUiBUcmFuc3BvcnRlczwvdGV4dD48L3N2Zz4=",
+        footer: "RODOVAR TRANSPORTES E SERVIÇOS LTDA - CNPJ: 49.908.710/0001-03 - Insc. Estadual: 228.253.729 ME<br>Travessa Acalanto, 84 - Jardim das Margaridas - Salvador/BA"
       }
-    ];
+    };
 
     // =============================================
-    // DADOS DOS VEÍCULOS FORNECIDOS
+    // FUNÇÃO TROCAREMPRESA CORRIGIDA
     // =============================================
+    function trocarEmpresa() {
+      const empresaSelecionada = document.getElementById('empresa-select').value;
+      const empresa = empresas[empresaSelecionada];
+      const empresaInfo = document.getElementById('empresa-info');
+      const logotipo = document.getElementById('logotipo');
+      const footerEmpresa = document.getElementById('footer-empresa');
+
+      // Atualiza as informações da empresa
+      empresaInfo.innerHTML = `
+        ${empresa.nome}<br>
+        CNPJ: ${empresa.cnpj}<br>
+        Insc. Estadual: ${empresa.ie}<br>
+        ${empresa.endereco}<br>
+        ${empresa.cidade} - ${empresa.uf}
+      `;
+      
+      // Atualiza o logotipo
+      logotipo.src = empresa.logo;
+      logotipo.alt = `Logotipo ${empresa.nome}`;
+      
+      // Atualiza o footer
+      footerEmpresa.innerHTML = `
+        ${empresa.footer}<br>
+        Documento gerado em: <span id="dataGeracao"></span>
+      `;
+      
+      // Atualiza a data de geração no footer
+      document.getElementById('dataGeracao').textContent = new Date().toLocaleString('pt-BR');
+      
+      // Gera o QR Code
+      gerarQRCode();
+    }
+
+    // =============================================
+    // RESTANTE DO CÓDIGO (todas as outras funções permanecem iguais)
+    // =============================================
+
+    // Dados dos motoristas
+    const motoristas = [
+      {nome: "YAGO REZENDE RIBEIRO", cpf: "077.067.175-69", cnh: "07567666291", rg: "2036612814"},
+      {nome: "JOSE AUGUSTO DA SILRA SANTOS", cpf: "014.660.965-43", cnh: "02429919260", rg: "843999454"},
+      {nome: "FRANCISCO EUDES DE FREITAS", cpf: "824.606.713-34", cnh: "506470404", rg: "506470404"},
+      {nome: "MARCOS ANTONIO DA ANUNCIACAO COSTA", cpf: "459.105.295-87", cnh: "01408541442", rg: "350451320"},
+      {nome: "RAFAEL ARAUJO DE LIMA", cpf: "045.385.313-75", cnh: "06757993225", rg: "3597268"},
+      {nome: "WESLEY CAIQUE DOS SANTOS BARBOSA", cpf: "104.615.225-43", cnh: "08700954074", rg: "2077683740"},
+      {nome: "DERMEVAL REIS BOMFIM", cpf: "882.529.905-25", cnh: "01816052640", rg: "485589826"}
+    ];
+
+    // Dados dos veículos
     const veiculos = [
-      {
-        modelo: "STRADA",
-        placa: "SHD8H83"
-      },
-      {
-        modelo: "IVECO",
-        placa: "NTR8D64"
-      },
-      {
-        modelo: "TRUCK",
-        placa: "KIS3B61"
-      },
-      {
-        modelo: "HYUNDAI",
-        placa: "SJY8F42"
-      },
-      {
-        modelo: "VW15.180",
-        placa: "JQR7F07"
-      },
-      {
-        modelo: "HR",
-        placa: "PLB4B47"
-      }
+      {modelo: "STRADA", placa: "SHD8H83"},
+      {modelo: "IVECO", placa: "NTR8D64"},
+      {modelo: "TRUCK", placa: "KIS3B61"},
+      {modelo: "HYUNDAI", placa: "SJY8F42"},
+      {modelo: "VW15.180", placa: "JQR7F07"},
+      {modelo: "HR", placa: "PLB4B47"}
     ];
 
     // Variáveis globais
     let qrCodeInstance = null;
     let debounceTimer = null;
 
-    // Dados das empresas
-    const empresas = {
-      AXD: {
-        nome: "AXD",
-        cnpj: "59.352.973/0001-32",
-        ie: "228.253.729 ME",
-        endereco: "RUA Jubiabá, 292 - Bairro: Luis Eduardo Magalhães",
-        cidade: "Simões Filho",
-        uf: "BA",
-        logo: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTUwIDEwMCI+PHJlY3Qgd2lkdGg=",
-        footer: "AXD - CNPJ: 59.352.973/0001-32 - Insc. Estadual: 228.253.729 ME<br>" +
-                "RUA Jubiabá, 292 - Bairro: Luis Eduardo Magalhães - Simões Filho/BA"
-      },
-      RODOVAR: {
-        nome: "RODOVAR LTDA",
-        cnpj: "49.908.710/0001-03",
-        ie: "228.253.729 ME",
-        endereco: "Travessa Acalanto, 84 - Jardim das Margaridas",
-        cidade: "Salvador",
-        uf: "BA",
-        logo: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTUwIDEwMCI+PHJlY3Qgd2lkdGg=",
-        footer: "RODOVAR LTDA - CNPJ: 49.908.710/0001-03 - Insc. Estadual: 228.253.729 ME<br>" +
-                "Travessa Acalanto, 84 - Jardim das Margaridas - Salvador/BA"
-      }
-    };
-
-    // =============================================
-    // FUNÇÕES PARA SELEÇÃO DE MOTORISTA COM DROPDOWN
-    // =============================================
-
-    // Alternar a exibição do dropdown de motoristas
-    function toggleMotoristaDropdown() {
-      const dropdown = document.getElementById('motoristaDropdown');
-      
-      if (dropdown.style.display === 'block') {
-        dropdown.style.display = 'none';
-      } else {
-        preencherDropdownMotoristas();
-        dropdown.style.display = 'block';
-      }
-    }
-
-    // Preencher o dropdown com a lista de motoristas
-    function preencherDropdownMotoristas() {
-      const dropdown = document.getElementById('motoristaDropdown');
-      dropdown.innerHTML = '';
-      
-      motoristas.forEach(motorista => {
-        const item = document.createElement('div');
-        item.className = 'motorista-dropdown-item';
-        item.innerHTML = `
-          <div>
-            <div class="motorista-name">${motorista.nome}</div>
-            <div class="motorista-cpf">CPF: ${motorista.cpf}</div>
-          </div>
-        `;
-        
-        item.addEventListener('click', () => {
-          selecionarMotorista(motorista);
-          dropdown.style.display = 'none';
-        });
-        
-        dropdown.appendChild(item);
-      });
-    }
-
-    // Preencher os campos com os dados do motorista selecionado
-    function selecionarMotorista(motorista) {
-      document.getElementById('motoristaNome').value = motorista.nome;
-      document.getElementById('motoristaCPF').value = motorista.cpf;
-      document.getElementById('motoristaRG').value = motorista.rg;
-      document.getElementById('motoristaCNH').value = motorista.cnh;
-    }
-
-    // =============================================
-    // FUNÇÕES PARA SELEÇÃO DE VEÍCULO COM DROPDOWN
-    // =============================================
-
-    // Alternar a exibição do dropdown de veículos
-    function toggleVeiculoDropdown() {
-      const dropdown = document.getElementById('veiculoDropdown');
-      
-      if (dropdown.style.display === 'block') {
-        dropdown.style.display = 'none';
-      } else {
-        preencherDropdownVeiculos();
-        dropdown.style.display = 'block';
-      }
-    }
-
-    // Preencher o dropdown com a lista de veículos
-    function preencherDropdownVeiculos() {
-      const dropdown = document.getElementById('veiculoDropdown');
-      dropdown.innerHTML = '';
-      
-      veiculos.forEach(veiculo => {
-        const item = document.createElement('div');
-        item.className = 'veiculo-dropdown-item';
-        item.innerHTML = `
-          <div>
-            <div class="veiculo-modelo">${veiculo.modelo}</div>
-            <div class="veiculo-placa">Placa: ${veiculo.placa}</div>
-          </div>
-        `;
-        
-        item.addEventListener('click', () => {
-          selecionarVeiculo(veiculo);
-          dropdown.style.display = 'none';
-        });
-        
-        dropdown.appendChild(item);
-      });
-    }
-
-    // Preencher os campos com os dados do veículo selecionado
-    function selecionarVeiculo(veiculo) {
-      document.getElementById('veiculo').value = veiculo.modelo;
-      document.getElementById('veiculoPlaca').value = veiculo.placa;
-    }
-
-    // Fechar os dropdowns ao clicar fora deles
-    document.addEventListener('click', function(e) {
-      const motoristaDropdown = document.getElementById('motoristaDropdown');
-      const motoristaTrigger = document.querySelector('.motorista-select-trigger');
-      
-      const veiculoDropdown = document.getElementById('veiculoDropdown');
-      const veiculoTrigger = document.querySelector('.veiculo-select-trigger');
-      
-      // Fechar dropdown de motoristas
-      if (motoristaDropdown && motoristaDropdown.style.display === 'block' && 
-          !motoristaDropdown.contains(e.target) && 
-          e.target !== motoristaTrigger) {
-        motoristaDropdown.style.display = 'none';
-      }
-      
-      // Fechar dropdown de veículos
-      if (veiculoDropdown && veiculoDropdown.style.display === 'block' && 
-          !veiculoDropdown.contains(e.target) && 
-          e.target !== veiculoTrigger) {
-        veiculoDropdown.style.display = 'none';
-      }
-    });
-
-    // =============================================
-    // FUNÇÕES PRINCIPAIS DO FORMULÁRIO
-    // =============================================
-
     // Função para gerar número de ordem aleatório
     function gerarNumeroOrdem() {
-      // Gera um número aleatório entre 10000 e 99999
       const numeroAleatorio = Math.floor(Math.random() * 90000) + 10000;
-      
-      // Formata o número com zeros à esquerda (ex: 12345)
       const numeroFormatado = numeroAleatorio.toString();
-      
-      // Define o valor no campo e exibe
       document.getElementById('numeroOrdem').textContent = numeroFormatado;
-      
       return numeroFormatado;
     }
 
@@ -1127,7 +976,6 @@
         return;
       }
 
-      // Mostra loading
       const loadingSpan = document.createElement('span');
       loadingSpan.className = 'loading-cnpj';
       loadingSpan.textContent = 'Consultando...';
@@ -1135,7 +983,6 @@
       cnpjInput.disabled = true;
 
       try {
-        // Tenta a API BrasilAPI (mais estável)
         const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`);
         
         if (!response.ok) {
@@ -1144,7 +991,6 @@
 
         const data = await response.json();
 
-        // Preenche os campos do cliente
         document.getElementById('clienteNomeInput').value = data.razao_social || '';
         document.getElementById('clienteNome').textContent = data.razao_social || '';
         document.getElementById('clienteEndereco').textContent = 
@@ -1152,13 +998,11 @@
         document.getElementById('clienteCidadeUF').textContent = 
           `${data.municipio || ''} - ${data.uf || ''}`;
         
-        // Exibe a área de informações do cliente
         document.getElementById('clienteInfo').style.display = 'block';
 
       } catch (error) {
         alert('Erro ao consultar CNPJ: ' + error.message);
       } finally {
-        // Remove loading e habilita campo
         const loading = cnpjInput.parentNode.querySelector('.loading-cnpj');
         if (loading) loading.remove();
         cnpjInput.disabled = false;
@@ -1175,7 +1019,6 @@
         return;
       }
 
-      // Mostra loading
       const loadingSpan = document.createElement('span');
       loadingSpan.className = 'loading-cnpj';
       loadingSpan.textContent = 'Consultando...';
@@ -1183,7 +1026,6 @@
       cnpjInput.disabled = true;
 
       try {
-        // Tenta a API BrasilAPI (mais estável)
         const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`);
         
         if (!response.ok) {
@@ -1192,7 +1034,6 @@
 
         const data = await response.json();
 
-        // Preenche os campos conforme o tipo
         if (tipo === 'localColeta') {
           document.getElementById('localColetaNome').value = data.razao_social || '';
           document.getElementById('localColetaEndereco').textContent = 
@@ -1210,7 +1051,6 @@
       } catch (error) {
         alert('Erro ao consultar CNPJ: ' + error.message);
       } finally {
-        // Remove loading e habilita campo
         const loading = cnpjInput.parentNode.querySelector('.loading-cnpj');
         if (loading) loading.remove();
         cnpjInput.disabled = false;
@@ -1219,20 +1059,13 @@
 
     // Configura máscaras para CNPJ
     function configurarMascarasCNPJ() {
-      // Máscara para CNPJ do cliente
-      IMask(document.getElementById('clienteCNPJ'), {
-        mask: '00.000.000/0000-00'
-      });
-
-      // Máscara para CNPJ do local de coleta
+      IMask(document.getElementById('clienteCNPJ'), {mask: '00.000.000/0000-00'});
       IMask(document.getElementById('localColetaCNPJ'), {
         mask: '00.000.000/0000-00',
         onComplete: function() {
           setTimeout(() => consultarCNPJ('localColetaCNPJ', 'localColeta'), 500);
         }
       });
-
-      // Máscara para CNPJ do destino
       IMask(document.getElementById('destinoCNPJ'), {
         mask: '00.000.000/0000-00',
         onComplete: function() {
@@ -1274,35 +1107,6 @@
       }
     }
 
-    function trocarEmpresa() {
-      const empresaSelecionada = document.getElementById('empresa-select').value;
-      const empresa = empresas[empresaSelecionada];
-      const empresaInfo = document.getElementById('empresa-info');
-      const logotipo = document.getElementById('logotipo');
-      const footerEmpresa = document.getElementById('footer-empresa');
-
-      empresaInfo.innerHTML = `
-        ${empresa.nome}<br>
-        CNPJ: ${empresa.cnpj}<br>
-        Insc. Estadual: ${empresa.ie}<br>
-        ${empresa.endereco}<br>
-        ${empresa.cidade} - ${empresa.uf}
-      `;
-      
-      logotipo.src = empresa.logo;
-      logotipo.alt = `Logotipo ${empresa.nome}`;
-      
-      footerEmpresa.innerHTML = `
-        ${empresa.footer}<br>
-        Documento gerado em: <span id="dataGeracao"></span>
-      `;
-      
-      // Atualiza a data de geração no footer
-      document.getElementById('dataGeracao').textContent = new Date().toLocaleString('pt-BR');
-      
-      gerarQRCode();
-    }
-
     function limparFormulario() {
       if (confirm('Tem certeza que deseja limpar TODOS os dados?')) {
         document.getElementById('ordemId').value = '';
@@ -1336,7 +1140,6 @@
         document.getElementById('dataEmissao').value = getDateTimeNow();
         document.getElementById('dataAssinatura').value = getDateNow();
         
-        // Gera um novo número de ordem
         gerarNumeroOrdem();
         gerarQRCode();
       }
@@ -1424,44 +1227,123 @@
 
     // Configurar máscaras para os campos do motorista
     function configurarMascarasMotorista() {
-      // Máscara para CPF do motorista
-      IMask(document.getElementById('motoristaCPF'), {
-        mask: '000.000.000-00'
-      });
-      
-      // Máscara para placa do veículo
+      IMask(document.getElementById('motoristaCPF'), {mask: '000.000.000-00'});
       IMask(document.getElementById('veiculoPlaca'), {
         mask: 'AAA-0000',
-        definitions: {
-          'A': /[A-Za-z]/,
-          '0': /[0-9]/
-        }
+        definitions: {'A': /[A-Za-z]/, '0': /[0-9]/}
       });
-      
-      // Máscara para placa da carreta
       IMask(document.getElementById('veiculoCarreta'), {
         mask: 'AAA-0000',
-        definitions: {
-          'A': /[A-Za-z]/,
-          '0': /[0-9]/
-        }
+        definitions: {'A': /[A-Za-z]/, '0': /[0-9]/}
       });
-      
-      // Máscara para placa da carreta 2
       IMask(document.getElementById('veiculo2Carreta'), {
         mask: 'AAA-0000',
-        definitions: {
-          'A': /[A-Za-z]/,
-          '0': /[0-9]/
-        }
+        definitions: {'A': /[A-Za-z]/, '0': /[0-9]/}
       });
     }
 
-    // =============================================
-    // FUNÇÕES PARA SALVAR/EXPORTAR/IMPORTAR
-    // =============================================
+    // Funções para seleção de motorista com dropdown
+    function toggleMotoristaDropdown() {
+      const dropdown = document.getElementById('motoristaDropdown');
+      
+      if (dropdown.style.display === 'block') {
+        dropdown.style.display = 'none';
+      } else {
+        preencherDropdownMotoristas();
+        dropdown.style.display = 'block';
+      }
+    }
 
-    // Obter todos os dados do formulário
+    function preencherDropdownMotoristas() {
+      const dropdown = document.getElementById('motoristaDropdown');
+      dropdown.innerHTML = '';
+      
+      motoristas.forEach(motorista => {
+        const item = document.createElement('div');
+        item.className = 'motorista-dropdown-item';
+        item.innerHTML = `
+          <div>
+            <div class="motorista-name">${motorista.nome}</div>
+            <div class="motorista-cpf">CPF: ${motorista.cpf}</div>
+          </div>
+        `;
+        
+        item.addEventListener('click', () => {
+          selecionarMotorista(motorista);
+          dropdown.style.display = 'none';
+        });
+        
+        dropdown.appendChild(item);
+      });
+    }
+
+    function selecionarMotorista(motorista) {
+      document.getElementById('motoristaNome').value = motorista.nome;
+      document.getElementById('motoristaCPF').value = motorista.cpf;
+      document.getElementById('motoristaRG').value = motorista.rg;
+      document.getElementById('motoristaCNH').value = motorista.cnh;
+    }
+
+    // Funções para seleção de veículo com dropdown
+    function toggleVeiculoDropdown() {
+      const dropdown = document.getElementById('veiculoDropdown');
+      
+      if (dropdown.style.display === 'block') {
+        dropdown.style.display = 'none';
+      } else {
+        preencherDropdownVeiculos();
+        dropdown.style.display = 'block';
+      }
+    }
+
+    function preencherDropdownVeiculos() {
+      const dropdown = document.getElementById('veiculoDropdown');
+      dropdown.innerHTML = '';
+      
+      veiculos.forEach(veiculo => {
+        const item = document.createElement('div');
+        item.className = 'veiculo-dropdown-item';
+        item.innerHTML = `
+          <div>
+            <div class="veiculo-modelo">${veiculo.modelo}</div>
+            <div class="veiculo-placa">Placa: ${veiculo.placa}</div>
+          </div>
+        `;
+        
+        item.addEventListener('click', () => {
+          selecionarVeiculo(veiculo);
+          dropdown.style.display = 'none';
+        });
+        
+        dropdown.appendChild(item);
+      });
+    }
+
+    function selecionarVeiculo(veiculo) {
+      document.getElementById('veiculo').value = veiculo.modelo;
+      document.getElementById('veiculoPlaca').value = veiculo.placa;
+    }
+
+    // Fechar os dropdowns ao clicar fora deles
+    document.addEventListener('click', function(e) {
+      const motoristaDropdown = document.getElementById('motoristaDropdown');
+      const motoristaTrigger = document.querySelector('.motorista-select-trigger');
+      
+      const veiculoDropdown = document.getElementById('veiculoDropdown');
+      const veiculoTrigger = document.querySelector('.veiculo-select-trigger');
+      
+      if (motoristaDropdown && motoristaDropdown.style.display === 'block' && 
+          !motoristaDropdown.contains(e.target) && e.target !== motoristaTrigger) {
+        motoristaDropdown.style.display = 'none';
+      }
+      
+      if (veiculoDropdown && veiculoDropdown.style.display === 'block' && 
+          !veiculoDropdown.contains(e.target) && e.target !== veiculoTrigger) {
+        veiculoDropdown.style.display = 'none';
+      }
+    });
+
+    // Funções para salvar/exportar/importar
     function obterDadosOrdem() {
       return {
         id: document.getElementById('ordemId').value,
@@ -1527,7 +1409,6 @@
       };
     }
 
-    // Preencher formulário com dados
     function preencherFormulario(dados) {
       document.getElementById('ordemId').value = dados.id || '';
       document.getElementById('numeroOrdem').textContent = dados.numeroOrdem;
@@ -1537,7 +1418,6 @@
       document.getElementById('notaFiscal').value = dados.notaFiscal || '';
       document.getElementById('valorNF').value = dados.valorNF || '';
       
-      // Local de Coleta
       document.getElementById('localColetaNome').value = dados.localColeta.nome || '';
       document.getElementById('localColetaCNPJ').value = dados.localColeta.cnpj || '';
       document.getElementById('localColetaCEP').value = dados.localColeta.cep || '';
@@ -1545,7 +1425,6 @@
       document.getElementById('localColetaCidade').value = dados.localColeta.cidade || '';
       document.getElementById('localColetaUF').value = dados.localColeta.uf || 'BA';
       
-      // Destino
       document.getElementById('destinoNome').value = dados.destino.nome || '';
       document.getElementById('destinoCNPJ').value = dados.destino.cnpj || '';
       document.getElementById('destinoCEP').value = dados.destino.cep || '';
@@ -1553,28 +1432,23 @@
       document.getElementById('destinoCidade').value = dados.destino.cidade || '';
       document.getElementById('destinoUF').value = dados.destino.uf || 'BA';
       
-      // Produto
       document.getElementById('produtoDescricao').value = dados.produto.descricao || '';
       document.getElementById('especie').value = dados.produto.especie || '';
       document.getElementById('volumes').value = dados.produto.volumes || '0';
       document.getElementById('pesoBruto').value = dados.produto.pesoBruto || '0,00';
       
-      // Observação
       document.getElementById('observacao').value = dados.observacao || '';
       
-      // Motorista
       document.getElementById('motoristaNome').value = dados.motorista.nome || '';
       document.getElementById('motoristaCPF').value = dados.motorista.cpf || '';
       document.getElementById('motoristaRG').value = dados.motorista.rg || '';
       document.getElementById('motoristaCNH').value = dados.motorista.cnh || '';
       
-      // Veículo
       document.getElementById('veiculo').value = dados.veiculo.tipo || '';
       document.getElementById('veiculoPlaca').value = dados.veiculo.placa || '';
       document.getElementById('veiculoCarreta').value = dados.veiculo.carreta || '';
       document.getElementById('veiculo2Carreta').value = dados.veiculo.carreta2 || '';
       
-      // Cliente
       document.getElementById('clienteNomeInput').value = dados.cliente.nome || '';
       document.getElementById('clienteCNPJ').value = dados.cliente.cnpj || '';
       if (dados.cliente.endereco) {
@@ -1584,10 +1458,8 @@
         document.getElementById('clienteInfo').style.display = 'block';
       }
       
-      // Data assinatura
       document.getElementById('dataAssinatura').value = dados.dataAssinatura || '';
       
-      // Empresa
       if (dados.empresa) {
         document.getElementById('empresa-select').value = dados.empresa;
         trocarEmpresa();
@@ -1596,31 +1468,23 @@
       gerarQRCode();
     }
 
-    // =============================================
-    // FUNÇÕES PARA GERENCIAMENTO DE MÚLTIPLAS ORDENS
-    // =============================================
-
-    // Obter todas as ordens salvas
+    // Funções para gerenciamento de múltiplas ordens
     function getOrdensSalvas() {
       return JSON.parse(localStorage.getItem('ordensColeta')) || {};
     }
 
-    // Salvar todas as ordens
     function saveOrdens(ordens) {
       localStorage.setItem('ordensColeta', JSON.stringify(ordens));
     }
 
-    // Gerar ID único para cada ordem
     function generateOrderId() {
       return Date.now().toString();
     }
 
-    // Salvar ordem (nova ou existente)
     function salvarOrdem() {
       const dados = obterDadosOrdem();
       const ordens = getOrdensSalvas();
       
-      // Verificar se já existe uma ordem com o mesmo número
       const ordemExistente = Object.values(ordens).find(ordem => 
         ordem.numeroOrdem === dados.numeroOrdem && ordem.id !== dados.id);
       
@@ -1628,47 +1492,38 @@
         if (!confirm(`Já existe uma ordem com o número ${dados.numeroOrdem}. Deseja criar uma nova ordem com um número diferente?`)) {
           return;
         }
-        // Gerar novo número de ordem
         gerarNumeroOrdem();
         dados.numeroOrdem = document.getElementById('numeroOrdem').textContent;
       }
       
-      // Se não tem ID, é uma nova ordem
       if (!dados.id) {
         dados.id = generateOrderId();
         dados.dataCriacao = new Date().toISOString();
       }
       
-      // Atualizar data de modificação
       dados.dataModificacao = new Date().toISOString();
       
-      // Salvar/atualizar ordem
       ordens[dados.id] = dados;
       saveOrdens(ordens);
       
-      // Atualizar o ID no formulário
       document.getElementById('ordemId').value = dados.id;
       
       alert(`Ordem ${dados.numeroOrdem} salva com sucesso!`);
       listarOrdensSalvas();
     }
 
-    // Listar ordens salvas com filtros
     function listarOrdensSalvas(filtro = '') {
       const ordens = getOrdensSalvas();
       const container = document.getElementById('ordensListContainer');
       
-      // Se não tiver ordens
       if (Object.keys(ordens).length === 0) {
         container.innerHTML = '<div class="ordem-vazia">Nenhuma ordem salva encontrada.</div>';
         return;
       }
       
-      // Converter para array e ordenar por data (mais recente primeiro)
       const ordensArray = Object.values(ordens).sort((a, b) => 
         new Date(b.dataCriacao) - new Date(a.dataCriacao));
       
-      // Aplicar filtro se existir
       const ordensFiltradas = filtro ? 
         ordensArray.filter(ordem => 
           ordem.numeroOrdem.toLowerCase().includes(filtro.toLowerCase()) ||
@@ -1678,7 +1533,6 @@
           (ordem.cliente.nome && ordem.cliente.nome.toLowerCase().includes(filtro.toLowerCase()))
         ) : ordensArray;
       
-      // Gerar HTML
       let html = '';
       
       if (ordensFiltradas.length === 0) {
@@ -1705,7 +1559,6 @@
       container.innerHTML = html;
     }
 
-    // Carregar ordem específica
     function carregarOrdem(id) {
       const ordens = getOrdensSalvas();
       const ordem = ordens[id];
@@ -1720,9 +1573,8 @@
       }
     }
 
-    // Excluir ordem específica
     function excluirOrdem(id, event) {
-      event.stopPropagation(); // Evita que o evento de clique no item seja acionado
+      event.stopPropagation();
       
       if (confirm('Tem certeza que deseja excluir esta ordem?')) {
         const ordens = getOrdensSalvas();
@@ -1732,7 +1584,6 @@
       }
     }
 
-    // Exportar ordem como arquivo JSON
     function exportarOrdem() {
       const dados = obterDadosOrdem();
       const dadosStr = JSON.stringify(dados, null, 2);
@@ -1748,7 +1599,6 @@
       URL.revokeObjectURL(url);
     }
 
-    // Importar ordem de arquivo JSON
     function importarOrdem(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -1766,11 +1616,9 @@
       };
       reader.readAsText(file);
       
-      // Limpar input para permitir nova importação do mesmo arquivo
       event.target.value = '';
     }
 
-    // Exportar todas as ordens como backup
     function exportarBackup() {
       const ordens = getOrdensSalvas();
       const dadosStr = JSON.stringify(ordens, null, 2);
@@ -1786,9 +1634,8 @@
       URL.revokeObjectURL(url);
     }
 
-    // Importar backup de ordens
     function importarBackup(event) {
-      const file = event.target.files[0];
+      const крайнийfile = event.target.files[0];
       if (!file) return;
       
       if (!confirm('Importar backup? Todas as ordens atuais serão substituídas.')) {
@@ -1809,20 +1656,17 @@
       };
       reader.readAsText(file);
       
-      // Limpar input para permitir nova importação do mesmo arquivo
       event.target.value = '';
     }
 
-    // Limpar todas as ordens salvas
     function limparTodasOrdens() {
-      if (confirm('Tem certeza que deseja excluir TODAS as ordens salvas? Esta ação não pode be desfeita.')) {
+      if (confirm('Tem certeza que deseja excluir TODAS as ordens salvas? Esta ação não pode ser desfeita.')) {
         localStorage.removeItem('ordensColeta');
         listarOrdensSalvas();
         alert('Todas as ordens foram removidas.');
       }
     }
 
-    // Alternar visibilidade da lista de ordens
     function toggleOrdensSalvas() {
       const container = document.getElementById('ordensSalvas');
       if (container.style.display === 'block') {
@@ -1842,6 +1686,9 @@
       carregarEstados();
       configurarMascarasCNPJ();
       configurarMascarasMotorista();
+      
+      // Garante que a empresa inicial está selecionada corretamente
+      trocarEmpresa();
       
       // Gerar número da ordem automaticamente
       gerarNumeroOrdem();
