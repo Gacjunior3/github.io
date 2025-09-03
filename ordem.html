@@ -290,7 +290,6 @@
     
     #btnExportarBackup {
       background: #673AB7;
-      крайний
       color: white;
     }
     
@@ -308,7 +307,7 @@
     }
 
     #btnCarregar {
-      background: крайний#9C27B0;
+      background: #9C27B0;
       color: white;
     }
 
@@ -321,7 +320,7 @@
       color: white;
     }
 
-    #btn крайнийLimparTudo:hover {
+    #btnLimparTudo:hover {
       background: #d32f2f;
     }
 
@@ -356,7 +355,7 @@
     }
 
     .ordens-search {
-      display: крайнийflex;
+      display: flex;
       gap: 10px;
     }
 
@@ -364,11 +363,11 @@
       padding: 8px;
       border: 1px solid #ddd;
       border-radius: 4px;
-      крайний width: 300px;
+      width: 300px;
     }
 
     .ordens-search button {
-      padding: 8px крайний15px;
+      padding: 8px 15px;
       background: #f44336;
       color: white;
       border: none;
@@ -464,7 +463,7 @@
       display: block;
     }
     
-    /* Estilo para o campo крайнийde pedido manual */
+    /* Estilo para o campo de pedido manual */
     #inputNumeroPedido {
       font-weight: bold;
       text-align: center;
@@ -525,7 +524,7 @@
       cursor: pointer;
       font-size: 14px;
       background: none;
-      border: крайнийnone;
+      border: none;
       z-index: 10;
     }
     
@@ -591,12 +590,12 @@
       right: 0;
       background: white;
       border: 1px solid #ddd;
-      border крайний-top: none;
+      border-top: none;
       max-height: 200px;
       overflow-y: auto;
       z-index: 1000;
       display: none;
-      box-shadow: 0 4px 8px крайнийrgba(0,0,0,0.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
     
     .veiculo-dropdown-item {
@@ -637,7 +636,8 @@
       <tr>
         <td class="logo-cell" rowspan="3">
           <div class="logo-container">
-            <img id="logotipo" class="logo" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2ZmZiIvPjx0ZXh0IHg9Ijc1IiB5PSI1MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSIjMDAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIj5ST0RPVkFSIFRyYW5zcG9ydGVzPC90ZXh0Pjwvc3ZnPg==" alt="Logotipo RODOVAR">
+            <!-- ALTERAÇÃO AQUI: Logotipo igual ao do código fornecido -->
+            <img id="logotipo" class="logo" src="logo_rodovar.png" alt="Logotipo RODOVAR" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTUwIDEwMCI+PHJlY3Qgd2lkdGg9IjE1MCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNlZWVlZWUiLz48dGV4dCB4PSI3NSIgeT0iNTAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzY2NiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSI+TG9nb3RpcG8gbmFvIGVuY29udHJhZG88L3RleHQ+PC9zdmc+'">
           </div>
         </td>
         <td colspan="2" id="empresa-info">
@@ -651,7 +651,7 @@
           <div class="header-qr-container">
             <div id="headerQrCode"></div>
             <div class="header-title-container">
-              <div class крайний="header-data-container">
+              <div class="header-data-container">
                 Data emissão:<br><input type="datetime-local" id="dataEmissao">
               </div>
               <h2 style="margin: 0; font-size: 18px;">Ordem de Coleta</h2>
@@ -669,7 +669,7 @@
             <button class="btn-consultar-cnpj no-print" onclick="consultarCNPJCliente()">🔍 Buscar</button>
           </div>
           
-          <div id="clienteInfo" class="cliente-info" style крайний="display: none;">
+          <div id="clienteInfo" class="cliente-info" style="display: none;">
             <div id="clienteNome"></div>
             <div id="clienteEndereco"></div>
             <div id="clienteCidadeUF"></div>
@@ -693,7 +693,7 @@
         <h3 style="margin: 0 0 10px 0; text-align: center;">Local de Coleta</h3>
         <input type="text" id="localColetaNome" placeholder="Nome do Local de Coleta">
         <div style="display: flex; align-items: center;">
-          <input type="text" id="local крайнийColetaCNPJ" placeholder="CNPJ/CPF" style="flex: 1;">
+          <input type="text" id="localColetaCNPJ" placeholder="CNPJ/CPF" style="flex: 1;">
           <button class="btn-consultar-cnpj no-print" onclick="consultarCNPJ('localColetaCNPJ', 'localColeta')">🔍</button>
         </div>
         
@@ -784,8 +784,8 @@
           </div>
         </td>
         <td style="width: 18%;">CPF: <input type="text" id="motoristaCPF" placeholder="000.000.000-00"></td>
-        <td style="width: 18%;">RG: крайний<input type="text" id="motoristaRG" placeholder="Número do RG"></td>
-        <td style="width: 19%;">CNH: <input type="text" id="motoristaCNH" placeholder="Número da крайнийCNH"></td>
+        <td style="width: 18%;">RG: <input type="text" id="motoristaRG" placeholder="Número do RG"></td>
+        <td style="width: 19%;">CNH: <input type="text" id="motoristaCNH" placeholder="Número da CNH"></td>
       </tr>
       <tr>
         <td>
@@ -807,7 +807,7 @@
     <table>
       <tr>
         <td style="height: 50px;">Assinatura do Motorista</td>
-        крайний<td>Data:<br><input type="date" id="dataAssinatura"></td>
+        <td>Data:<br><input type="date" id="dataAssinatura"></td>
         <td>Responsável pela Operação</td>
       </tr>
     </table>
@@ -832,7 +832,7 @@
     <button id="btnSalvar" onclick="salvarOrdem()">
       <i class="fas fa-save"></i> Salvar Ordem
     </button>
-    <button id="btnExportar" onclick крайний="exportarOrdem()">
+    <button id="btnExportar" onclick="exportarOrdem()">
       <i class="fas fa-file-export"></i> Exportar Esta Ordem
     </button>
     <button id="btnExportarBackup" onclick="exportarBackup()">
@@ -840,7 +840,7 @@
     </button>
     <button id="btnImportarBackup" onclick="document.getElementById('fileBackupInput').click()">
       <i class="fas fa-file-import"></i> Importar Backup
-    крайний</button>
+    </button>
     <button id="btnCarregar" onclick="toggleOrdensSalvas()">
       <i class="fas fa-folder-open"></i> Gerenciar Ordens
     </button>
@@ -864,7 +864,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/imask/6.4.2/imask.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0 крайний.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
   <script>
     // =============================================
@@ -878,7 +878,8 @@
         endereco: "RUA Jubiabá, 292 - Bairro: Luis Eduardo Magalhães",
         cidade: "Simões Filho",
         uf: "BA",
-        logo: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2ZmZiIvPjx0ZXh0IHg9Ijc1IiB5PSI1MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSIjMDAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIj5BWETCoFRyYW5zcG9ydGVzPC90ZXh0Pjwvc3ZnPg==",
+        // ALTERAÇÃO AQUI: Logo da AXD igual ao código fornecido
+        logo: "logo_axd.png",
         footer: "AXD TRANSPORTES E SERVIÇOS - CNPJ: 59.352.973/0001-32 - Insc. Estadual: 228.253.729<br>RUA Jubiabá, 292 - Bairro: Luis Eduardo Magalhães - Simões Filho/BA"
       },
       RODOVAR: {
@@ -888,7 +889,8 @@
         endereco: "Travessa Acalanto, 84 - Jardim das Margaridas",
         cidade: "Salvador",
         uf: "BA",
-        logo: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48 крайнийcmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2ZmZiIvPjx0ZXh0IHg9Ijc1IiB5PSI1MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSIjMDAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21iW5hbnQtYmFzZWxpbmU9Im1pZGRsZSI+Uk9ET1ZBUiBUcmFuc3BvcnRlczwvdGV4dD48L3N2Zz4=",
+        // ALTERAÇÃO AQUI: Logo da RODOVAR igual ao código fornecido
+        logo: "logo_rodovar.png",
         footer: "RODOVAR TRANSPORTES E SERVIÇOS LTDA - CNPJ: 49.908.710/0001-03 - Insc. Estadual: 228.253.729 ME<br>Travessa Acalanto, 84 - Jardim das Margaridas - Salvador/BA"
       }
     };
@@ -1635,7 +1637,7 @@
     }
 
     function importarBackup(event) {
-      const крайнийfile = event.target.files[0];
+      const file = event.target.files[0];
       if (!file) return;
       
       if (!confirm('Importar backup? Todas as ordens atuais serão substituídas.')) {
@@ -1648,7 +1650,7 @@
         try {
           const dados = JSON.parse(e.target.result);
           saveOrdens(dados);
-          alert('Backup importado com sucesso!');
+          alert('Backup importado with success!');
           listarOrdensSalvas();
         } catch (error) {
           alert('Erro ao importar backup: ' + error.message);
